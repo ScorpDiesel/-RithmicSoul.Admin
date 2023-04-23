@@ -6,3 +6,6 @@
 /RithmicSoul.Admin/Client/obj
 /RithmicSoul.Admin/Server/obj
 /RithmicSoul.Admin/Shared/obj
+/RithmicSoul.Admin/Client/bin/Debug/net7.0
+/RithmicSoul.Admin/Server/bin/Debug/net7.0
+/RithmicSoul.Admin/Shared/bin/Debug/net7.0
