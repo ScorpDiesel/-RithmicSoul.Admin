@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RithmicSoul.Admin.Server", "RithmicSoul.Admin\Server\RithmicSoul.Admin.Server.csproj", "{F6DABA2D-683D-47B0-A92A-A00D54A1A9DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RithmicSoul.Admin.Client", "RithmicSoul.Admin\Client\RithmicSoul.Admin.Client.csproj", "{BAD7755D-1A24-4EBB-9B03-8791FFB9324A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RithmicSoul.Admin.Client", "RithmicSoul.Admin\Client\RithmicSoul.Admin.Client.csproj", "{BAD7755D-1A24-4EBB-9B03-8791FFB9324A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RithmicSoul.Admin.Shared", "RithmicSoul.Admin\Shared\RithmicSoul.Admin.Shared.csproj", "{A9702A96-A68D-4449-B93F-BB0E744EC846}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RithmicSoul.Admin.Shared", "RithmicSoul.Admin\Shared\RithmicSoul.Admin.Shared.csproj", "{A9702A96-A68D-4449-B93F-BB0E744EC846}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionApp1", "FunctionApp1\FunctionApp1.csproj", "{D5E9914A-8E6F-461B-B4E0-C9BE66F37AB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F6DABA2D-683D-47B0-A92A-A00D54A1A9DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F6DABA2D-683D-47B0-A92A-A00D54A1A9DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F6DABA2D-683D-47B0-A92A-A00D54A1A9DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F6DABA2D-683D-47B0-A92A-A00D54A1A9DE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BAD7755D-1A24-4EBB-9B03-8791FFB9324A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BAD7755D-1A24-4EBB-9B03-8791FFB9324A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BAD7755D-1A24-4EBB-9B03-8791FFB9324A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -27,6 +23,10 @@ Global
 		{A9702A96-A68D-4449-B93F-BB0E744EC846}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9702A96-A68D-4449-B93F-BB0E744EC846}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9702A96-A68D-4449-B93F-BB0E744EC846}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5E9914A-8E6F-461B-B4E0-C9BE66F37AB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5E9914A-8E6F-461B-B4E0-C9BE66F37AB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5E9914A-8E6F-461B-B4E0-C9BE66F37AB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5E9914A-8E6F-461B-B4E0-C9BE66F37AB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
