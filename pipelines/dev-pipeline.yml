@@ -7,7 +7,20 @@ name: Azure Static Web Apps CI/CD
 trigger:
   branches:
     include:
-      - dev
+      - dev 
+
+variables:
+  # Azure Resource Manager connection created during pipeline creation xx
+  azureSubscription: 'd5e17c9b-0290-489b-8d23-154642c3d60a'
+
+  # Function app name
+  functionAppName: 'RithmicSoulAdminFunctionApp'
+  
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+  # Working Directory
+  workingDirectory: '$(System.DefaultWorkingDirectory)/RithmicSoulAdminFunctionApp'
 
 stages:
 - stage: Build
@@ -97,7 +110,7 @@ stages:
     displayName: Build and Deploy Azure Static Web App
     condition: or(eq(variables['Build.Reason'], 'Manual'),or(eq(variables['Build.Reason'], 'PullRequest'),eq(variables['Build.Reason'], 'IndividualCI')))
     pool:
-      vmImage: ubuntu-latest
+      vmImage: $(vmImageName)
     variables:
     - group: Azure-Static-Web-Apps-lemon-plant-0c66b6d0f-variable-group
     steps:
