@@ -7,123 +7,27 @@ name: Azure Static Web Apps CI/CD
 trigger:
   branches:
     include:
-      - dev 
+      - dev
 
-variables:
-  # Azure Resource Manager connection created during pipeline creation xx
-  azureSubscription: 'd5e17c9b-0290-489b-8d23-154642c3d60a'
-
-  # Function app name
-  functionAppName: 'RithmicSoulAdminFunctionApp'
-  
-  # Agent VM image name
-  vmImageName: 'ubuntu-latest'
-
-  # Working Directory
-  workingDirectory: '$(System.DefaultWorkingDirectory)/RithmicSoulAdminFunctionApp'
-
-stages:
-- stage: Build
-  displayName: Build stage
-
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: $(vmImageName)
-
-    steps:
-    - task: UseDotNet@2
-      displayName: Use .Net Core sdk 3.1.107
-      inputs:
-        version: '3.1.107'
-        
-    - task: UseDotNet@2
-      displayName: 'Use .Net sdk 7.0.x'
-      inputs:
-        version: '7.0.x'
-
-    - task: NuGetToolInstaller@0
-      displayName: Use NuGet 6.x
-      inputs:
-        versionSpec: 6.x
-        checkLatest: true
-
-    - task: NuGetCommand@2
-      displayName: NuGet Restore
-      inputs:
-        command: restore
-        restoreSolution: '**/*.sln'
-        feedsToUse: config
-        nugetConfigPath: $(Build.SourcesDirectory)/.nuget/NuGet.Config
-        includeNuGetOrg: true
-
-    - task: DotNetCoreCLI@1
-      displayName: Build Solution
-      inputs:
-        command: publish
-        publishWebProjects: false
-        projects: '**/*.sln'
-        arguments: --configuration Release --output $(Build.ArtifactStagingDirectory)
-
-    - publish: $(Build.ArtifactStagingDirectory)
-      displayName: Publish Artifact
-      artifact: drop
-
-- stage: Deploy
-  displayName: Deploy stage
-  dependsOn: Build
-  condition: succeeded()
-
-  jobs:
-  - deployment: Deploy
-    displayName: Deploy Function App
-    environment: 'development'
-    pool:
-      vmImage: $(vmImageName)
-
-    strategy:
-      runOnce:
-        deploy:
-
-          steps:
-          # - task: AzureFunctionApp@1
-          #   displayName: 'Azure functions app deploy'
-          #   inputs:
-          #     azureSubscription: '$(azureSubscription)'
-          #     appType: functionApp
-          #     appName: $(functionAppName)
-          #     package: $(Pipeline.Workspace)/**/*.zip
-              #deploymentMethod: runFromPackage
-          - task: AzureFunctionApp@2
-            inputs:
-              azureSubscription: 'Azure subscription 1 (d5e17c9b-0290-489b-8d23-154642c3d60a)'
-              appType: 'functionApp'
-              appName: 'RithmicSoulAdminFunctionApp'
-              deployToSlotOrASE: true
-              resourceGroupName: 'rg-rithmicsoul-ws'
-              slotName: 'dev'
-              package: $(Pipeline.Workspace)/**/*.zip
-              deploymentMethod: 'auto'
-
-  - job: build_and_deploy_job
-    displayName: Build and Deploy Azure Static Web App
-    condition: or(eq(variables['Build.Reason'], 'Manual'),or(eq(variables['Build.Reason'], 'PullRequest'),eq(variables['Build.Reason'], 'IndividualCI')))
-    pool:
-      vmImage: $(vmImageName)
-    variables:
-    - group: Azure-Static-Web-Apps-lemon-plant-0c66b6d0f-variable-group
-    steps:
-    - checkout: self
-      submodules: true
-    - task: AzureStaticWebApp@0
-      inputs:
-        azure_static_web_apps_api_token: $(AZURE_STATIC_WEB_APPS_API_TOKEN_LEMON_PLANT_0C66B6D0F)
+jobs:
+- job: build_and_deploy_job
+  displayName: Build and Deploy Job
+  condition: or(eq(variables['Build.Reason'], 'Manual'),or(eq(variables['Build.Reason'], 'PullRequest'),eq(variables['Build.Reason'], 'IndividualCI')))
+  pool:
+    vmImage: ubuntu-latest
+  variables:
+  - group: Azure-Static-Web-Apps-lemon-plant-0c66b6d0f-variable-group
+  steps:
+  - checkout: self
+    submodules: true
+  - task: AzureStaticWebApp@0
+    inputs:
+      azure_static_web_apps_api_token: $(AZURE_STATIC_WEB_APPS_API_TOKEN_LEMON_PLANT_0C66B6D0F)
 ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
 # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-        app_location: "Client" # App source code path
-        api_location: "Api" # Api source code path - optional
-        output_location: "wwwroot" # Built app content directory - optional
-        deployment_environment: "dev"
+      app_location: "Client" # App source code path
+      api_location: "" # Api source code path - optional
+      output_location: "wwwroot" # Built app content directory - optional
+      deployment_environment: "dev"
 ###### End of Repository/Build Configurations ######
 
