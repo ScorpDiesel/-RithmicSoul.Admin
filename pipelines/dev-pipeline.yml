@@ -55,7 +55,7 @@ stages:
         command: restore
         restoreSolution: '**/*.sln'
         feedsToUse: config
-        nugetConfigPath: $(Build.SourcesDirectory)/.nuget/NuGet.config
+        nugetConfigPath: $(Build.SourcesDirectory)/.nuget/NuGet.Config
         includeNuGetOrg: true
 
     - task: DotNetCoreCLI@1
