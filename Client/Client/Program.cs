@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using RithmicSoul.Admin;
+using RithmicSoul.Admin.Client;
 
 namespace RithmicSoul.Admin
 {
