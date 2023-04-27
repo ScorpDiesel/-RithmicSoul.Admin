@@ -20,6 +20,46 @@ jobs:
   steps:
   - checkout: self
     submodules: true
+
+  - task: NuGetToolInstaller@0
+    displayName: Use NuGet 6.x
+    inputs:
+    versionSpec: 6.x
+    checkLatest: true
+
+  - task: NuGetCommand@2
+    displayName: NuGet Restore
+    inputs:
+    command: restore
+    restoreSolution: '**/*.sln'
+    feedsToUse: config
+    nugetConfigPath: $(Build.SourcesDirectory)/.nuget/NuGet.config
+    includeNuGetOrg: true
+
+  - task: DotNetCoreCLI@1
+    displayName: Build Solution
+    inputs:
+    command: publish
+    publishWebProjects: false
+    projects: '**/*.sln'
+    arguments: --configuration Release --output $(Build.ArtifactStagingDirectory)
+
+  - publish: $(Build.ArtifactStagingDirectory)
+    displayName: Publish Artifact
+    artifact: drop 
+    
+#  - task: PublishBuildArtifacts@1
+#    displayName: 'publish artifacts'
+#  - task: NuGetToolInstaller@1
+
+## Restore #
+#  - task: NuGetCommand@2
+#    inputs:
+#      command: 'restore'
+#      restoreSolution: '**/*.sln'
+#      feedsToUse: 'config'
+#      nugetConfigPath: 'MyProject/nuget.config'
+
   - task: AzureStaticWebApp@0
     inputs:
       azure_static_web_apps_api_token: $(AZURE_STATIC_WEB_APPS_API_TOKEN_LEMON_PLANT_0C66B6D0F)
