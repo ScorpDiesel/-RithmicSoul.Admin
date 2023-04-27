@@ -16,12 +16,12 @@ jobs:
   steps:
   - checkout: self
     submodules: true
-
-  - task: NuGetAuthenticate@0
-    displayName: 'Authenticate with NuGet'
     
   - script: dotnet restore --configfile $(Build.SourcesDirectory)/.nuget/NuGet.Config
     displayName: 'Restore NuGet packages'
+
+  - task: NuGetAuthenticate@0
+    displayName: 'Authenticate with NuGet'
 
   #- task: NuGetToolInstaller@0
   #  displayName: Use NuGet 6.x
@@ -61,12 +61,6 @@ jobs:
 #      restoreSolution: '**/*.sln'
 #      feedsToUse: 'config'
 #      nugetConfigPath: 'MyProject/nuget.config'
-
-  - task: DownloadPipelineArtifact@2
-    inputs:
-      artifact: DEV
-      path: wwwroot # Put build artifact back into the project
-      displayName: "Download artifacts"
 
   - task: AzureStaticWebApp@0
     inputs:
