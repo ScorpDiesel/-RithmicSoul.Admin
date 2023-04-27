@@ -16,12 +16,12 @@ jobs:
   steps:
   - checkout: self
     submodules: true
+
+  #- task: NuGetAuthenticate@0
+  #  displayName: 'Authenticate with NuGet'
     
   - script: dotnet restore --configfile $(Build.SourcesDirectory)/.nuget/NuGet.Config
     displayName: 'Restore NuGet packages'
-
-  - task: NuGetAuthenticate@0
-    displayName: 'Authenticate with NuGet'
 
   #- task: NuGetToolInstaller@0
   #  displayName: Use NuGet 6.x
