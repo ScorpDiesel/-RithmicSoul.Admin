@@ -1,9 +1,13 @@
 ﻿@page "/surveys"
+
 @using RithmicSoul.Models.Survey
 @using RithmicSoulDatabaseLibrary.Utilities
 @using RithmicSoul.Models.Dtos
 @using System.Collections.ObjectModel
+@using RithmicSoul.Admin.Client.Enums
+@using RithmicSoul.Admin.Client.Pages.Surveys.QuestionType
 @inject HttpClient HttpClient
+@inject IDialogService DialogService
 
 <PageTitle>Weather forecast</PageTitle>
 
@@ -27,16 +31,16 @@
                             <ToolBarContent>
                                 <MudText Typo="Typo.h6">@_questionTypeTableName</MudText>
                                 <MudSpacer />
-                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0"/>
+                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="() => { DoQuestionTypeActionAsync(FormActionType.New); }" />
                             </ToolBarContent>
                             <Columns>
                                 <PropertyColumn Property="q => q.QuestionTypeId" IsEditable="false" />
-                                <PropertyColumn Property="q => q.QuestionTypeName"/>
+                                <PropertyColumn Property="q => q.QuestionTypeName" />
                                 <PropertyColumn Property="q => q.RatingTypeName">
                                     <EditTemplate>
                                         <MudSelect T="string" Required Margin="@Margin.Dense" Value="context.Item.RatingTypeName"
-                                                   Variant="Variant.Outlined">
-                                            @foreach (var rt in _ratingTypesString)
+                                                   Variant="Variant.Outlined" Label="RatingTypeName" AnchorOrigin="Origin.BottomCenter">
+                                            @foreach (var rt in _ratingTypesStringList)
                                             {
                                                 <MudSelectItem Value="@rt">@rt</MudSelectItem>
                                             }
@@ -45,8 +49,8 @@
                                 </PropertyColumn>
                                 <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
                                     <CellTemplate>
-                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
-                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" />
+                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="() => { DoQuestionTypeActionAsync(FormActionType.Edit, context.Item); }" />
+                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="() => { DoQuestionTypeActionAsync(FormActionType.Delete, context.Item); }" />
                                     </CellTemplate>
                                 </TemplateColumn>
                             </Columns>
@@ -135,13 +139,13 @@
             </MudPaper>
         </MudItem>
         @*<MudItem xs="12" sm="6" md="4">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
         </MudItem>
         <MudItem xs="12" sm="6" md="4">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
         </MudItem>
         <MudItem xs="12" sm="12" md="4">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
         </MudItem>*@
     </MudGrid>
 </MudContainer>
@@ -153,15 +157,15 @@
     private ObservableCollection<SurveyDto> _surveys = new();
     private ObservableCollection<SurveyQuestionnaireDto> _surveyQuestionnaires = new();
     private ObservableCollection<SurveyQuestionDto> _surveyQuestions = new();
-    private string _questionTypeTableName = EntityUtility.GetTableName<QuestionType>();
+    private string _questionTypeTableName = EntityUtility.GetTableName<Models.Survey.QuestionType>();
     private string _ratingTypeTableName = EntityUtility.GetTableName<RatingType>();
     private string _surveyTypeTableName = EntityUtility.GetTableName<SurveyType>();
     private string _surveyTableName = EntityUtility.GetTableName<Survey>();
     private string _surveyQuestionnaireTableName = EntityUtility.GetTableName<SurveyQuestionnaire>();
     private string _surveyQuestionTableName = EntityUtility.GetTableName<SurveyQuestion>();
-    
-    private IEnumerable<string> _ratingTypesString = new List<string>();
-    
+
+    private IEnumerable<string> _ratingTypesStringList = new List<string>();
+
     protected override async Task OnInitializedAsync()
     {
         _questionTypes = await HttpClient.GetFromJsonAsync<ObservableCollection<QuestionTypeDto>>("QuestionType/GetAll");
@@ -171,6 +175,20 @@
         _surveyQuestionnaires = await HttpClient.GetFromJsonAsync<ObservableCollection<SurveyQuestionnaireDto>>("SurveyQuestionnaire/GetAll");
         _surveyQuestions = await HttpClient.GetFromJsonAsync<ObservableCollection<SurveyQuestionDto>>("SurveyQuestion/GetAll");
 
-        _ratingTypesString = _ratingTypes.Select(r => r.RatingTypeName);
+        _ratingTypesStringList = _ratingTypes.Select(r => r.RatingTypeName);
+    }
+
+    private async Task DoQuestionTypeActionAsync(FormActionType actionType, QuestionTypeDto? dto = null)
+    {
+        //Console.WriteLine(dto.QuestionTypeName);
+        var parameters = new DialogParameters
+            {
+                ["RatingTypesStringList"] = _ratingTypesStringList,
+                ["Dto"] = dto,
+                ["IsDeleteAction"] = actionType == FormActionType.Delete
+            };
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var dialogTypeLabel = Enum.GetName(actionType);
+        var dialog = await DialogService.ShowAsync<QuestionTypeDialog>($"{dialogTypeLabel} Question Type", parameters, options);
     }
 }

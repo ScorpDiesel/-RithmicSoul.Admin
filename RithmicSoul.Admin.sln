@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{53CA61A0-E02F-468E-B0EB-74DCA0DE1CD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RithmicSoul.Admin.Client", "Client\RithmicSoul.Admin.Client\RithmicSoul.Admin.Client.csproj", "{875C51AF-D755-41FC-B6AB-EA2EAAF877C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RithmicSoul.Admin.Client", "Client\RithmicSoul.Admin.Client\RithmicSoul.Admin.Client.csproj", "{875C51AF-D755-41FC-B6AB-EA2EAAF877C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

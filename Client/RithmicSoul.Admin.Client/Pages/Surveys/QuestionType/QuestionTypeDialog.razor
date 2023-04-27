@@ -1,0 +1,57 @@
+﻿@using RithmicSoul.Models.Dtos
+
+<MudDialog>
+    <DialogContent>
+        <div style="display:@(IsDeleteAction ? "block" : "none")">
+        <MudText Class="mt-2 mb-8">Delete this Question Type?</MudText>
+        </div>
+        <MudForm>
+            <MudTextField T="string" Label="QuestionTypeName" Class="mb-8" Value="@Dto?.QuestionTypeName" Disabled="@IsDeleteAction"></MudTextField>
+            <MudSelect T="string" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="RatingTypeName" Value="@Dto?.RatingTypeName"
+                       AnchorOrigin="Origin.BottomCenter" Disabled="@IsDeleteAction">
+                @foreach (var rt in RatingTypesStringList)
+                {
+                    <MudSelectItem Value="@rt">@rt</MudSelectItem>
+                }
+            </MudSelect>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Save">@(IsDeleteAction ? "Delete" : "Save")</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] 
+    MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public IEnumerable<string> RatingTypesStringList { get; set; } = new List<string>();
+
+    [Parameter]
+    public QuestionTypeDto? Dto { get; set; } = new();
+
+    [Parameter]
+    public bool IsDeleteAction { get; set; }
+
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    void Save()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    private string ResourceGroup { get; set; }
+
+    private void OnSelectedValue(string value)
+    {
+        ResourceGroup = value;
+    }
+}
