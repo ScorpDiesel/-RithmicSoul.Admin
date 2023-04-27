@@ -1,0 +1,176 @@
+﻿@page "/surveys"
+@using RithmicSoul.Models.Survey
+@using RithmicSoulDatabaseLibrary.Utilities
+@using RithmicSoul.Models.Dtos
+@using System.Collections.ObjectModel
+@inject HttpClient HttpClient
+
+<PageTitle>Weather forecast</PageTitle>
+
+<MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.ExtraLarge">
+    <MudGrid>
+        @*<MudItem xs="12" sm="6" md="4">
+        <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+        <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="12" md="4">
+        <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        </MudItem>*@
+        <MudItem xs="12" sm="6">
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudPaper Elevation="2" Class="pa-4" Style="height: 400px; overflow: scroll">
+                        <MudDataGrid T="QuestionTypeDto" Items="@_questionTypes" EditMode="DataGridEditMode.Form" Hover="true"
+                                     Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false">
+                            <ToolBarContent>
+                                <MudText Typo="Typo.h6">@_questionTypeTableName</MudText>
+                                <MudSpacer />
+                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0"/>
+                            </ToolBarContent>
+                            <Columns>
+                                <PropertyColumn Property="q => q.QuestionTypeId" IsEditable="false" />
+                                <PropertyColumn Property="q => q.QuestionTypeName"/>
+                                <PropertyColumn Property="q => q.RatingTypeName">
+                                    <EditTemplate>
+                                        <MudSelect T="string" Required Margin="@Margin.Dense" Value="context.Item.RatingTypeName"
+                                                   Variant="Variant.Outlined">
+                                            @foreach (var rt in _ratingTypesString)
+                                            {
+                                                <MudSelectItem Value="@rt">@rt</MudSelectItem>
+                                            }
+                                        </MudSelect>
+                                    </EditTemplate>
+                                </PropertyColumn>
+                                <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
+                                    <CellTemplate>
+                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" />
+                                    </CellTemplate>
+                                </TemplateColumn>
+                            </Columns>
+                            <PagerContent>
+                                <MudDataGridPager T="QuestionTypeDto" />
+                            </PagerContent>
+                        </MudDataGrid>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudPaper Elevation="2" Class="pa-4" Style="height: 400px; overflow: scroll">
+                        <MudDataGrid Items="@_ratingTypes">
+                            <ToolBarContent>
+                                <MudText Typo="Typo.h6">@_ratingTypeTableName</MudText>
+                                <MudSpacer />
+                            </ToolBarContent>
+                            <Columns>
+                                <PropertyColumn Property="q => q.RatingTypeId" />
+                                <PropertyColumn Property="q => q.RatingTypeName" />
+                            </Columns>
+                        </MudDataGrid>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudPaper Elevation="2" Class="pa-4" Style="height: 400px; overflow: scroll">
+                        <MudDataGrid Items="@_surveyTypes">
+                            <ToolBarContent>
+                                <MudText Typo="Typo.h6">@_surveyTypeTableName</MudText>
+                                <MudSpacer />
+                            </ToolBarContent>
+                            <Columns>
+                                <PropertyColumn Property="q => q.SurveyTypeId" />
+                                <PropertyColumn Property="q => q.SurveyTypeName" />
+                            </Columns>
+                        </MudDataGrid>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudPaper Elevation="2" Class="pa-4" Style="height: 400px; overflow: scroll">
+                        <MudDataGrid Items="@_surveyQuestions">
+                            <ToolBarContent>
+                                <MudText Typo="Typo.h6">@_surveyTableName</MudText>
+                                <MudSpacer />
+                            </ToolBarContent>
+                            <Columns>
+                                <PropertyColumn Property="q => q.QuestionId" />
+                                <PropertyColumn Property="q => q.QuestionText" />
+                            </Columns>
+                        </MudDataGrid>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudPaper Elevation="2" Class="pa-4" Style="height: 400px; overflow: scroll">
+                        <MudDataGrid Items="@_surveys">
+                            <ToolBarContent>
+                                <MudText Typo="Typo.h6">@_surveyQuestionnaireTableName</MudText>
+                                <MudSpacer />
+                            </ToolBarContent>
+                            <Columns>
+                                <PropertyColumn Property="q => q.SurveyId" />
+                                <PropertyColumn Property="q => q.SurveyTypeId" />
+                                <PropertyColumn Property="q => q.SurveyName" />
+                                <PropertyColumn Property="q => q.SurveyDescription" />
+                                <PropertyColumn Property="q => q.DateCreated" />
+                            </Columns>
+                        </MudDataGrid>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 100%; overflow: scroll">
+                <MudDataGrid Items="@_surveyQuestionnaires">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">@_surveyQuestionTableName</MudText>
+                        <MudSpacer />
+                    </ToolBarContent>
+                    <Columns>
+                        <PropertyColumn Property="q => q.QuestionnaireId" />
+                        <PropertyColumn Property="q => q.QuestionTypeId" />
+                        <PropertyColumn Property="q => q.SurveyQuestionId" />
+                        <PropertyColumn Property="q => q.SurveyId" />
+                        <PropertyColumn Property="q => q.DateCreated" />
+                    </Columns>
+                </MudDataGrid>
+            </MudPaper>
+        </MudItem>
+        @*<MudItem xs="12" sm="6" md="4">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="12" md="4">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        </MudItem>*@
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private ObservableCollection<QuestionTypeDto> _questionTypes = new();
+    private ObservableCollection<RatingTypeDto> _ratingTypes = new();
+    private ObservableCollection<SurveyTypeDto> _surveyTypes = new();
+    private ObservableCollection<SurveyDto> _surveys = new();
+    private ObservableCollection<SurveyQuestionnaireDto> _surveyQuestionnaires = new();
+    private ObservableCollection<SurveyQuestionDto> _surveyQuestions = new();
+    private string _questionTypeTableName = EntityUtility.GetTableName<QuestionType>();
+    private string _ratingTypeTableName = EntityUtility.GetTableName<RatingType>();
+    private string _surveyTypeTableName = EntityUtility.GetTableName<SurveyType>();
+    private string _surveyTableName = EntityUtility.GetTableName<Survey>();
+    private string _surveyQuestionnaireTableName = EntityUtility.GetTableName<SurveyQuestionnaire>();
+    private string _surveyQuestionTableName = EntityUtility.GetTableName<SurveyQuestion>();
+    
+    private IEnumerable<string> _ratingTypesString = new List<string>();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _questionTypes = await HttpClient.GetFromJsonAsync<ObservableCollection<QuestionTypeDto>>("QuestionType/GetAll");
+        _ratingTypes = await HttpClient.GetFromJsonAsync<ObservableCollection<RatingTypeDto>>("RatingType/GetAll");
+        _surveyTypes = await HttpClient.GetFromJsonAsync<ObservableCollection<SurveyTypeDto>>("SurveyType/GetAll");
+        _surveys = await HttpClient.GetFromJsonAsync<ObservableCollection<SurveyDto>>("Survey/GetAll");
+        _surveyQuestionnaires = await HttpClient.GetFromJsonAsync<ObservableCollection<SurveyQuestionnaireDto>>("SurveyQuestionnaire/GetAll");
+        _surveyQuestions = await HttpClient.GetFromJsonAsync<ObservableCollection<SurveyQuestionDto>>("SurveyQuestion/GetAll");
+
+        _ratingTypesString = _ratingTypes.Select(r => r.RatingTypeName);
+    }
+}
