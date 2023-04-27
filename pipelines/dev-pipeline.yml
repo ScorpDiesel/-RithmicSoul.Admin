@@ -1,9 +1,5 @@
 name: Azure Static Web Apps CI/CD
 
-# pr:
-#   branches:
-#     include:
-#       - ver2_Minutes
 trigger:
   branches:
     include:
@@ -65,6 +61,12 @@ jobs:
 #      restoreSolution: '**/*.sln'
 #      feedsToUse: 'config'
 #      nugetConfigPath: 'MyProject/nuget.config'
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: DEV
+      path: wwwroot # Put build artifact back into the project
+      displayName: "Download artifacts"
 
   - task: AzureStaticWebApp@0
     inputs:
