@@ -8,68 +8,53 @@ trigger:
 jobs:
 - job: build_and_deploy_job
   displayName: Build and Deploy Job
-  condition: or(eq(variables['Build.Reason'], 'Manual'),or(eq(variables['Build.Reason'], 'PullRequest'),eq(variables['Build.Reason'], 'IndividualCI')))
+  condition: or(eq(variables['Build.Reason'], 'Manual'), or(eq(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.Reason'], 'IndividualCI')))
   pool:
     vmImage: ubuntu-latest
   variables:
   - group: Azure-Static-Web-Apps-lemon-plant-0c66b6d0f-variable-group
+  - name: buildConfiguration
+    value: 'Release'
+
   steps:
   - checkout: self
     submodules: true
 
-  #- task: NuGetAuthenticate@0
-  #  displayName: 'Authenticate with NuGet'
-    
-  - script: dotnet restore --configfile $(Build.SourcesDirectory)/.nuget/NuGet.Config
-    displayName: 'Restore NuGet packages'
+  - task: NuGetAuthenticate@0
+    displayName: 'Authenticate with NuGet'
 
-  #- task: NuGetToolInstaller@0
-  #  displayName: Use NuGet 6.x
-  #  inputs:
-  #    versionSpec: 6.x
-  #    checkLatest: true
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet restore'
+    inputs:
+      command: 'restore'
+      projects: '**/*.csproj'
+      feedsToUse: 'select'
+      vstsFeed: 'RithmicMedia' # Replace this with your feed's name
 
-  #- task: NuGetCommand@2
-  #  displayName: NuGet Restore
-  #  inputs:
-  #    command: restore
-  #    restoreSolution: '**/*.sln'
-  #    feedsToUse: config
-  #    nugetConfigPath: $(Build.SourcesDirectory)/.nuget/NuGet.Config
-  #    includeNuGetOrg: true
+  - task: DotNetCoreCLI@2
+    displayName: 'Build'
+    inputs:
+      command: 'build'
+      arguments: '--configuration $(buildConfiguration)'
+      projects: '**/*.csproj'
 
-  #- task: DotNetCoreCLI@1
-  #  displayName: Build Solution
-  #  inputs:
-  #    command: publish
-  #    publishWebProjects: false
-  #    projects: '**/*.sln'
-  #    arguments: --configuration Release --output $(Build.ArtifactStagingDirectory)
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish...'
+    inputs:
+      command: 'publish'
+      publishWebProjects: true
+      arguments: '--configuration $(buildConfiguration) --output ./Client/RithmicSoul.Admin.Client/build --verbosity n'
+      zipAfterPublish: false
 
-  #- publish: $(Build.ArtifactStagingDirectory)
-  #  displayName: Publish Artifact
-  #  artifact: drop 
-    
-#  - task: PublishBuildArtifacts@1
-#    displayName: 'publish artifacts'
-#  - task: NuGetToolInstaller@1
-
-## Restore #
-#  - task: NuGetCommand@2
-#    inputs:
-#      command: 'restore'
-#      restoreSolution: '**/*.sln'
-#      feedsToUse: 'config'
-#      nugetConfigPath: 'MyProject/nuget.config'
+  - task: DownloadPipelineArtifact@2
+    displayName: "Download artifacts"
+    inputs:
+      path: './Client/RithmicSoul.Admin.Client/build'
 
   - task: AzureStaticWebApp@0
     inputs:
       azure_static_web_apps_api_token: $(AZURE_STATIC_WEB_APPS_API_TOKEN_LEMON_PLANT_0C66B6D0F)
-###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-# For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-      app_location: "Client/RithmicSoul.Admin.Client" # App source code path
-      api_location: "" # Api source code path - optional
-      output_location: "wwwroot" # Built app content directory - optional
+      skip_app_build: true
+      app_location: 'Client/RithmicSoul.Admin.Client/build/RithmicSoul.Admin.Client/wwwroot'
+      output_location: ''
       deployment_environment: "dev"
-###### End of Repository/Build Configurations ######
-
