@@ -37,7 +37,7 @@ public class QuestionTypeService : IService<QuestionTypeDto>
 
     public async Task<bool> DeleteAsync(int id)
     {
-        var response = await _httpClient.GetFromJsonAsync<HttpResponseMessage>($"QuestionType/DeleteById/{id}");
+        var response = await _httpClient.GetAsync($"QuestionType/DeleteById/{id}");
         return response.IsSuccessStatusCode;
     }
 

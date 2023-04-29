@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using RithmicSoul.Admin.Client;
 using MudBlazor.Services;
+using NetCore.AutoRegisterDi;
+using RithmicSoulDatabaseLibrary.Interfaces;
 
 namespace RithmicSoul.Admin.Client
 {
@@ -21,6 +23,10 @@ namespace RithmicSoul.Admin.Client
             {
                 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             }
+
+            var registered = builder.Services.RegisterAssemblyPublicNonGenericClasses()
+                .Where(c => c.Name.EndsWith("Service"))
+                .AsPublicImplementedInterfaces();
 
             builder.Services.AddMudServices();
             await builder.Build().RunAsync();

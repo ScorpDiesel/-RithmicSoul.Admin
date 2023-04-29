@@ -10,8 +10,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.5" PrivateAssets="all" />
     <PackageReference Include="MudBlazor" Version="6.2.2" />
-    <PackageReference Include="RithmicSoul.Models" Version="2023.4.26.5" />
-    <PackageReference Include="RithmicSoulDatabaseLibrary" Version="2023.4.26.3" />
+    <PackageReference Include="NetCore.AutoRegisterDi" Version="2.1.0" />
+    <PackageReference Include="RithmicSoul.Models" Version="2023.4.29.2" />
+    <PackageReference Include="RithmicSoulDatabaseLibrary" Version="2023.4.29.3" />
     <PackageReference Include="Serialize.Linq" Version="2.0.0" />
   </ItemGroup>
 

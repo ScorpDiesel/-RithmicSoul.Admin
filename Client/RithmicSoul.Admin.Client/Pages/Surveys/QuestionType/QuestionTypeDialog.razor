@@ -1,24 +1,30 @@
 ﻿@using RithmicSoul.Models.Dtos
+@using RithmicSoulDatabaseLibrary.Interfaces
+@using System.Collections.ObjectModel
+@inject IService<QuestionTypeDto> QuestionTypeService
 
 <MudDialog>
     <DialogContent>
-        <div style="display:@(IsDeleteAction ? "block" : "none")">
-        <MudText Class="mt-2 mb-8">Delete this Question Type?</MudText>
+        <div style="display:@(IsDeleteAction ? "block;" : "none")">
+            <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Warning" Size="Size.Large" />
+        <MudText Class="mt-2 mb-8 float-right">Delete this Question Type?</MudText>
         </div>
+        <div style="display:@(!IsDeleteAction ? "block" : "none")">
         <MudForm>
-            <MudTextField T="string" Label="QuestionTypeName" Class="mb-8" Value="@Dto?.QuestionTypeName" Disabled="@IsDeleteAction"></MudTextField>
-            <MudSelect T="string" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="RatingTypeName" Value="@Dto?.RatingTypeName"
+            <MudTextField T="string" Label="QuestionTypeName" Class="mb-8" @bind-Value="@Dto.QuestionTypeName" Disabled="@IsDeleteAction" Required></MudTextField>
+            @*<MudSelect T="int?" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="RatingTypeName" @bind-Value="@Dto.RatingTypeId"
                        AnchorOrigin="Origin.BottomCenter" Disabled="@IsDeleteAction">
-                @foreach (var rt in RatingTypesStringList)
+                @foreach (var rt in RatingTypes)
                 {
-                    <MudSelectItem Value="@rt">@rt</MudSelectItem>
+                    <MudSelectItem Value="@rt.RatingTypeId">@rt.RatingTypeName</MudSelectItem>
                 }
-            </MudSelect>
+            </MudSelect>*@
         </MudForm>
+        </div>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Save">@(IsDeleteAction ? "Delete" : "Save")</MudButton>
+        <MudButton Color="Color.Primary" OnClick="DoActionAsync">@(IsDeleteAction ? "Delete" : "Save")</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -27,10 +33,10 @@
     MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
-    public IEnumerable<string> RatingTypesStringList { get; set; } = new List<string>();
+    public ObservableCollection<RatingTypeDto> RatingTypes { get; set; } = new();
 
     [Parameter]
-    public QuestionTypeDto? Dto { get; set; } = new();
+    public QuestionTypeDto Dto { get; set; }
 
     [Parameter]
     public bool IsDeleteAction { get; set; }
@@ -38,11 +44,26 @@
 
     protected override Task OnInitializedAsync()
     {
+        if (IsDeleteAction) MudDialog.SetTitle(string.Empty);
+        Dto ??= new QuestionTypeDto();
         return base.OnInitializedAsync();
     }
 
-    void Save()
+    async Task DoActionAsync()
     {
+        if (IsDeleteAction)
+        {
+            var response = await QuestionTypeService.DeleteAsync((int)Dto.QuestionTypeId);
+        }
+        else if (Dto.QuestionTypeId == null)
+        {
+            var response = await QuestionTypeService.InsertAsync(Dto);
+        }
+        else
+        {
+            var response = await QuestionTypeService.UpdateAsync(Dto);
+        }
+
         MudDialog.Close(DialogResult.Ok(true));
     }
 
