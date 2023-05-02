@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using System.Net.Http.Json;
 using System.Text;
-using RithmicSoul.Models.Dtos;
+using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoulDatabaseLibrary.Interfaces;
 using Serialize.Linq.Serializers;
 
@@ -17,27 +17,26 @@ public class SurveyService : IService<SurveyDto>
         _httpClient = httpClient;
     }
 
-    public async Task<bool> InsertAsync(SurveyDto item)
+    public async Task<bool> InsertAsync(SurveyDto dto)
     {
-        var response = await _httpClient.PostAsJsonAsync("Survey/Insert", item);
+        var response = await _httpClient.PostAsJsonAsync("Survey/Insert", dto);
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> UpdateAsync(SurveyDto item)
+    public async Task<bool> UpdateAsync(SurveyDto dto)
     {
-        var response = await _httpClient.PostAsJsonAsync("Survey/Update", item);
+        var response = await _httpClient.PostAsJsonAsync("Survey/Update", dto);
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> DeleteAsync(SurveyDto item)
+    public async Task<bool> DeleteAsync(SurveyDto dto)
     {
-        var response = await _httpClient.PostAsJsonAsync("Survey/Delete", item);
-        return response.IsSuccessStatusCode;
+        return await DeleteAsync(dto.SurveyId);
     }
 
     public async Task<bool> DeleteAsync(int id)
     {
-        var response = await _httpClient.GetFromJsonAsync<HttpResponseMessage>($"Survey/DeleteById/{id}");
+        var response = await _httpClient.GetAsync($"Survey/DeleteById/{id}");
         return response.IsSuccessStatusCode;
     }
 

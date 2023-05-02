@@ -1,0 +1,55 @@
+﻿@using RithmicSoul.Models.Survey.Dtos;
+@using RithmicSoulDatabaseLibrary.Interfaces
+@inject IService<SurveyTypeDto> SurveyTypeService
+
+<MudDialog>
+    <DialogContent>
+        <MudForm>
+            <MudSelect T="int?" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="@nameof(_dto.SurveyTypeId)" AnchorOrigin="Origin.BottomCenter"
+                       @bind-Value="@SelectedSurveyTypeId">
+                @if (_surveyTypes == null)
+                {
+                    return;
+                }
+                @foreach (var st in _surveyTypes)
+                {
+                    <MudSelectItem T="int?" Value="@st.SurveyTypeId">@st.SurveyTypeName</MudSelectItem>
+                }
+            </MudSelect>
+            <MudTextField T="string" Label="@nameof(_dto.SurveyName)" Class="mb-8" @bind-Value="@_dto.SurveyName" Required></MudTextField>
+            <MudTextField T="string" Label="@nameof(_dto.SurveyDescription)" Class="mb-8" @bind-Value="@_dto.SurveyDescription" Required></MudTextField>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Save">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+    public int? SelectedSurveyTypeId
+    {
+        get => _dto.SurveyTypeId == 0 ? null : _dto.SurveyTypeId;
+        set => _dto.SurveyTypeId = value ?? 0;
+    }
+
+    private SurveyDto _dto = new();
+    private IEnumerable<SurveyTypeDto> _surveyTypes;
+    private MudSelect<int?> _surveyTypeSelect;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _surveyTypes = await SurveyTypeService.GetAllAsync();
+    }
+
+    void Save()
+    {
+        Console.WriteLine(_dto.SurveyTypeId);
+        MudDialog.Close(DialogResult.Ok(_dto));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+     
+}

@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using System.Net.Http.Json;
 using System.Text;
-using RithmicSoul.Models.Dtos;
+using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoulDatabaseLibrary.Interfaces;
 using Serialize.Linq.Serializers;
 

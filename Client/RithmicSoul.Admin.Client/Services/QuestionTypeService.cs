@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using System.Net.Http.Json;
 using System.Text;
-using RithmicSoul.Models.Dtos;
+using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoulDatabaseLibrary.Interfaces;
 using Serialize.Linq.Serializers;
 
@@ -31,8 +31,7 @@ public class QuestionTypeService : IService<QuestionTypeDto>
 
     public async Task<bool> DeleteAsync(QuestionTypeDto item)
     {
-        var response = await _httpClient.PostAsJsonAsync("QuestionType/Delete", item);
-        return response.IsSuccessStatusCode;
+        return await DeleteAsync(item.QuestionTypeId);
     }
 
     public async Task<bool> DeleteAsync(int id)
