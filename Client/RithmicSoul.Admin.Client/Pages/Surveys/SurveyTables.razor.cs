@@ -1,14 +1,15 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using RithmicSoul.Admin.Client.Enums;
+using RithmicSoul.Admin.Client.Pages.Surveys.Dialogs;
 using RithmicSoul.Models.Survey;
 using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoulDatabaseLibrary.Interfaces;
 using RithmicSoulDatabaseLibrary.Utilities;
 
-namespace RithmicSoul.Admin.Client.Pages.SurveTables;
+namespace RithmicSoul.Admin.Client.Pages.Surveys;
 
-public partial class SurveysBase : ComponentBase
+public partial class SurveyTablesBase : ComponentBase
 {
     public MudDataGrid<QuestionTypeDto> MudGridQuestionType;
     public MudDataGrid<RatingTypeDto> MudGridRatingType;
@@ -18,13 +19,13 @@ public partial class SurveysBase : ComponentBase
     public MudDataGrid<SurveyQuestionnaireDto> MudGridSurveyQuestionnaire;
     public MudDataGrid<RatingTypeQuestionTypeDto> MudGridRatingTypeQuestionType;
 
-    [Inject] 
+    [Inject]
     IService<QuestionTypeDto> QuestionTypeService { get; set; }
 
-    [Inject] 
+    [Inject]
     IService<RatingTypeDto> RatingTypeService { get; set; }
 
-    [Inject] 
+    [Inject]
     IService<SurveyDto> SurveyService { get; set; }
 
     [Inject]
@@ -36,7 +37,7 @@ public partial class SurveysBase : ComponentBase
     [Inject]
     IService<SurveyTypeDto> SurveyTypeService { get; set; }
 
-    [Inject] 
+    [Inject]
     IService<RatingTypeQuestionTypeDto> RatingTypeQuestionTypeService { get; set; }
 
 
@@ -62,7 +63,7 @@ public partial class SurveysBase : ComponentBase
     public string SurveyQuestionTableName = EntityUtility.GetTableName<SurveyQuestion>();
 
     public Dictionary<(string, int), string> RowHighlight = new();
-    private Dictionary<string, (Func<dynamic,Task<dynamic>>, Func<dynamic, Task<dynamic>>, Func<dynamic, Task<dynamic>>, Func<Task>)> _callbacks = new();
+    private Dictionary<string, (Func<dynamic, Task<dynamic>>, Func<dynamic, Task<dynamic>>, Func<dynamic, Task<dynamic>>, Func<Task>)> _callbacks = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -116,7 +117,7 @@ public partial class SurveysBase : ComponentBase
 
     protected string GetRowHighlight(object dto, int rowIndex)
     {
-        return RowHighlight.TryGetValue((dto.GetType().Name, dto.GetHashCode()), out string bgColor) ? $"background-color: { bgColor };" : string.Empty;
+        return RowHighlight.TryGetValue((dto.GetType().Name, dto.GetHashCode()), out string bgColor) ? $"background-color: {bgColor};" : string.Empty;
     }
     protected void ResetRowHighlight(object dto)
     {
@@ -147,18 +148,18 @@ public partial class SurveysBase : ComponentBase
             var (insert, update, delete, getAll) = _callbacks[dtoName];
             await delete.Invoke(dto);
             await getAll.Invoke();
-            ShowSnackBar($"A record from { tableName } has been deleted.");
+            ShowSnackBar($"A record from {tableName} has been deleted.");
         }
 
         ResetRowHighlight(dto);
         StateHasChanged();
     }
 
-    public async Task CreateAsync<T,T1>() where T1 : ComponentBase
+    public async Task CreateAsync<T, T1>() where T1 : ComponentBase
     {
         var options = new DialogOptions { Position = DialogPosition.Center };
         var tableName = typeof(T).Name.Replace("Dto", string.Empty);
-        var dialog = await DialogService.ShowAsync<T1>($"New { tableName }", options);
+        var dialog = await DialogService.ShowAsync<T1>($"New {tableName}", options);
         var result = await dialog.Result;
 
         if (!result.Canceled)
@@ -189,7 +190,7 @@ public partial class SurveysBase : ComponentBase
         var dto = context.Item;
         SetRowHighlight(dto);
         await context.Actions.StartEditingItemAsync();
-        
+
     }
 
     public async Task RefreshAsync(EntityType entityType)
