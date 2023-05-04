@@ -1,0 +1,100 @@
+﻿@using RithmicSoul.Models.Survey.Dtos;
+@using RithmicSoulDatabaseLibrary.Interfaces
+@inject IService<SurveyQuestionDto> SurveyQuestionService
+
+<MudDialog>
+    <DialogContent>
+        <MudForm>
+            <MudSelect T="int?" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="@nameof(_dto.QuestionText)" AnchorOrigin="Origin.BottomCenter"
+                       @bind-Value="@SelectedSurveyQuestionId" Style="Width: 1000px" TextChanged="@QuestionTypeChangeEvent">
+                @if (_surveyQuestions == null)
+                {
+                    return;
+                }
+                @foreach (var st in _surveyQuestions)
+                {
+                    <MudSelectItem T="int?" Value="@st.QuestionId">@st.QuestionText</MudSelectItem>
+                }
+            </MudSelect>
+            <MudPaper Class="mt-4 mb-4 pa-4" Style="@_questionTypeNameVisibility" Outlined="true">
+                <MudText>Question: @_questionText</MudText>
+            </MudPaper>
+            <MudText Style="@_questionTypeNameVisibility">Question Type: @_questionTypeName</MudText>
+            <MudPaper Class="mt-4 pa-4" Style="@_choiceControlsVisibility" Outlined="true">
+                <MudStack Row="true" Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Style="@_choiceControlsVisibility">
+                <MudText>Add/Remove Question Choices</MudText>
+                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.AddCircle" OnClick="@IncrementQuantity" />
+                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.DoNotDisturbOn" OnClick="@DecrementQuantity" />
+            </MudStack>
+            <MudTextField T="string" Label="@nameof(_dto.ChoiceText)" Class="mb-8" @bind-Value="@_dto.ChoiceText" Required></MudTextField>
+
+            @for (var q = 1; q <= _choiceQuantity; q++)
+            {
+                    <MudTextField T="string" Label="@nameof(_dto.ChoiceText)" Class="mb-8" @bind-Value="@_dto.ChoiceText" Required @ref="_choice"></MudTextField>
+            }
+            </MudPaper>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Save">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+    private MudTextField<string> _choice;
+    private int _choiceQuantity;
+    private string? _questionTypeName;
+    private string? _questionText;
+    private string _questionTypeNameVisibility = "visibility: hidden;";
+    private string _choiceControlsVisibility = "visibility: hidden;";
+
+    public int? SelectedSurveyQuestionId
+    {
+        get => _dto.QuestionId == 0 ? null : _dto.QuestionId;
+        set => _dto.QuestionId = value ?? 0;
+    }
+
+    private QuestionChoiceDto _dto = new();
+    private IEnumerable<SurveyQuestionDto> _surveyQuestions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _surveyQuestions = await SurveyQuestionService.GetAllAsync();
+    }
+
+    void IncrementQuantity()
+    {
+        _choiceQuantity = _choiceQuantity < 10 ? ++_choiceQuantity : _choiceQuantity;
+    }
+
+
+    void DecrementQuantity()
+    {
+        _choiceQuantity = _choiceQuantity > 0 ? --_choiceQuantity : _choiceQuantity;
+    }
+
+    protected void QuestionTypeChangeEvent(string value)
+    {
+        SelectedSurveyQuestionId = Convert.ToInt32(value);
+        var dto = _surveyQuestions.FirstOrDefault(q => q.QuestionId == SelectedSurveyQuestionId);
+        _questionTypeName = dto?.QuestionTypeName;
+        _questionText = dto?.QuestionText;
+        _questionTypeNameVisibility = "visibility: visible;";
+        var showChoicesList = new List<string>();
+        showChoicesList.Add("Multiple Choice");
+        showChoicesList.Add("Checkbox");
+        showChoicesList.Add("Demographic");
+        _choiceControlsVisibility = showChoicesList.Contains(_questionTypeName) ? "visibility: visible;" : "visibility: hidden;";
+    }
+
+    void Save()
+    {
+        
+        MudDialog.Close(DialogResult.Ok(_dto));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

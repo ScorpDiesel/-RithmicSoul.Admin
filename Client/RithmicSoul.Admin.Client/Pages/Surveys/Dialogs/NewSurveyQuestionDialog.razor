@@ -1,8 +1,21 @@
 ﻿@using RithmicSoul.Models.Survey.Dtos;
+@using RithmicSoulDatabaseLibrary.Interfaces
+@inject IService<QuestionTypeDto> QuestionTypeService
 
 <MudDialog>
     <DialogContent>
         <MudForm>
+            <MudSelect T="int?" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="@nameof(_dto.QuestionTypeName)" AnchorOrigin="Origin.BottomCenter"
+                       @bind-Value="@SelectedQuestionTypeId">
+                @if (_questionTypes == null)
+                {
+                    return;
+                }
+                @foreach (var sq in _questionTypes)
+                {
+                    <MudSelectItem T="int?" Value="@sq.QuestionTypeId">@sq.QuestionTypeName</MudSelectItem>
+                }
+            </MudSelect>
             <MudTextField T="string" Label="QuestionText" Class="mb-8" @bind-Value="@_dto.QuestionText" Required></MudTextField>
         </MudForm>
     </DialogContent>
@@ -15,8 +28,19 @@
 @code {
     [CascadingParameter] 
     MudDialogInstance MudDialog { get; set; }
+    public int? SelectedQuestionTypeId
+    {
+        get => _dto.QuestionTypeId == 0 ? null : _dto.QuestionTypeId;
+        set => _dto.QuestionTypeId = value ?? 0;
+    }
 
     private SurveyQuestionDto _dto = new();
+    private IEnumerable<QuestionTypeDto> _questionTypes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _questionTypes = await QuestionTypeService.GetAllAsync();
+    }
 
     void Save()
     {

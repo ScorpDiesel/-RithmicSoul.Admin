@@ -17,21 +17,21 @@ public class QuestionTypeService : IService<QuestionTypeDto>
         _httpClient = httpClient;
     }
 
-    public async Task<bool> InsertAsync(QuestionTypeDto item)
+    public async Task<bool> InsertAsync(QuestionTypeDto dto)
     {
-        var response = await _httpClient.PostAsJsonAsync("QuestionType/Insert", item);
+        var response = await _httpClient.PostAsJsonAsync("QuestionType/Insert", dto);
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> UpdateAsync(QuestionTypeDto item)
+    public async Task<bool> UpdateAsync(QuestionTypeDto dto)
     {
-        var response = await _httpClient.PostAsJsonAsync("QuestionType/Update", item);
+        var response = await _httpClient.PostAsJsonAsync("QuestionType/Update", dto);
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> DeleteAsync(QuestionTypeDto item)
+    public async Task<bool> DeleteAsync(QuestionTypeDto dto)
     {
-        return await DeleteAsync(item.QuestionTypeId);
+        return await DeleteAsync(dto.QuestionTypeId);
     }
 
     public async Task<bool> DeleteAsync(int id)

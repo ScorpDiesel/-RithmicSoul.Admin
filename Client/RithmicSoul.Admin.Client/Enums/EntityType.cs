@@ -3,8 +3,7 @@
 public enum EntityType
 {
     QuestionType,
-    RatingTypeQuestionType,
-    RatingType,
+    QuestionChoice,
     SurveyQuestionnaire,
     SurveyQuestion,
     Survey,

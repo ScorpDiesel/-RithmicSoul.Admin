@@ -12,18 +12,14 @@ namespace RithmicSoul.Admin.Client.Pages.Surveys;
 public partial class SurveyTablesBase : ComponentBase
 {
     public MudDataGrid<QuestionTypeDto> MudGridQuestionType;
-    public MudDataGrid<RatingTypeDto> MudGridRatingType;
     public MudDataGrid<SurveyTypeDto> MudGridSurveyType;
     public MudDataGrid<SurveyQuestionDto> MudGridSurveyQuestion;
     public MudDataGrid<SurveyDto> MudGridSurvey;
     public MudDataGrid<SurveyQuestionnaireDto> MudGridSurveyQuestionnaire;
-    public MudDataGrid<RatingTypeQuestionTypeDto> MudGridRatingTypeQuestionType;
+    public MudDataGrid<QuestionChoiceDto> MudGridQuestionChoice;
 
     [Inject]
     IService<QuestionTypeDto> QuestionTypeService { get; set; }
-
-    [Inject]
-    IService<RatingTypeDto> RatingTypeService { get; set; }
 
     [Inject]
     IService<SurveyDto> SurveyService { get; set; }
@@ -38,7 +34,7 @@ public partial class SurveyTablesBase : ComponentBase
     IService<SurveyTypeDto> SurveyTypeService { get; set; }
 
     [Inject]
-    IService<RatingTypeQuestionTypeDto> RatingTypeQuestionTypeService { get; set; }
+    IService<QuestionChoiceDto> QuestionChoiceService { get; set; }
 
 
     [Inject]
@@ -47,16 +43,20 @@ public partial class SurveyTablesBase : ComponentBase
     [Inject]
     ISnackbar Snackbar { get; set; }
 
+    [Inject]
+    NavigationManager Navigation { get; set; }
+
+    //[Inject]
+    //protected ConsoleLogger Logger{ get; set; }
+
     public IEnumerable<QuestionTypeDto> QuestionTypes = new List<QuestionTypeDto>();
-    public IEnumerable<RatingTypeDto> RatingTypes;
-    public IEnumerable<RatingTypeQuestionTypeDto> RatingTypeQuestionTypes;
+    public IEnumerable<QuestionChoiceDto> QuestionChoices;
     public IEnumerable<SurveyTypeDto> SurveyTypes;
     public IEnumerable<SurveyDto> Surveys;
     public IEnumerable<SurveyQuestionnaireDto> SurveyQuestionnaires;
     public IEnumerable<SurveyQuestionDto> SurveyQuestions;
     public string QuestionTypeTableName = EntityUtility.GetTableName<QuestionType>();
-    public string RatingTypeQestionTypeTableName = EntityUtility.GetTableName<RatingTypeQuestionType>();
-    public string RatingTypeTableName = EntityUtility.GetTableName<RatingType>();
+    public string QuestionChoiceTableName = EntityUtility.GetTableName<QuestionChoice>();
     public string SurveyTypeTableName = EntityUtility.GetTableName<SurveyType>();
     public string SurveyTableName = EntityUtility.GetTableName<Survey>();
     public string SurveyQuestionnaireTableName = EntityUtility.GetTableName<SurveyQuestionnaire>();
@@ -65,18 +65,36 @@ public partial class SurveyTablesBase : ComponentBase
     public Dictionary<(string, int), string> RowHighlight = new();
     private Dictionary<string, (Func<dynamic, Task<dynamic>>, Func<dynamic, Task<dynamic>>, Func<dynamic, Task<dynamic>>, Func<Task>)> _callbacks = new();
 
+    protected string ConsoleOutput;
+
     protected override async Task OnInitializedAsync()
     {
         QuestionTypes = await QuestionTypeService.GetAllAsync();
-        RatingTypes = await RatingTypeService.GetAllAsync();
-        RatingTypeQuestionTypes = await RatingTypeQuestionTypeService.GetAllAsync();
+        QuestionChoices = await QuestionChoiceService.GetAllAsync();
         SurveyTypes = await SurveyTypeService.GetAllAsync();
         Surveys = await SurveyService.GetAllAsync();
         SurveyQuestionnaires = await SurveyQuestionnaireService.GetAllAsync();
         SurveyQuestions = await SurveyQuestionService.GetAllAsync();
-
+        
         AddCallbackServices();
+
+        //RunInBackground(TimeSpan.FromSeconds(1), GetConsoleOutput);
     }
+
+    //protected void GetConsoleOutput()
+    //{
+    //    Console.WriteLine("hi");
+    //    ConsoleOutput = string.Join("\r\n ", _logProvider.GetLogMessages().ToArray());
+    //}
+
+    //async Task RunInBackground(TimeSpan timeSpan, Action action)
+    //{
+    //    var periodicTimer = new PeriodicTimer(timeSpan);
+    //    while (await periodicTimer.WaitForNextTickAsync())
+    //    {
+    //        action();
+    //    }
+    //}
 
     private void AddCallbackServices()
     {
@@ -84,14 +102,10 @@ public partial class SurveyTablesBase : ComponentBase
             (async (dto) => await QuestionTypeService.InsertAsync(dto),
                 async (dto) => await QuestionTypeService.UpdateAsync(dto),
                 async (dto) => await QuestionTypeService.DeleteAsync(dto), GetAllQuestionTypesAsync));
-        _callbacks.Add(nameof(RatingTypeDto),
-            (async (dto) => await RatingTypeService.InsertAsync(dto),
-                async (dto) => await RatingTypeService.UpdateAsync(dto),
-                async (dto) => await RatingTypeService.DeleteAsync(dto), GetAllRatingTypesAsync));
-        _callbacks.Add(nameof(RatingTypeQuestionTypeDto),
-            (async (dto) => await RatingTypeQuestionTypeService.InsertAsync(dto),
-                async (dto) => await RatingTypeQuestionTypeService.UpdateAsync(dto),
-                async (dto) => await RatingTypeQuestionTypeService.DeleteAsync(dto), GetAllRatingTypeQuestionTypesAsync));
+        _callbacks.Add(nameof(QuestionChoiceDto),
+            (async (dto) => await QuestionChoiceService.InsertAsync(dto),
+                async (dto) => await QuestionChoiceService.UpdateAsync(dto),
+                async (dto) => await QuestionChoiceService.DeleteAsync(dto), GetAllQuestionChoicesAsync));
         _callbacks.Add(nameof(SurveyTypeDto),
             (async (dto) => await SurveyTypeService.InsertAsync(dto),
                 async (dto) => await SurveyTypeService.UpdateAsync(dto),
@@ -124,15 +138,27 @@ public partial class SurveyTablesBase : ComponentBase
         RowHighlight.Remove((dto.GetType().Name, dto.GetHashCode()));
     }
 
-    void ShowSnackBar(string message)
+    void ShowSnackBar(bool isSuccess, string message)
     {
-        Snackbar.Configuration.SnackbarVariant = Variant.Outlined;
+        Snackbar.Configuration.SnackbarVariant = Variant.Filled;
         Snackbar.Configuration.VisibleStateDuration = 4000;
         Snackbar.Configuration.HideTransitionDuration = 200;
         Snackbar.Configuration.ShowTransitionDuration = 200;
         Snackbar.Clear();
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-        Snackbar.Add(message, Severity.Success);
+        Snackbar.Add(message, isSuccess ? Severity.Success : Severity.Error);
+    }
+
+    protected void OpenSurveyForm()
+    {
+        Navigation.NavigateTo("/SurveyForm");
+    }
+
+    void HandleResponse(dynamic response, object dto, string tableName)
+    {
+
+        ResetRowHighlight(dto);
+        StateHasChanged();
     }
 
     public async Task DeleteAsync(object dto, int id)
@@ -146,9 +172,9 @@ public partial class SurveyTablesBase : ComponentBase
         if (!result.Canceled)
         {
             var (insert, update, delete, getAll) = _callbacks[dtoName];
-            await delete.Invoke(dto);
+            var response = await delete.Invoke(dto);
             await getAll.Invoke();
-            ShowSnackBar($"A record from {tableName} has been deleted.");
+            ShowSnackBar(response, $"A record from {tableName} has been deleted.");
         }
 
         ResetRowHighlight(dto);
@@ -167,10 +193,21 @@ public partial class SurveyTablesBase : ComponentBase
             var dto = (T)result.Data;
             var dtoName = dto.GetType().Name;
             var (insert, update, delete, getAll) = _callbacks[dtoName];
-            await insert.Invoke(dto);
-            await getAll.Invoke();
-            StateHasChanged();
-            ShowSnackBar($"A new record was created in {tableName}.");
+            var response = await insert.Invoke(dto);
+            string message;
+
+            if (response)
+            {
+                message = $"A new record was created in {tableName}.";
+                await getAll.Invoke();
+                StateHasChanged();
+            }
+            else
+            {
+                message = $"There was an error creating a new record in {tableName}.";
+            }
+
+            ShowSnackBar(response, message);
         }
     }
 
@@ -180,16 +217,17 @@ public partial class SurveyTablesBase : ComponentBase
         var dtoName = dto.GetType().Name;
         var tableName = dtoName.Replace("Dto", string.Empty);
         var (insert, update, delete, getAll) = _callbacks[dtoName];
-        await update.Invoke(dto);
+        var response = await update.Invoke(dto);
         ResetRowHighlight(dto);
-        ShowSnackBar($"A record was updated in {tableName}.");
+        StateHasChanged();
+        ShowSnackBar(response, $"A record was updated in {tableName}.");
     }
 
     public async Task EditContextAsync<T>(CellContext<T> context)
     {
         var dto = context.Item;
         SetRowHighlight(dto);
-        await context.Actions.StartEditingItemAsync();
+        await context.Actions.StartEditingItemAsync(); 
 
     }
 
@@ -199,9 +237,6 @@ public partial class SurveyTablesBase : ComponentBase
         {
             case EntityType.QuestionType:
                 await GetAllQuestionTypesAsync();
-                break;
-            case EntityType.RatingType:
-                await GetAllRatingTypesAsync();
                 break;
             case EntityType.SurveyQuestionnaire:
                 await GetAllSurveyQuestionnairesAsync();
@@ -215,7 +250,7 @@ public partial class SurveyTablesBase : ComponentBase
             case EntityType.SurveyType:
                 await GetAllSurveyTypesAsync();
                 break;
-            case EntityType.RatingTypeQuestionType:
+            case EntityType.QuestionChoice:
             default:
                 throw new ArgumentOutOfRangeException(nameof(entityType), entityType, null);
         }
@@ -227,12 +262,6 @@ public partial class SurveyTablesBase : ComponentBase
     {
         SurveyTypes = await SurveyTypeService.GetAllAsync();
         MudGridSurveyType.Items = SurveyTypes;
-    }
-
-    public async Task GetAllRatingTypesAsync()
-    {
-        RatingTypes = await RatingTypeService.GetAllAsync();
-        MudGridRatingType.Items = RatingTypes;
     }
 
     public async Task GetAllQuestionTypesAsync()
@@ -259,9 +288,9 @@ public partial class SurveyTablesBase : ComponentBase
         MudGridSurvey.Items = Surveys;
     }
 
-    public async Task GetAllRatingTypeQuestionTypesAsync()
+    public async Task GetAllQuestionChoicesAsync()
     {
-        RatingTypeQuestionTypes = await RatingTypeQuestionTypeService.GetAllAsync();
+        QuestionChoices = await QuestionChoiceService.GetAllAsync();
         MudGridSurvey.Items = Surveys;
     }
 }

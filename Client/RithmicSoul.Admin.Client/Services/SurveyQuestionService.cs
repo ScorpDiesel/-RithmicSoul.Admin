@@ -17,27 +17,26 @@ public class SurveyQuestionService : IService<SurveyQuestionDto>
         _httpClient = httpClient;
     }
 
-    public async Task<bool> InsertAsync(SurveyQuestionDto item)
+    public async Task<bool> InsertAsync(SurveyQuestionDto dto)
     {
-        var response = await _httpClient.PostAsJsonAsync("SurveyQuestion/Insert", item);
+        var response = await _httpClient.PostAsJsonAsync("SurveyQuestion/Insert", dto);
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> UpdateAsync(SurveyQuestionDto item)
+    public async Task<bool> UpdateAsync(SurveyQuestionDto dto)
     {
-        var response = await _httpClient.PostAsJsonAsync("SurveyQuestion/Update", item);
+        var response = await _httpClient.PostAsJsonAsync("SurveyQuestion/Update", dto);
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> DeleteAsync(SurveyQuestionDto item)
+    public async Task<bool> DeleteAsync(SurveyQuestionDto dto)
     {
-        var response = await _httpClient.PostAsJsonAsync("SurveyQuestion/Delete", item);
-        return response.IsSuccessStatusCode;
+        return await DeleteAsync(dto.QuestionId);
     }
 
     public async Task<bool> DeleteAsync(int id)
     {
-        var response = await _httpClient.GetFromJsonAsync<HttpResponseMessage>($"SurveyQuestion/DeleteById/{id}");
+        var response = await _httpClient.GetAsync($"SurveyQuestion/DeleteById/{id}");
         return response.IsSuccessStatusCode;
     }
 
