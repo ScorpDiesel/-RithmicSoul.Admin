@@ -23,9 +23,21 @@ public class QuestionTypeService : IService<QuestionTypeDto>
         return response.IsSuccessStatusCode;
     }
 
+    public async Task<bool> BulkInsertAsync(List<QuestionTypeDto> dtos)
+    {
+        var response = await _httpClient.PostAsJsonAsync("QuestionType/BulkInsert", dtos);
+        return response.IsSuccessStatusCode;
+    }
+
     public async Task<bool> UpdateAsync(QuestionTypeDto dto)
     {
         var response = await _httpClient.PostAsJsonAsync("QuestionType/Update", dto);
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> BulkUpdateAsync(List<QuestionTypeDto> dtos)
+    {
+        var response = await _httpClient.PostAsJsonAsync("QuestionType/BulkUpdate", dtos);
         return response.IsSuccessStatusCode;
     }
 
@@ -37,6 +49,12 @@ public class QuestionTypeService : IService<QuestionTypeDto>
     public async Task<bool> DeleteAsync(int id)
     {
         var response = await _httpClient.GetAsync($"QuestionType/DeleteById/{id}");
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> BulkDeleteAsync(List<int> ids)
+    {
+        var response = await _httpClient.PostAsJsonAsync("QuestionType/BulkDelete", ids);
         return response.IsSuccessStatusCode;
     }
 

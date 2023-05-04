@@ -23,9 +23,21 @@ public class SurveyQuestionService : IService<SurveyQuestionDto>
         return response.IsSuccessStatusCode;
     }
 
+    public async Task<bool> BulkInsertAsync(List<SurveyQuestionDto> dtos)
+    {
+        var response = await _httpClient.PostAsJsonAsync("SurveyQuestion/BulkInsert", dtos);
+        return response.IsSuccessStatusCode;
+    }
+
     public async Task<bool> UpdateAsync(SurveyQuestionDto dto)
     {
         var response = await _httpClient.PostAsJsonAsync("SurveyQuestion/Update", dto);
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> BulkUpdateAsync(List<SurveyQuestionDto> dtos)
+    {
+        var response = await _httpClient.PostAsJsonAsync("SurveyQuestion/BulkUpdate", dtos);
         return response.IsSuccessStatusCode;
     }
 
@@ -37,6 +49,12 @@ public class SurveyQuestionService : IService<SurveyQuestionDto>
     public async Task<bool> DeleteAsync(int id)
     {
         var response = await _httpClient.GetAsync($"SurveyQuestion/DeleteById/{id}");
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> BulkDeleteAsync(List<int> ids)
+    {
+        var response = await _httpClient.PostAsJsonAsync("SurveyQuestion/BulkDelete", ids);
         return response.IsSuccessStatusCode;
     }
 
