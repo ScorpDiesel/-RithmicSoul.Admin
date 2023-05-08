@@ -1,7 +1,15 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.JSInterop;
+using Microsoft.JSInterop.WebAssembly;
+using MudBlazor;
 using MudBlazor.Services;
 using NetCore.AutoRegisterDi;
+using Palermo.BlazorMvc;
+using RithmicSoul.Admin.Client.Logging;
+using RithmicSoul.Admin.Client.Services;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 namespace RithmicSoul.Admin.Client.Client
 {
@@ -10,30 +18,42 @@ namespace RithmicSoul.Admin.Client.Client
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("#app");
+            builder.Services.AddSingleton<WebAssemblyJSRuntime, CustomWebAssemblyJSRuntime>();
+            builder.Services.AddScoped<IUiBus>(provider => new MvcBus(NullLogger<MvcBus>.Instance));
+            builder.RootComponents.Add<AppController>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
-            //builder.Services.AddSingleton<ILoggerProvider, ConsoleLogProvider>();
-            //builder.Services.AddLogging(logging =>
-            //{
-            //    //logging.ClearProviders();
-            //    //logging.AddProvider(new ConsoleLogProvider());
-            //});
+            builder.Services.AddSingleton(typeof(ConsoleRedirectLogger<>));
+            builder.Services.AddSingleton(_ => new PeriodicTimerService());
+            builder.Services.AddHttpClientInterceptor();
             if (builder.HostEnvironment.IsDevelopment())
             {
-                builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:7129/api/") });
+                builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:7129/api/") }
+                    .EnableIntercept(sp));
             }
             else
             {
-                builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri($"{ builder.HostEnvironment.BaseAddress }api/") });
+                builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri($"{ builder.HostEnvironment.BaseAddress }api/") }
+                    .EnableIntercept(sp));
             }
 
+            builder.Services.AddLoadingBar(config =>
+            {
+                config.LoadingBarColor = "#fc8236";
+            });
 
             var registered = builder.Services.RegisterAssemblyPublicNonGenericClasses()
                 .Where(c => c.Name.EndsWith("Service"))
                 .AsPublicImplementedInterfaces();
 
-            //builder.Services.AddSingleton<ConsoleLogProvider>();
-            builder.Services.AddMudServices();
+            builder.Services.AddMudServices(config =>
+            {
+                config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+                config.SnackbarConfiguration.VisibleStateDuration = 4000;
+                config.SnackbarConfiguration.HideTransitionDuration = 200;
+                config.SnackbarConfiguration.ShowTransitionDuration = 200;
+                config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
+            });
+            builder.UseLoadingBar();
             await builder.Build().RunAsync();
         }
     }

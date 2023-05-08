@@ -52,9 +52,9 @@ public class SurveyQuestionService : IService<SurveyQuestionDto>
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> BulkDeleteAsync(List<int> ids)
+    public async Task<bool> BulkDeleteAsync(List<SurveyQuestionDto> dtos)
     {
-        var response = await _httpClient.PostAsJsonAsync("SurveyQuestion/BulkDelete", ids);
+        var response = await _httpClient.PostAsJsonAsync("SurveyQuestion/BulkDelete", dtos);
         return response.IsSuccessStatusCode;
     }
 

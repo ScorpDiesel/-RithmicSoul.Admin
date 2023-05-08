@@ -1,7 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@inherits Palermo.BlazorMvc.LayoutViewComponentBase
 
 <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
-<MudDialogProvider />
+<MudDialogProvider Position="DialogPosition.Center" />
 <MudSnackbarProvider />
 
 <MudLayout>
@@ -16,7 +16,9 @@
     </MudDrawer>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
-            @Body
+            <Error>
+                @Body
+            </Error>
         </MudContainer>
     </MudMainContent>
 </MudLayout>

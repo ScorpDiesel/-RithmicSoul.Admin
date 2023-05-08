@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using RithmicSoul.Admin.Client.Enums;
+using RithmicSoul.Admin.Client.Logging;
 using RithmicSoul.Admin.Client.Pages.Surveys.Dialogs;
+using RithmicSoul.Admin.Client.Services;
 using RithmicSoul.Models.Survey;
 using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoulDatabaseLibrary.Interfaces;
 using RithmicSoulDatabaseLibrary.Utilities;
+using RithmicSoulSharedLibrary.Extensions;
 
 namespace RithmicSoul.Admin.Client.Pages.Surveys;
 
@@ -46,8 +49,11 @@ public partial class SurveyTablesBase : ComponentBase
     [Inject]
     NavigationManager Navigation { get; set; }
 
-    //[Inject]
-    //protected ConsoleLogger Logger{ get; set; }
+    [Inject]
+    protected ConsoleRedirectLogger<SurveyTables> Logger { get; set; }
+
+    [Inject]
+    protected PeriodicTimerService TimerService { get; set; }
 
     public IEnumerable<QuestionTypeDto> QuestionTypes = new List<QuestionTypeDto>();
     public IEnumerable<QuestionChoiceDto> QuestionChoices;
@@ -61,6 +67,7 @@ public partial class SurveyTablesBase : ComponentBase
     public string SurveyTableName = EntityUtility.GetTableName<Survey>();
     public string SurveyQuestionnaireTableName = EntityUtility.GetTableName<SurveyQuestionnaire>();
     public string SurveyQuestionTableName = EntityUtility.GetTableName<SurveyQuestion>();
+    protected bool _isLoading;
 
     public Dictionary<(string, int), string> RowHighlight = new();
     private Dictionary<string, (Func<dynamic, Task<dynamic>>, Func<dynamic, Task<dynamic>>, Func<dynamic, Task<dynamic>>, Func<Task>)> _callbacks = new();
@@ -69,32 +76,26 @@ public partial class SurveyTablesBase : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
+        _isLoading = true;
         QuestionTypes = await QuestionTypeService.GetAllAsync();
         QuestionChoices = await QuestionChoiceService.GetAllAsync();
         SurveyTypes = await SurveyTypeService.GetAllAsync();
         Surveys = await SurveyService.GetAllAsync();
         SurveyQuestionnaires = await SurveyQuestionnaireService.GetAllAsync();
         SurveyQuestions = await SurveyQuestionService.GetAllAsync();
-        
-        AddCallbackServices();
 
-        //RunInBackground(TimeSpan.FromSeconds(1), GetConsoleOutput);
+        AddCallbackServices();
+        _isLoading = false;
+        await TimerService.StartExecutingAsync();
+        TimerService.JobExecuted += (_, _) => UpdateConsoleOutput();
     }
 
-    //protected void GetConsoleOutput()
-    //{
-    //    Console.WriteLine("hi");
-    //    ConsoleOutput = string.Join("\r\n ", _logProvider.GetLogMessages().ToArray());
-    //}
-
-    //async Task RunInBackground(TimeSpan timeSpan, Action action)
-    //{
-    //    var periodicTimer = new PeriodicTimer(timeSpan);
-    //    while (await periodicTimer.WaitForNextTickAsync())
-    //    {
-    //        action();
-    //    }
-    //}
+    void UpdateConsoleOutput()
+    {
+        var message = Logger.GetLogMessages();
+        ConsoleOutput = $"{message.Replace("\n", " ")}\n{ConsoleOutput}";
+        StateHasChanged();
+    }
 
     private void AddCallbackServices()
     {
@@ -103,9 +104,9 @@ public partial class SurveyTablesBase : ComponentBase
                 async (dto) => await QuestionTypeService.UpdateAsync(dto),
                 async (dto) => await QuestionTypeService.DeleteAsync(dto), GetAllQuestionTypesAsync));
         _callbacks.Add(nameof(QuestionChoiceDto),
-            (async (dto) => await QuestionChoiceService.InsertAsync(dto),
-                async (dto) => await QuestionChoiceService.UpdateAsync(dto),
-                async (dto) => await QuestionChoiceService.DeleteAsync(dto), GetAllQuestionChoicesAsync));
+            (async (dto) => await QuestionChoiceService.BulkInsertAsync(dto),
+                async (dto) => await QuestionChoiceService.BulkUpdateAsync(dto),
+                async (dto) => await QuestionChoiceService.BulkDeleteAsync(dto), GetAllQuestionChoicesAsync));
         _callbacks.Add(nameof(SurveyTypeDto),
             (async (dto) => await SurveyTypeService.InsertAsync(dto),
                 async (dto) => await SurveyTypeService.UpdateAsync(dto),
@@ -140,12 +141,7 @@ public partial class SurveyTablesBase : ComponentBase
 
     void ShowSnackBar(bool isSuccess, string message)
     {
-        Snackbar.Configuration.SnackbarVariant = Variant.Filled;
-        Snackbar.Configuration.VisibleStateDuration = 4000;
-        Snackbar.Configuration.HideTransitionDuration = 200;
-        Snackbar.Configuration.ShowTransitionDuration = 200;
         Snackbar.Clear();
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
         Snackbar.Add(message, isSuccess ? Severity.Success : Severity.Error);
     }
 
@@ -161,20 +157,34 @@ public partial class SurveyTablesBase : ComponentBase
         StateHasChanged();
     }
 
-    public async Task DeleteAsync(object dto, int id)
+    public async Task DeleteAsync<T>(T dto, int id)
     {
         SetRowHighlight(dto);
         var options = new DialogOptions { Position = DialogPosition.Center };
-        var dialog = await DialogService.ShowAsync<DeleteDbRecordDialog>(null, options);
+        var dialog = await DialogService.ShowAsync<DeleteItemDialog>(null, options);
         var result = await dialog.Result;
-        var dtoName = dto.GetType().Name;
-        var tableName = dtoName.Replace("Dto", string.Empty);
+
         if (!result.Canceled)
         {
+            var dtoName = dto.GetType().Name;
+            var tableName = dtoName.Replace("Dto", string.Empty);
+            var dtoList = new List<T> { dto }; //TODO: Implement checkbox selection in each row to add to collection to be sent to BulkDelete
             var (insert, update, delete, getAll) = _callbacks[dtoName];
-            var response = await delete.Invoke(dto);
-            await getAll.Invoke();
-            ShowSnackBar(response, $"A record from {tableName} has been deleted.");
+            var response = await delete.Invoke(dtoList);
+            string message;
+
+            if (response)
+            {
+                message = $"An item from {tableName} has been deleted.";
+                await getAll.Invoke();
+                StateHasChanged();
+            }
+            else
+            {
+                message = $"There was an error deleting the item in {tableName}.";
+            }
+
+            ShowSnackBar(response, message);
         }
 
         ResetRowHighlight(dto);
@@ -188,30 +198,55 @@ public partial class SurveyTablesBase : ComponentBase
         var dialog = await DialogService.ShowAsync<T1>($"New {tableName}", options);
         var result = await dialog.Result;
 
+        await CreateNewItemAsync<T>(result, tableName);
+    }
+
+    private async Task CreateNewItemAsync<T>(DialogResult result, string tableName)
+    {
         if (!result.Canceled)
         {
-            var dto = (T)result.Data;
-            var dtoName = dto.GetType().Name;
+            object resultData;
+            if (result.Data.IsGenericList())
+            {
+                resultData = (List<T>)result.Data;
+            }
+            else
+            {
+                resultData = (T)result.Data;
+            }
+
+            var dtoName = typeof(T).Name;
+
             var (insert, update, delete, getAll) = _callbacks[dtoName];
-            var response = await insert.Invoke(dto);
+            var response = await insert.Invoke(resultData);
             string message;
 
             if (response)
             {
-                message = $"A new record was created in {tableName}.";
+                message = $"A new Item was created in {tableName}.";
                 await getAll.Invoke();
                 StateHasChanged();
             }
             else
             {
-                message = $"There was an error creating a new record in {tableName}.";
+                message = $"There was an error creating a new Item in {tableName}.";
             }
 
             ShowSnackBar(response, message);
         }
     }
 
-    public async Task UpdateRecordAsync(object dto)
+    protected async Task EditMultiItemsAsync<T, T1>(T dto) where T1 : ComponentBase
+    {
+        var parameters = new DialogParameters { { nameof(dto), dto } };
+        var tableName = typeof(T).Name.Replace("Dto", string.Empty);
+        var dialog = await DialogService.ShowAsync<T1>($"Edit {tableName}", parameters);
+        var result = await dialog.Result;
+
+        await CreateNewItemAsync<T>(result, tableName);
+    }
+
+    public async Task UpdateItemAsync(object dto)
     {
         SetRowHighlight(dto);
         var dtoName = dto.GetType().Name;
@@ -220,14 +255,14 @@ public partial class SurveyTablesBase : ComponentBase
         var response = await update.Invoke(dto);
         ResetRowHighlight(dto);
         StateHasChanged();
-        ShowSnackBar(response, $"A record was updated in {tableName}.");
+        ShowSnackBar(response, $"A Item was updated in {tableName}.");
     }
 
-    public async Task EditContextAsync<T>(CellContext<T> context)
+    public async Task EditByContextAsync<T>(CellContext<T> context)
     {
         var dto = context.Item;
         SetRowHighlight(dto);
-        await context.Actions.StartEditingItemAsync(); 
+        await context.Actions.StartEditingItemAsync();
 
     }
 
@@ -235,6 +270,9 @@ public partial class SurveyTablesBase : ComponentBase
     {
         switch (entityType)
         {
+            case EntityType.QuestionChoice:
+                await GetAllQuestionChoicesAsync();
+                break;
             case EntityType.QuestionType:
                 await GetAllQuestionTypesAsync();
                 break;
@@ -250,7 +288,6 @@ public partial class SurveyTablesBase : ComponentBase
             case EntityType.SurveyType:
                 await GetAllSurveyTypesAsync();
                 break;
-            case EntityType.QuestionChoice:
             default:
                 throw new ArgumentOutOfRangeException(nameof(entityType), entityType, null);
         }

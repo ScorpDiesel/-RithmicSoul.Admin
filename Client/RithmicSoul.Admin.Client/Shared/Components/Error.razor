@@ -1,0 +1,32 @@
+﻿@inherits ErrorBoundary
+@using Microsoft.Extensions.Logging
+@using RithmicSoul.Admin.Client.Logging
+@inject ConsoleRedirectLogger<Error> Logger
+
+@if (CurrentException is null)
+{
+    @ChildContent
+}
+else if (ErrorContent is not null)
+{
+    @ErrorContent(CurrentException)
+}
+else
+{
+    @ChildContent
+    Recover();
+}
+
+@code {
+
+    protected override Task OnErrorAsync(Exception ex)
+    {
+        Logger.LogError(ex, ex.Message, ex.StackTrace);
+        return base.OnErrorAsync(ex);
+    }
+
+    public new void Recover()
+    {
+        base.Recover();
+    }
+}

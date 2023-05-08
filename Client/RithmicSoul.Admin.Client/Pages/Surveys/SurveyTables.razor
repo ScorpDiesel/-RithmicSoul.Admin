@@ -9,7 +9,7 @@
 
 <MudContainer Class="mt-16" MaxWidth="MaxWidth.ExtraExtraLarge">
     <MudGrid Justify="Justify.FlexStart" Spacing="1">
-        <MudItem xs="2">
+        <MudItem xs="3">
             <MudGrid>
                 <MudItem xs="10">
                     <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;">
@@ -25,18 +25,22 @@
                 </MudItem>
             </MudGrid>
             <MudGrid>
-                <MudItem>
-                    <MudPaper Elevation="2" Class="pa-4 mt-8" Style="height: 600px; width:320px">
-                        <MudText Typo="Typo.h6" Class="pb-10">Console</MudText>
-                        
-                    </MudPaper>
+                <MudItem xs="10">
+                    <MudStack>
+                        <MudPaper Elevation="2" Class="pa-4 mt-8" Style="height: 600px">
+                            <MudText Typo="Typo.h6" Class="pb-10">Console</MudText>
+                            <MudItem Style="height: 480px;overflow-y: auto;white-space: pre-line;">
+                            @ConsoleOutput
+                            </MudItem>
+                        </MudPaper>
+                    </MudStack>
                 </MudItem>
             </MudGrid>
         </MudItem>
 
-        <MudItem xs="10">
+        <MudItem xs="9">
             <MudGrid>
-                <MudItem xs="12" sm="11">
+                <MudItem xs="8">
                     <MudGrid>
                         <MudItem xs="12">
                             <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
@@ -47,12 +51,12 @@
                 </MudItem>
                 <MudItem xs="12">
                     <MudGrid>
-                        <MudItem xs="7">
+                        <MudItem xs="8">
                             <MudGrid>
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
                                         <MudDataGrid Items="@Surveys" T="SurveyDto" Hover="true" FixedHeader="true" Style="height: 560px;"
-                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateRecordAsync" CanceledEditingItem="@ResetRowHighlight"
+                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
                                                      RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
                                                      Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridSurvey">
                                             <ToolBarContent>
@@ -62,15 +66,14 @@
                                                 <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(EntityType.Survey); })" />
                                             </ToolBarContent>
                                             <Columns>
-                                                <PropertyColumn Property="q => q.SurveyId" IsEditable="false" />
+                                                <PropertyColumn Property="q => q.SurveyId" IsEditable="false" Hidden="true" />
                                                 <PropertyColumn Property="q => q.SurveyName" IsEditable="false" />
                                                 <PropertyColumn Property="q => q.SurveyTypeName" IsEditable="false" />
-                                                <PropertyColumn Property="q => q.SurveyName" />
                                                 <PropertyColumn Property="q => q.SurveyDescription" />
                                                 <PropertyColumn Property="q => q.DateCreated" IsEditable="false" />
                                                 <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
                                                     <CellTemplate>
-                                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditContextAsync(context); })" />
+                                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
                                                         <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.SurveyId); }" />
                                                     </CellTemplate>
                                                 </TemplateColumn>
@@ -85,7 +88,7 @@
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
                                         <MudDataGrid Items="@SurveyQuestionnaires" T="SurveyQuestionnaireDto" Hover="true" FixedHeader="true" Style="height: 560px;"
-                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateRecordAsync" CanceledEditingItem="@ResetRowHighlight"
+                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
                                                      RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
                                                      Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridSurveyQuestionnaire">
                                             <ToolBarContent>
@@ -95,13 +98,13 @@
                                                 <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(EntityType.SurveyQuestionnaire); })" />
                                             </ToolBarContent>
                                             <Columns>
-                                                <PropertyColumn Property="q => q.QuestionnaireId" IsEditable="false" />
+                                                <PropertyColumn Property="q => q.QuestionnaireId" IsEditable="false" Hidden="true" />
                                                 <PropertyColumn Property="q => q.SurveyName" IsEditable="false" />
                                                 <PropertyColumn Property="q => q.SurveyQuestionText" IsEditable="false" />
                                                 <PropertyColumn Property="q => q.DateCreated" IsEditable="false" />
                                                 <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
                                                     <CellTemplate>
-                                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditContextAsync(context); })" />
+                                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
                                                         <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.QuestionnaireId); }" />
                                                     </CellTemplate>
                                                 </TemplateColumn>
@@ -114,9 +117,10 @@
                                 </MudItem>
 
                                 <MudItem xs="12">
-                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; ">
+                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; overflow-y: auto">
                                         <MudDataGrid Items="@SurveyQuestions" T="SurveyQuestionDto" Hover="true" FixedHeader="true" Style="height: 560px;"
-                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateRecordAsync" CanceledEditingItem="@ResetRowHighlight"
+                                                     Groupable="true" GroupExpanded="false" LoadingProgressColor="Color.Primary" Loading="_isLoading" MultiSelection="true"
+                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
                                                      RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
                                                      Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridSurveyQuestion">
                                             <ToolBarContent>
@@ -126,8 +130,8 @@
                                                 <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(EntityType.SurveyQuestion); })" />
                                             </ToolBarContent>
                                             <Columns>
-                                                <PropertyColumn Property="q => q.QuestionId" IsEditable="false" CellStyle="Width: 80px" />
-                                                <PropertyColumn Property="q => q.QuestionTypeName" CellStyle="Width: 80px">
+                                                <PropertyColumn Property="q => q.QuestionId" IsEditable="false" CellStyle="Width: 80px" Hidden="true" />
+                                                <PropertyColumn Property="q => q.QuestionTypeName" CellStyle="Width: 80px" Grouping="true">
                                                     <EditTemplate>
                                                         <MudSelect T="int" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="@nameof(@context.Item.QuestionTypeName)" AnchorOrigin="Origin.BottomCenter"
                                                                    @bind-Value="@context.Item.QuestionTypeId">
@@ -142,10 +146,10 @@
                                                         </MudSelect>
                                                     </EditTemplate>
                                                 </PropertyColumn>
-                                                <PropertyColumn Property="q => q.QuestionText" Style="display: inline-block; width: 120px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" />
+                                                <PropertyColumn Property="q => q.QuestionText" Groupable="false" Style="display: inline-block; width: 120px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" />
                                                 <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around" Style="Width50px">
                                                     <CellTemplate>
-                                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditContextAsync(context); })" />
+                                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
                                                         <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.QuestionId); }" />
                                                     </CellTemplate>
                                                 </TemplateColumn>
@@ -156,14 +160,11 @@
                                         </MudDataGrid>
                                     </MudPaper>
                                 </MudItem>
-                            </MudGrid>
-                        </MudItem>
-                        <MudItem xs="4">
-                            <MudGrid>
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
                                         <MudDataGrid Items="@QuestionChoices" T="QuestionChoiceDto" Hover="true" FixedHeader="true" Style="height: 560px;"
-                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateRecordAsync" CanceledEditingItem="@ResetRowHighlight"
+                                                     Groupable="true" GroupExpanded="false"
+                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight" 
                                                      RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true" EditDialogOptions="new DialogOptions{MaxWidth = MaxWidth.ExtraExtraLarge}"
                                                      Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridQuestionChoice">
                                             <ToolBarContent>
@@ -173,12 +174,12 @@
                                                 <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(EntityType.QuestionChoice); })" />
                                             </ToolBarContent>
                                             <Columns>
-                                                <PropertyColumn Property="q => q.ChoiceId" IsEditable="false" />
-                                                <PropertyColumn Property="q => q.ChoiceText" IsEditable="false" />
-                                                <PropertyColumn Property="q => q.QuestionText" IsEditable="false" />
+                                                <PropertyColumn Property="q => q.ChoiceId" IsEditable="false" Hidden="true" />
+                                                <PropertyColumn Property="q => q.QuestionText" IsEditable="false" Grouping="true" />
+                                                <PropertyColumn Property="q => q.ChoiceText" Groupable="false" />
                                                 <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
                                                     <CellTemplate>
-                                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditContextAsync(context); })" />
+                                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditMultiItemsAsync<QuestionChoiceDto, EditQuestionChoiceDialog>(context.Item); })" />
                                                         <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.ChoiceId); }" />
                                                     </CellTemplate>
                                                 </TemplateColumn>
@@ -189,10 +190,14 @@
                                         </MudDataGrid>
                                     </MudPaper>
                                 </MudItem>
+                            </MudGrid>
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudGrid>
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
                                         <MudDataGrid Items="@SurveyTypes" T="SurveyTypeDto" Hover="true" FixedHeader="true" Style="height: 560px;"
-                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateRecordAsync" CanceledEditingItem="@ResetRowHighlight"
+                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
                                                      RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
                                                      Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridSurveyType">
                                             <ToolBarContent>
@@ -206,7 +211,7 @@
                                                 <PropertyColumn Property="q => q.SurveyTypeName" />
                                                 <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
                                                     <CellTemplate>
-                                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditContextAsync(context); })" />
+                                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
                                                         <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.SurveyTypeId); }" />
                                                     </CellTemplate>
                                                 </TemplateColumn>
@@ -220,7 +225,7 @@
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; ">
                                         <MudDataGrid T="QuestionTypeDto" Items="@QuestionTypes" Hover="true" FixedHeader="true" Style="height: 560px;"
-                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateRecordAsync" CanceledEditingItem="@ResetRowHighlight"
+                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
                                                      RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
                                                      Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridQuestionType">
                                             <ToolBarContent>
@@ -234,7 +239,7 @@
                                                 <PropertyColumn Property="q => q.QuestionTypeName" />
                                                 <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
                                                     <CellTemplate>
-                                                        <MudIconButton Class="mr-2" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditContextAsync(context); })" />
+                                                        <MudIconButton Class="mr-2" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
                                                         <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.QuestionTypeId); }" />
                                                     </CellTemplate>
                                                 </TemplateColumn>
