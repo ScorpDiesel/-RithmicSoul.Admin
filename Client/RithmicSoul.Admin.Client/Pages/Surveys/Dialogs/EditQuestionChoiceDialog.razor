@@ -1,0 +1,50 @@
+﻿<MudDialog>
+    <DialogContent>
+    @if (_isLoading)
+    {
+        <MudCard Style="Width: 550px">
+            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px"/>
+            <MudCardContent>
+                <MudSkeleton Width="30%" Height="42px;" />
+                <MudSkeleton Width="80%" />
+                <MudSkeleton Width="100%" />
+            </MudCardContent>
+            <MudCardActions>
+                <MudSkeleton Width="64px" Height="40px" Class="ml-2" />
+                <MudSkeleton Width="105px" Height="40px" Class="ml-3" />
+            </MudCardActions>
+        </MudCard>
+        <MudOverlay Visible="_isVisible" DarkBackground="true" Absolute="true">
+            <MudProgressCircular Color="Color.Secondary" Indeterminate="true" Style="width:70px; height: 70px;" />
+        </MudOverlay>
+    }
+    else
+    {
+        <MudForm>
+            <MudPaper Class="mt-4 mb-4 pa-4" Outlined="true">
+                <MudText>Question: @Dto.QuestionText</MudText>
+            </MudPaper>
+            <MudText>Question Type: @_questionTypeName</MudText>
+            <MudPaper Class="mt-4 pa-4" Outlined="true">
+                <MudStack Row="true" Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                <MudText>Add Question Choices</MudText>
+                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.AddCircle" OnClick="@AddQuestionChoice" />
+                </MudStack>
+                @foreach (var choice in _dtoList.Select((value, index) => new { index, value }))
+                {
+                    var value = choice.value;
+                    var index = choice.index;
+                    <MudStack Row="true" Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                        <MudTextField T="string" Label="@nameof(Dto.ChoiceText)" Class="mb-8" @bind-Value="@choice.value.ChoiceText" Required></MudTextField>
+                        <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.DoNotDisturbOn" OnClick="@(()=> { RemoveQuestionChoice(index); })" />
+                    </MudStack>
+                }
+            </MudPaper>
+        </MudForm>
+    }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="@SaveAsync">Save</MudButton>
+    </DialogActions>
+</MudDialog>

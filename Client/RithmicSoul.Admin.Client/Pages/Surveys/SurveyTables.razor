@@ -1,0 +1,261 @@
+﻿@inherits SurveyTablesBase
+@page "/surveys"
+
+@using RithmicSoul.Models.Survey.Dtos;
+@using RithmicSoul.Admin.Client.Enums
+@using RithmicSoul.Admin.Client.Pages.Surveys.Dialogs
+
+<PageTitle>Surveys</PageTitle>
+
+<MudContainer Class="mt-16" MaxWidth="MaxWidth.ExtraExtraLarge">
+    <MudGrid Justify="Justify.FlexStart" Spacing="1">
+        <MudItem xs="3">
+            <MudGrid>
+                <MudItem xs="10">
+                    <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;">
+                        <MudList Clickable="true">
+                            <MudListItem Text="Credit Survey" Icon="@Icons.Material.Filled.Add" OnClick="@OpenSurveyForm" />
+                            <MudListItem Text="Edit Survey" Icon="@Icons.Material.Filled.Edit" />
+                            <MudListItem Text="Delete Survey" Icon="@Icons.Material.Filled.Delete" />
+                            @*<MudDivider />
+                            <MudListItem Text="Trash" />
+                            <MudListItem Text="Spam" />*@
+                        </MudList>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+            <MudGrid>
+                <MudItem xs="10">
+                    <MudStack>
+                        <MudPaper Elevation="2" Class="pa-4 mt-8" Style="height: 600px">
+                            <MudText Typo="Typo.h6" Class="pb-10">Console</MudText>
+                            <MudItem Style="height: 480px;overflow-y: auto;white-space: pre-line;">
+                            @ConsoleOutput
+                            </MudItem>
+                        </MudPaper>
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+
+        <MudItem xs="9">
+            <MudGrid>
+                <MudItem xs="8">
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
+                                <MudText Typo="Typo.h6">Authored Surveys</MudText>
+                            </MudPaper>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudGrid>
+                        <MudItem xs="8">
+                            <MudGrid>
+                                <MudItem xs="12">
+                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
+                                        <MudDataGrid Items="@Surveys" T="SurveyDto" Hover="true" FixedHeader="true" Style="height: 560px;"
+                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
+                                                     RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
+                                                     Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridSurvey">
+                                            <ToolBarContent>
+                                                <MudText Typo="Typo.h6">Table: @SurveyTableName</MudText>
+                                                <MudSpacer />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await CreateAsync<SurveyDto, NewSurveyDialog>(); })" />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(EntityType.Survey); })" />
+                                            </ToolBarContent>
+                                            <Columns>
+                                                <PropertyColumn Property="q => q.SurveyId" IsEditable="false" Hidden="true" />
+                                                <PropertyColumn Property="q => q.SurveyName" IsEditable="false" />
+                                                <PropertyColumn Property="q => q.SurveyTypeName" IsEditable="false" />
+                                                <PropertyColumn Property="q => q.SurveyDescription" />
+                                                <PropertyColumn Property="q => q.DateCreated" IsEditable="false" />
+                                                <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
+                                                    <CellTemplate>
+                                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
+                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.SurveyId); }" />
+                                                    </CellTemplate>
+                                                </TemplateColumn>
+                                            </Columns>
+                                            <PagerContent>
+                                                <MudDataGridPager T="SurveyDto" DisableRowsPerPage="true" />
+                                            </PagerContent>
+                                        </MudDataGrid>
+                                    </MudPaper>
+                                </MudItem>
+
+                                <MudItem xs="12">
+                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
+                                        <MudDataGrid Items="@SurveyQuestionnaires" T="SurveyQuestionnaireDto" Hover="true" FixedHeader="true" Style="height: 560px;"
+                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
+                                                     RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
+                                                     Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridSurveyQuestionnaire">
+                                            <ToolBarContent>
+                                                <MudText Typo="Typo.h6">Table: @SurveyQuestionnaireTableName</MudText>
+                                                <MudSpacer />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await CreateAsync<SurveyQuestionnaireDto, NewSurveyQuestionnaireDialog>(); })" />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(EntityType.SurveyQuestionnaire); })" />
+                                            </ToolBarContent>
+                                            <Columns>
+                                                <PropertyColumn Property="q => q.QuestionnaireId" IsEditable="false" Hidden="true" />
+                                                <PropertyColumn Property="q => q.SurveyName" IsEditable="false" />
+                                                <PropertyColumn Property="q => q.SurveyQuestionText" IsEditable="false" />
+                                                <PropertyColumn Property="q => q.DateCreated" IsEditable="false" />
+                                                <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
+                                                    <CellTemplate>
+                                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
+                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.QuestionnaireId); }" />
+                                                    </CellTemplate>
+                                                </TemplateColumn>
+                                            </Columns>
+                                            <PagerContent>
+                                                <MudDataGridPager T="SurveyQuestionnaireDto" DisableRowsPerPage="true" />
+                                            </PagerContent>
+                                        </MudDataGrid>
+                                    </MudPaper>
+                                </MudItem>
+
+                                <MudItem xs="12">
+                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; overflow-y: auto">
+                                        <MudDataGrid Items="@SurveyQuestions" T="SurveyQuestionDto" Hover="true" FixedHeader="true" Style="height: 560px;"
+                                                     Groupable="true" GroupExpanded="false" LoadingProgressColor="Color.Primary" Loading="_isLoading" MultiSelection="true"
+                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
+                                                     RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
+                                                     Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridSurveyQuestion">
+                                            <ToolBarContent>
+                                                <MudText Typo="Typo.h6">Table: @SurveyQuestionTableName</MudText>
+                                                <MudSpacer />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await CreateAsync<SurveyQuestionDto, NewSurveyQuestionDialog>(); })" />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(EntityType.SurveyQuestion); })" />
+                                            </ToolBarContent>
+                                            <Columns>
+                                                <PropertyColumn Property="q => q.QuestionId" IsEditable="false" CellStyle="Width: 80px" Hidden="true" />
+                                                <PropertyColumn Property="q => q.QuestionTypeName" CellStyle="Width: 80px" Grouping="true">
+                                                    <EditTemplate>
+                                                        <MudSelect T="int" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="@nameof(@context.Item.QuestionTypeName)" AnchorOrigin="Origin.BottomCenter"
+                                                                   @bind-Value="@context.Item.QuestionTypeId">
+                                                            @if (QuestionTypes == null)
+                                                            {
+                                                                return;
+                                                            }
+                                                            @foreach (var qt in QuestionTypes)
+                                                            {
+                                                                <MudSelectItem T="int" Value="@qt.QuestionTypeId">@qt.QuestionTypeName</MudSelectItem>
+                                                            }
+                                                        </MudSelect>
+                                                    </EditTemplate>
+                                                </PropertyColumn>
+                                                <PropertyColumn Property="q => q.QuestionText" Groupable="false" Style="display: inline-block; width: 120px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" />
+                                                <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around" Style="Width50px">
+                                                    <CellTemplate>
+                                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
+                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.QuestionId); }" />
+                                                    </CellTemplate>
+                                                </TemplateColumn>
+                                            </Columns>
+                                            <PagerContent>
+                                                <MudDataGridPager T="SurveyQuestionDto" DisableRowsPerPage="true" />
+                                            </PagerContent>
+                                        </MudDataGrid>
+                                    </MudPaper>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
+                                        <MudDataGrid Items="@QuestionChoices" T="QuestionChoiceDto" Hover="true" FixedHeader="true" Style="height: 560px;"
+                                                     Groupable="true" GroupExpanded="false"
+                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight" 
+                                                     RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true" EditDialogOptions="new DialogOptions{MaxWidth = MaxWidth.ExtraExtraLarge}"
+                                                     Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridQuestionChoice">
+                                            <ToolBarContent>
+                                                <MudText Typo="Typo.h6">Table: @QuestionChoiceTableName</MudText>
+                                                <MudSpacer />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await CreateAsync<QuestionChoiceDto, NewQuestionChoiceDialog>(); })" />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(EntityType.QuestionChoice); })" />
+                                            </ToolBarContent>
+                                            <Columns>
+                                                <PropertyColumn Property="q => q.ChoiceId" IsEditable="false" Hidden="true" />
+                                                <PropertyColumn Property="q => q.QuestionText" IsEditable="false" Grouping="true" />
+                                                <PropertyColumn Property="q => q.ChoiceText" Groupable="false" />
+                                                <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
+                                                    <CellTemplate>
+                                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditMultiItemsAsync<QuestionChoiceDto, EditQuestionChoiceDialog>(context.Item); })" />
+                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.ChoiceId); }" />
+                                                    </CellTemplate>
+                                                </TemplateColumn>
+                                            </Columns>
+                                            <PagerContent>
+                                                <MudDataGridPager T="QuestionChoiceDto" DisableRowsPerPage="true" />
+                                            </PagerContent>
+                                        </MudDataGrid>
+                                    </MudPaper>
+                                </MudItem>
+                            </MudGrid>
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudGrid>
+                                <MudItem xs="12">
+                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
+                                        <MudDataGrid Items="@SurveyTypes" T="SurveyTypeDto" Hover="true" FixedHeader="true" Style="height: 560px;"
+                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
+                                                     RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
+                                                     Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridSurveyType">
+                                            <ToolBarContent>
+                                                <MudText Typo="Typo.h6">Table: @SurveyTypeTableName</MudText>
+                                                <MudSpacer />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await CreateAsync<SurveyTypeDto, NewSurveyTypeDialog>(); })" />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(EntityType.SurveyType); })" />
+                                            </ToolBarContent>
+                                            <Columns>
+                                                <PropertyColumn Property="q => q.SurveyTypeId" IsEditable="false" />
+                                                <PropertyColumn Property="q => q.SurveyTypeName" />
+                                                <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
+                                                    <CellTemplate>
+                                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
+                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.SurveyTypeId); }" />
+                                                    </CellTemplate>
+                                                </TemplateColumn>
+                                            </Columns>
+                                            <PagerContent>
+                                                <MudDataGridPager T="SurveyTypeDto" DisableRowsPerPage="true" />
+                                            </PagerContent>
+                                        </MudDataGrid>
+                                    </MudPaper>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; ">
+                                        <MudDataGrid T="QuestionTypeDto" Items="@QuestionTypes" Hover="true" FixedHeader="true" Style="height: 560px;"
+                                                     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
+                                                     RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
+                                                     Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridQuestionType">
+                                            <ToolBarContent>
+                                                <MudText Typo="Typo.h6">Table: @QuestionTypeTableName</MudText>
+                                                <MudSpacer />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await CreateAsync<QuestionTypeDto, NewQuestionTypeDialog>(); })" />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(EntityType.QuestionType); })" />
+                                            </ToolBarContent>
+                                            <Columns>
+                                                <PropertyColumn Property="q => q.QuestionTypeId" IsEditable="false" />
+                                                <PropertyColumn Property="q => q.QuestionTypeName" />
+                                                <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
+                                                    <CellTemplate>
+                                                        <MudIconButton Class="mr-2" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
+                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.QuestionTypeId); }" />
+                                                    </CellTemplate>
+                                                </TemplateColumn>
+                                            </Columns>
+                                            <PagerContent>
+                                                <MudDataGridPager T="QuestionTypeDto" DisableRowsPerPage="true" />
+                                            </PagerContent>
+                                        </MudDataGrid>
+                                    </MudPaper>
+                                </MudItem>
+                            </MudGrid>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+

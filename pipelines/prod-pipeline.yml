@@ -1,0 +1,59 @@
+name: Azure Static Web Apps CI/CD
+
+trigger:
+  branches:
+    include:
+      - master
+
+jobs:
+- job: build_and_deploy_job
+  displayName: Build and Deploy Job
+  condition: or(eq(variables['Build.Reason'], 'Manual'), or(eq(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.Reason'], 'IndividualCI')))
+  pool:
+    vmImage: ubuntu-latest
+  variables:
+  - group: Azure-Static-Web-Apps-lemon-plant-0c66b6d0f-variable-group
+  - name: buildConfiguration
+    value: 'Release'
+
+  steps:
+  - checkout: self
+    submodules: true
+
+  - task: NuGetAuthenticate@0
+    displayName: 'Authenticate with NuGet'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet restore'
+    inputs:
+      command: 'restore'
+      projects: '**/*.csproj'
+      feedsToUse: 'select'
+      vstsFeed: 'RithmicMedia' # Replace this with your feed's name
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Build'
+    inputs:
+      command: 'build'
+      arguments: '--configuration $(buildConfiguration)'
+      projects: '**/*.csproj'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish...'
+    inputs:
+      command: 'publish'
+      publishWebProjects: true
+      arguments: '--configuration $(buildConfiguration) --output ./Client/RithmicSoul.Admin.Client/build --verbosity n'
+      zipAfterPublish: false
+
+  - task: DownloadPipelineArtifact@2
+    displayName: "Download artifacts"
+    inputs:
+      path: './Client/RithmicSoul.Admin.Client/build'
+
+  - task: AzureStaticWebApp@0
+    inputs:
+      azure_static_web_apps_api_token: $(AZURE_STATIC_WEB_APPS_API_TOKEN_LEMON_PLANT_0C66B6D0F)
+      skip_app_build: true
+      app_location: 'Client/RithmicSoul.Admin.Client/build/RithmicSoul.Admin.Client/wwwroot'
+      output_location: ''

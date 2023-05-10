@@ -1,0 +1,19 @@
+﻿.log-boolean,
+.log-undefined {
+    color: magenta;
+}
+
+.log-object,
+.log-string {
+    color: orange;
+}
+
+.log-number {
+    color: cyan;
+}
+
+#logger {
+    overflow-x: auto;
+    display: flex;
+    width: 100%;
+}

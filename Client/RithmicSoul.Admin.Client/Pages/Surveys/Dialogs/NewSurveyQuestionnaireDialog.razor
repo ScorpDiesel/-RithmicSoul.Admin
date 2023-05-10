@@ -1,0 +1,28 @@
+﻿@using RithmicSoul.Models.Survey.Dtos;
+
+<MudDialog>
+    <DialogContent>
+        <MudForm>
+            <MudTextField T="int" Label="@nameof(_dto.SurveyQuestionId)" Class="mb-8" @bind-Value="@_dto.SurveyQuestionId" Required></MudTextField>
+            <MudTextField T="int" Label="@nameof(_dto.SurveyId)" Class="mb-8" @bind-Value="@_dto.SurveyId" Required></MudTextField>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Save">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] 
+    MudDialogInstance MudDialog { get; set; }
+
+    private SurveyQuestionnaireDto _dto = new();
+
+    void Save()
+    {
+        MudDialog.Close(DialogResult.Ok(_dto));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

@@ -1,0 +1,19 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/RithmicSoul.Admin/Client/obj
+/RithmicSoul.Admin/Server/obj
+/RithmicSoul.Admin/Shared/obj
+/RithmicSoul.Admin/Client/bin/Debug/net7.0
+/RithmicSoul.Admin/Server/bin/Debug/net7.0
+/RithmicSoul.Admin/Shared/bin/Debug/net7.0
+/RithmicSoul.Admin/obj
+/Shared/bin/Debug/net7.0
+/Shared/obj
+/RithmicSoul.Admin/bin/Debug/net7.0
+/Client/bin/Debug/net7.0
+/Client/obj
+/Client/RithmicSoul.Admin.Client/bin/Debug/net7.0
+/Client/RithmicSoul.Admin.Client/obj
