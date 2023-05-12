@@ -4,6 +4,8 @@ namespace RithmicSoul.Admin.Client.Models;
 
 public class AuthoredSurvey
 {
+    public int SurveyId { get; set; }
+
     [Required]
     public string SurveyName { get; set; }
 
@@ -13,5 +15,12 @@ public class AuthoredSurvey
     [Required]
     public int SurveyTypeId { get; set; }
 
-    [Required] public List<int> SurveyQuestions { get; set; } = new();
+    public string SurveyTypeName { get; set; }
+
+    public DateTime DateCreated { get; set; }
+
+    [Required]
+    public List<int?> SurveyQuestions { get; set; } = new();
+
+    public List<string> SurveyQuestionTextList { get; set; } = new();
 }

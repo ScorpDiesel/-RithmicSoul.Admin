@@ -19,6 +19,11 @@ public class QuestionChoiceService : IService<QuestionChoiceDto>
 
     public async Task<bool> InsertAsync(QuestionChoiceDto dto)
     {
+        throw new NotImplementedException();
+    }
+
+    public async Task<object> InsertForIdAsync(QuestionChoiceDto dto)
+    {
         var response = await _httpClient.PostAsJsonAsync("QuestionChoice/Insert", dto);
         return response.IsSuccessStatusCode;
     }

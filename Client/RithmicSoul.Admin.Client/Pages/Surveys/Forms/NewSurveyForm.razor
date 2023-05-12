@@ -5,8 +5,8 @@
         <MudItem xs="6">
             <MudPaper Elevation="25" Class="mb-16">
                 <MudToolBar>
-                    <MudIconButton Size="Size.Large" Icon="@Icons.Material.Outlined.Cancel" OnClick="@Cancel" />
-                    <MudIconButton Size="Size.Large" Icon="@Icons.Material.Outlined.Save" OnClick="@Save" />
+                    <MudIconButton Size="Size.Large" Icon="@Icons.Material.Outlined.Close" OnClick="@Cancel" />
+                    <MudIconButton Size="Size.Large" Icon="@Icons.Material.Outlined.SaveAlt" OnClick="@Save" />
                 </MudToolBar>
             </MudPaper>
             <MudPaper Class="pa-10">
@@ -16,22 +16,22 @@
                     <MudGrid>
                         <MudItem xs="12">
                             <MudStack Row="true" Class="mt-8" AlignItems="AlignItems.Center">
-                                <MudSelect T="int?" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="Survey Type" AnchorOrigin="Origin.BottomCenter"
-                                           Style="width: 100px" bind-Value="Model.SurveyTypeId">
+                                <MudSelect T="int" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="Survey Type" AnchorOrigin="Origin.BottomCenter"
+                                           Style="width: 100px" @bind-Value="@Model.SurveyTypeId">
+                                    <MudSelectItem T="int" Value="0" Disabled="true">Select...</MudSelectItem>
                                     @if (_surveyTypes == null)
                                     {
                                         return;
                                     }
                                     @foreach (var st in _surveyTypes)
                                     {
-                                        <MudSelectItem T="int?" Value="@st.SurveyTypeId">@st.SurveyTypeName</MudSelectItem>
+                                        <MudSelectItem T="int" Value="@st.SurveyTypeId">@st.SurveyTypeName</MudSelectItem>
                                     }
                                 </MudSelect>
                                 <MudSpacer />
                                 <MudStack Row="true" Justify="Justify.FlexEnd" AlignItems="AlignItems.Center">
-                                    <MudText>Add/Remove Questions</MudText>
+                                    <MudText>Add Questions</MudText>
                                     <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.AddCircle" OnClick="@AddQuestion" />
-                                    <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.DoNotDisturbOn" OnClick="@RemoveQuestion" />
                                 </MudStack>
                             </MudStack>
                         </MudItem>
@@ -39,7 +39,7 @@
 
                     <MudPaper Class="pa-4 mt-8" Elevation="3" Outlined="true">
                         <MudText Typo="Typo.h6" Class="pb-10">Survey Questions</MudText>
-                        <div style="height: 680px; overflow-y: scroll;">
+                        <div style="height: 720px; overflow-y: scroll;">
 
                             @foreach (var question in Model.SurveyQuestions.Select((value, index) => new { index, value }))
                             {
@@ -48,22 +48,24 @@
                                 <MudPaper Class="pa-4 mt-8" Outlined="true">
                                     <MudText Typo="Typo.h6" Class="mb-5">@($"Question #{thisIndex + 1}")</MudText>
                                         <MudGrid>
-                                            <MudItem xs="3">
+                                            @*<MudItem xs="3">
                                                 <MudText>@thisIndex</MudText>
-                                            </MudItem>
-                                            <MudItem xs="9">
+                                            </MudItem>*@
+                                            <MudItem xs="12">
                                                 <MudStack Row="true" Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                                                    <MudSelect T="int?" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="Survey Question" AnchorOrigin="Origin.BottomCenter">
-                                                @if (_surveyQuestions == null)
-                                                    {
-                                                        return;
-                                                    }
-                                                    @foreach (var sq in _surveyQuestions)
-                                                    {
-                                                        <MudSelectItem T="int?" Value="@sq.QuestionId">@sq.QuestionText</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                               @* <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.DoNotDisturbOn" OnClick="@(()=> { RemoveQuestion(thisIndex); })" />*@
+                                                    <MudSelect T="int?" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="Survey Question" AnchorOrigin="Origin.BottomCenter"
+                                                        @bind-Value="@Model.SurveyQuestions[thisIndex]">
+                                                        <MudSelectItem T="int?" Value="0" Disabled="true">Select...</MudSelectItem>
+                                                        @if (_surveyQuestions == null)
+                                                        {
+                                                            return;
+                                                        }
+                                                        @foreach (var sq in _surveyQuestions)
+                                                        {
+                                                            <MudSelectItem T="int?" Value="@sq.QuestionId">@sq.QuestionText</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.DoNotDisturbOn" OnClick="@(()=> { RemoveQuestion(thisIndex); })" />
                                             </MudStack>
                                         </MudItem>
                                     </MudGrid>

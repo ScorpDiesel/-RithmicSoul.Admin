@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Azure;
+using Google.Protobuf.WellKnownTypes;
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using RithmicSoul.Admin.Client.Interfaces;
 using RithmicSoul.Admin.Client.Models;
 using RithmicSoul.Admin.Client.Services;
 using RithmicSoul.Models.Survey.Dtos;
@@ -14,6 +17,7 @@ public partial class NewSurveyForm : ComponentBase
     protected IEnumerable<QuestionTypeDto> _questionTypes;
     protected IEnumerable<QuestionChoiceDto> _questionChoices;
     protected AuthoredSurvey Model = new();
+    protected string? _selectedQuestionTypeName;
 
     [Inject]
     NavigationManager Navigation { get; set; }
@@ -30,6 +34,11 @@ public partial class NewSurveyForm : ComponentBase
     [Inject]
     IService<QuestionChoiceDto> QuestionChoiceService { get; set; }
 
+    [Inject]
+    IAuthoredSurveyService AuthoredSurveyService { get; set; }
+
+    [Inject]
+    ISnackbar Snackbar { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -39,44 +48,47 @@ public partial class NewSurveyForm : ComponentBase
         _questionChoices = await QuestionChoiceService.GetAllAsync();
     }
 
-    void AddQuestion()
+    void ShowSnackBar(bool isSuccess, string message)
+    {
+        Snackbar.Clear();
+        Snackbar.Add(message, isSuccess ? Severity.Success : Severity.Error);
+    }
+
+    private void AddQuestion()
     {
         if (Model.SurveyQuestions.Count < 10) Model.SurveyQuestions.Add(new int());
     }
 
-    void RemoveQuestion()
+    private void QuestionChanged(int id)
     {
-        if (Model.SurveyQuestions.Count > 0) Model.SurveyQuestions.RemoveAt(Model.SurveyQuestions.Count - 1);
+        if (_surveyQuestions is null) return;
+        var dto = _surveyQuestions.FirstOrDefault(q => q.QuestionId == id);
+        _selectedQuestionTypeName = dto?.QuestionTypeName;
     }
 
-    //void RemoveQuestion(int index)
-    //{
-    //    //Console.WriteLine($"index {index} was deleted");
-    //    //for (var s = 0; s < _surveyQuestionList.Count; s++)
-    //    //{
-    //    //    Console.WriteLine($"{s} = {index}");
-    //    //}
-
-    //    if (_surveyQuestionList.Count > 1)
-    //    {
-    //        var s = _surveyQuestionList.ElementAt(index);
-    //        _surveyQuestionList.Remove(s);
-    //    }
-    //    //Console.WriteLine("----------------------------------");
-    //    //for (var s = 0; s < _surveyQuestionList.Count; s++)
-    //    //{
-    //    //    Console.WriteLine($"{s} = {index}");
-    //    //}
-    //}
-
-
-    protected void Cancel()
+    private void RemoveQuestion(int index)
     {
-        Navigation.NavigateTo("/Survey");
+        if (Model.SurveyQuestions.Count > 1) Model.SurveyQuestions.RemoveAt(index);
     }
 
-    protected void Save()
+
+    protected void Cancel() => Navigation.NavigateTo("/surveys");
+
+    protected async Task Save()
     {
-        Navigation.NavigateTo("/Survey");
+        var response = await AuthoredSurveyService.SaveAsync(Model);
+        string message;
+
+        if (response)
+        {
+            message = "The new authored survey was created.";
+        }
+        else
+        {
+            message = "There was an error creating the new authored survey.";
+        }
+
+        ShowSnackBar(response, message);
+        //Navigation.NavigateTo("/surveys");
     }
 }

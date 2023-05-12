@@ -20,7 +20,7 @@ public partial class EditQuestionChoiceDialog : ComponentBase
     private MudDialogInstance? MudDialog { get; set; }
 
     [Parameter]
-    public QuestionChoiceDto Dto { get; set; }
+    public QuestionChoiceDto Model { get; set; }
 
     private string? _questionTypeName;
     private readonly List<string> _chooseableList = new();
@@ -39,7 +39,7 @@ public partial class EditQuestionChoiceDialog : ComponentBase
         _chooseableList.Add("Multiple Choice");
         _chooseableList.Add("Checkbox");
         _chooseableList.Add("Demographic");
-        var dtos = await QuestionChoiceService?.GetAsync(q => q.QuestionId == Dto.QuestionId);
+        var dtos = await QuestionChoiceService?.GetAsync(q => q.QuestionId == Model.QuestionId);
         _dtoList?.AddRange(dtos.ToList());
         _oldDtoList?.AddRange(dtos.ToList());
         _surveyQuestions = await SurveyQuestionService?.GetAllAsync();
@@ -84,7 +84,7 @@ public partial class EditQuestionChoiceDialog : ComponentBase
 
         foreach (var choice in _dtoList)
         {
-            choice.QuestionId = Dto.QuestionId;
+            choice.QuestionId = Model.QuestionId;
         }
         
         MudDialog?.Close(DialogResult.Ok(_dtoList));

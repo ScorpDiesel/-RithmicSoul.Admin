@@ -8,14 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazorMvc" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.5" PrivateAssets="all" />
     <PackageReference Include="MudBlazor" Version="6.2.3" />
     <PackageReference Include="NetCore.AutoRegisterDi" Version="2.1.0" />
-    <PackageReference Include="RithmicSoul.Models" Version="2023.5.5.2" />
-    <PackageReference Include="RithmicSoulDatabaseLibrary" Version="2023.5.5.14" />
-    <PackageReference Include="RithmicSoulSharedLibrary" Version="2023.5.4.1" />
+    <PackageReference Include="RithmicSoul.Models" Version="2023.5.10.1" />
+    <PackageReference Include="RithmicSoulDatabaseLibrary" Version="2023.5.11.2" />
+    <PackageReference Include="RithmicSoulSharedLibrary" Version="2023.5.10.1" />
     <PackageReference Include="Serialize.Linq" Version="2.0.0" />
     <PackageReference Include="Toolbelt.Blazor.LoadingBar" Version="13.1.2" />
     <PackageReference Include="Blazored.FluentValidation" Version="2.1.0" />
@@ -25,6 +24,8 @@
   <ItemGroup>
     <Folder Include="Interfaces\" />
     <Folder Include="Models\" />
+    <Folder Include="Dtos\" />
+    <Folder Include="Utilities\" />
     <Folder Include="Pages\Views\" />
   </ItemGroup>
 

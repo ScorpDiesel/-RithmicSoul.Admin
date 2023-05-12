@@ -22,7 +22,7 @@
     {
         <MudForm>
             <MudPaper Class="mt-4 mb-4 pa-4" Outlined="true">
-                <MudText>Question: @Dto.QuestionText</MudText>
+                <MudText>Question: @Model.QuestionText</MudText>
             </MudPaper>
             <MudText>Question Type: @_questionTypeName</MudText>
             <MudPaper Class="mt-4 pa-4" Outlined="true">
@@ -35,7 +35,7 @@
                     var value = choice.value;
                     var index = choice.index;
                     <MudStack Row="true" Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                        <MudTextField T="string" Label="@nameof(Dto.ChoiceText)" Class="mb-8" @bind-Value="@choice.value.ChoiceText" Required></MudTextField>
+                        <MudTextField T="string" Label="@nameof(Model.ChoiceText)" Class="mb-8" @bind-Value="@choice.value.ChoiceText" Required></MudTextField>
                         <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.DoNotDisturbOn" OnClick="@(()=> { RemoveQuestionChoice(index); })" />
                     </MudStack>
                 }

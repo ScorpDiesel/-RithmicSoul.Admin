@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Net.Http.Json;
 using System.Text;
+using RithmicSoul.Admin.Client.Models;
 using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoulDatabaseLibrary.Interfaces;
 using Serialize.Linq.Serializers;
@@ -19,8 +20,15 @@ public class SurveyService : IService<SurveyDto>
 
     public async Task<bool> InsertAsync(SurveyDto dto)
     {
+        throw new NotImplementedException();
+    }
+
+    public async Task<object> InsertForIdAsync(SurveyDto dto)
+    {
         var response = await _httpClient.PostAsJsonAsync("Survey/Insert", dto);
-        return response.IsSuccessStatusCode;
+        response.EnsureSuccessStatusCode();
+        var responseObj = response.Content.ReadAsStringAsync();
+        return responseObj.Result;
     }
 
     public async Task<bool> BulkInsertAsync(List<SurveyDto> dtos)

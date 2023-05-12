@@ -1,8 +1,8 @@
 ﻿<MudDialog>
     <DialogContent>
         <MudForm>
-            <MudSelect T="int?" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="@nameof(_dto.QuestionText)" AnchorOrigin="Origin.BottomCenter"
-                       @bind-Value="@SelectedSurveyQuestionId" Style="Width: 1000px" TextChanged="@QuestionTypeChangeEvent">
+            <MudSelect T="int?" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="@nameof(_model.QuestionText)" AnchorOrigin="Origin.BottomCenter"
+                       @bind-Value="@_model.QuestionId" Style="Width: 1000px" TextChanged="@QuestionTypeChangeEvent">
                 @if (_surveyQuestions == null)
                 {
                     return;
@@ -21,12 +21,11 @@
                 <MudText>Add Question Choices</MudText>
                 <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.AddCircle" OnClick="@AddQuestionChoice" />
                 </MudStack>
-                @foreach (var choice in _dtoList.Select((value, index) => new { index, value }))
+                @foreach (var choice in _model.QuestionChoices.Select((value, index) => new { index, value }))
                 {
-                    var value = choice.value;
                     var index = choice.index;
                     <MudStack Row="true" Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                        <MudTextField T="string" Label="@nameof(_dto.ChoiceText)" Class="mb-8" @bind-Value="@value.ChoiceText" Required></MudTextField>
+                        <MudTextField T="string" Label="Choice Text" Class="mb-8" @bind-Value="_model.QuestionChoices[index]" Required></MudTextField>
                         <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.DoNotDisturbOn" OnClick="@(()=> { RemoveQuestionChoice(index); })" />
                     </MudStack>
                 }

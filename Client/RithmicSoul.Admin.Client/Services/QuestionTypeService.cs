@@ -23,6 +23,11 @@ public class QuestionTypeService : IService<QuestionTypeDto>
 
     public async Task<bool> InsertAsync(QuestionTypeDto dto)
     {
+        throw new NotImplementedException();
+    }
+
+    public async Task<object> InsertForIdAsync(QuestionTypeDto dto)
+    {
         var response = await _httpClient.PostAsJsonAsync("QuestionType/Insert", dto);
         return response.IsSuccessStatusCode;
     }

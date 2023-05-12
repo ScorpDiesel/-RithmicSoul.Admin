@@ -1,9 +1,10 @@
-﻿@inherits SurveyTablesBase
-@page "/surveys"
+﻿@page "/surveys"
 
 @using RithmicSoul.Models.Survey.Dtos;
 @using RithmicSoul.Admin.Client.Enums
+@using RithmicSoul.Admin.Client.Models
 @using RithmicSoul.Admin.Client.Pages.Surveys.Dialogs
+@using RithmicSoul.Admin.Client.Dtos
 
 <PageTitle>Surveys</PageTitle>
 
@@ -40,11 +41,40 @@
 
         <MudItem xs="9">
             <MudGrid>
-                <MudItem xs="8">
+                <MudItem xs="12">
                     <MudGrid>
                         <MudItem xs="12">
                             <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
-                                <MudText Typo="Typo.h6">Authored Surveys</MudText>
+                                <MudDataGrid Items="@AuthoredSurveys" T="AuthoredSurveyDto" Hover="true" FixedHeader="true" Style="height: 560px;"
+                                             EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
+                                             RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
+                                             Groupable="true" GroupExpanded="false"
+                                             Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridAuthoredSurvey">
+                                    <ToolBarContent>
+                                        <MudText Typo="Typo.h6">Authored Surveys</MudText>
+                                        <MudSpacer />
+                                        <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldMore" Class="mt-0" OnClick="@MudGridAuthoredSurvey.ExpandAllGroups" />
+                                        <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldLess" Class="mt-0" OnClick="@MudGridAuthoredSurvey.CollapseAllGroups" />
+                                        <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await CreateAsync<SurveyDto, NewSurveyDialog>(); })" />
+                                        <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(EntityType.Survey); })" />
+                                    </ToolBarContent>
+                                    <Columns>
+                                        <PropertyColumn Property="q => q.SurveyName" IsEditable="false" Grouping="true"/>
+                                        <PropertyColumn Property="q => q.SurveyTypeName" IsEditable="false" />
+                                        <PropertyColumn Property="q => q.SurveyDescription" />
+                                        <PropertyColumn Property="q => q.SurveyQuestionText" />
+                                        <PropertyColumn Property="q => q.DateCreated" IsEditable="false" />
+                                        <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
+                                            <CellTemplate>
+                                                <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
+                                                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" />
+                                            </CellTemplate>
+                                        </TemplateColumn>
+                                    </Columns>
+                                    <PagerContent>
+                                        <MudDataGridPager T="AuthoredSurveyDto" DisableRowsPerPage="true" />
+                                    </PagerContent>
+                                </MudDataGrid>
                             </MudPaper>
                         </MudItem>
                     </MudGrid>
@@ -74,7 +104,7 @@
                                                 <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
                                                     <CellTemplate>
                                                         <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
-                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.SurveyId); }" />
+                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item); }" />
                                                     </CellTemplate>
                                                 </TemplateColumn>
                                             </Columns>
@@ -90,22 +120,25 @@
                                         <MudDataGrid Items="@SurveyQuestionnaires" T="SurveyQuestionnaireDto" Hover="true" FixedHeader="true" Style="height: 560px;"
                                                      EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
                                                      RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
+                                                     Groupable="true" GroupExpanded="false"
                                                      Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridSurveyQuestionnaire">
                                             <ToolBarContent>
                                                 <MudText Typo="Typo.h6">Table: @SurveyQuestionnaireTableName</MudText>
                                                 <MudSpacer />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldMore" Class="mt-0" OnClick="@MudGridSurveyQuestionnaire.ExpandAllGroups" />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldLess" Class="mt-0" OnClick="@MudGridSurveyQuestionnaire.CollapseAllGroups" />
                                                 <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await CreateAsync<SurveyQuestionnaireDto, NewSurveyQuestionnaireDialog>(); })" />
                                                 <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(EntityType.SurveyQuestionnaire); })" />
                                             </ToolBarContent>
                                             <Columns>
                                                 <PropertyColumn Property="q => q.QuestionnaireId" IsEditable="false" Hidden="true" />
-                                                <PropertyColumn Property="q => q.SurveyName" IsEditable="false" />
+                                                <PropertyColumn Property="q => q.SurveyName" IsEditable="false" Grouping="true" />
                                                 <PropertyColumn Property="q => q.SurveyQuestionText" IsEditable="false" />
                                                 <PropertyColumn Property="q => q.DateCreated" IsEditable="false" />
                                                 <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
                                                     <CellTemplate>
                                                         <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
-                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.QuestionnaireId); }" />
+                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item); }" />
                                                     </CellTemplate>
                                                 </TemplateColumn>
                                             </Columns>
@@ -126,6 +159,8 @@
                                             <ToolBarContent>
                                                 <MudText Typo="Typo.h6">Table: @SurveyQuestionTableName</MudText>
                                                 <MudSpacer />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldMore" Class="mt-0" OnClick="@MudGridSurveyQuestion.ExpandAllGroups" />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldLess" Class="mt-0" OnClick="@MudGridSurveyQuestion.CollapseAllGroups" />
                                                 <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await CreateAsync<SurveyQuestionDto, NewSurveyQuestionDialog>(); })" />
                                                 <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(EntityType.SurveyQuestion); })" />
                                             </ToolBarContent>
@@ -150,7 +185,7 @@
                                                 <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around" Style="Width50px">
                                                     <CellTemplate>
                                                         <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
-                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.QuestionId); }" />
+                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item); }" />
                                                     </CellTemplate>
                                                 </TemplateColumn>
                                             </Columns>
@@ -163,24 +198,28 @@
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
                                         <MudDataGrid Items="@QuestionChoices" T="QuestionChoiceDto" Hover="true" FixedHeader="true" Style="height: 560px;"
-                                                     Groupable="true" GroupExpanded="false"
+                                                     Groupable="true" GroupExpanded="false" MultiSelection="true"
                                                      EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight" 
                                                      RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true" EditDialogOptions="new DialogOptions{MaxWidth = MaxWidth.ExtraExtraLarge}"
                                                      Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridQuestionChoice">
                                             <ToolBarContent>
                                                 <MudText Typo="Typo.h6">Table: @QuestionChoiceTableName</MudText>
                                                 <MudSpacer />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldMore" Class="mt-0" OnClick="@MudGridQuestionChoice.ExpandAllGroups" />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldLess" Class="mt-0" OnClick="@MudGridQuestionChoice.CollapseAllGroups" />
                                                 <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await CreateAsync<QuestionChoiceDto, NewQuestionChoiceDialog>(); })" />
                                                 <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(EntityType.QuestionChoice); })" />
+                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => { DeleteSelectedAsync(MudGridQuestionChoice.SelectedItems); })" />
                                             </ToolBarContent>
                                             <Columns>
+                                                <SelectColumn T="QuestionChoiceDto" />
                                                 <PropertyColumn Property="q => q.ChoiceId" IsEditable="false" Hidden="true" />
                                                 <PropertyColumn Property="q => q.QuestionText" IsEditable="false" Grouping="true" />
                                                 <PropertyColumn Property="q => q.ChoiceText" Groupable="false" />
                                                 <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
                                                     <CellTemplate>
                                                         <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditMultiItemsAsync<QuestionChoiceDto, EditQuestionChoiceDialog>(context.Item); })" />
-                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.ChoiceId); }" />
+                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item); }" />
                                                     </CellTemplate>
                                                 </TemplateColumn>
                                             </Columns>
@@ -212,7 +251,7 @@
                                                 <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
                                                     <CellTemplate>
                                                         <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
-                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.SurveyTypeId); }" />
+                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item); }" />
                                                     </CellTemplate>
                                                 </TemplateColumn>
                                             </Columns>
@@ -240,7 +279,7 @@
                                                 <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
                                                     <CellTemplate>
                                                         <MudIconButton Class="mr-2" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
-                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item, context.Item.QuestionTypeId); }" />
+                                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item); }" />
                                                     </CellTemplate>
                                                 </TemplateColumn>
                                             </Columns>

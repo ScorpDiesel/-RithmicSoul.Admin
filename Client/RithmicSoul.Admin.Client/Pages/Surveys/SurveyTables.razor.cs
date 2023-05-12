@@ -1,18 +1,21 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using RithmicSoul.Admin.Client.Dtos;
 using RithmicSoul.Admin.Client.Enums;
+using RithmicSoul.Admin.Client.Interfaces;
 using RithmicSoul.Admin.Client.Logging;
+using RithmicSoul.Admin.Client.Models;
 using RithmicSoul.Admin.Client.Pages.Surveys.Dialogs;
 using RithmicSoul.Admin.Client.Services;
 using RithmicSoul.Models.Survey;
 using RithmicSoul.Models.Survey.Dtos;
+using RithmicSoul.Models.Survey.Models;
 using RithmicSoulDatabaseLibrary.Interfaces;
 using RithmicSoulDatabaseLibrary.Utilities;
 using RithmicSoulSharedLibrary.Extensions;
-
 namespace RithmicSoul.Admin.Client.Pages.Surveys;
 
-public partial class SurveyTablesBase : ComponentBase
+public partial class SurveyTables : ComponentBase
 {
     public MudDataGrid<QuestionTypeDto> MudGridQuestionType;
     public MudDataGrid<SurveyTypeDto> MudGridSurveyType;
@@ -20,6 +23,7 @@ public partial class SurveyTablesBase : ComponentBase
     public MudDataGrid<SurveyDto> MudGridSurvey;
     public MudDataGrid<SurveyQuestionnaireDto> MudGridSurveyQuestionnaire;
     public MudDataGrid<QuestionChoiceDto> MudGridQuestionChoice;
+    public MudDataGrid<AuthoredSurveyDto> MudGridAuthoredSurvey;
 
     [Inject]
     IService<QuestionTypeDto> QuestionTypeService { get; set; }
@@ -39,6 +43,8 @@ public partial class SurveyTablesBase : ComponentBase
     [Inject]
     IService<QuestionChoiceDto> QuestionChoiceService { get; set; }
 
+    [Inject]
+    IAuthoredSurveyService AuthoredSurveyService { get; set; }
 
     [Inject]
     IDialogService DialogService { get; set; }
@@ -52,8 +58,8 @@ public partial class SurveyTablesBase : ComponentBase
     [Inject]
     protected ConsoleRedirectLogger<SurveyTables> Logger { get; set; }
 
-    [Inject]
-    protected PeriodicTimerService TimerService { get; set; }
+    //[Inject]
+    //protected PeriodicTimerService TimerService { get; set; }
 
     public IEnumerable<QuestionTypeDto> QuestionTypes = new List<QuestionTypeDto>();
     public IEnumerable<QuestionChoiceDto> QuestionChoices;
@@ -61,6 +67,7 @@ public partial class SurveyTablesBase : ComponentBase
     public IEnumerable<SurveyDto> Surveys;
     public IEnumerable<SurveyQuestionnaireDto> SurveyQuestionnaires;
     public IEnumerable<SurveyQuestionDto> SurveyQuestions;
+    private IEnumerable<AuthoredSurveyDto> AuthoredSurveys;
     public string QuestionTypeTableName = EntityUtility.GetTableName<QuestionType>();
     public string QuestionChoiceTableName = EntityUtility.GetTableName<QuestionChoice>();
     public string SurveyTypeTableName = EntityUtility.GetTableName<SurveyType>();
@@ -83,11 +90,12 @@ public partial class SurveyTablesBase : ComponentBase
         Surveys = await SurveyService.GetAllAsync();
         SurveyQuestionnaires = await SurveyQuestionnaireService.GetAllAsync();
         SurveyQuestions = await SurveyQuestionService.GetAllAsync();
+        AuthoredSurveys = await AuthoredSurveyService.GetAllAsync();
 
         AddCallbackServices();
         _isLoading = false;
-        await TimerService.StartExecutingAsync();
-        TimerService.JobExecuted += (_, _) => UpdateConsoleOutput();
+        //await TimerService.StartExecutingAsync();
+        //TimerService.JobExecuted += (_, _) => UpdateConsoleOutput();
     }
 
     void UpdateConsoleOutput()
@@ -100,28 +108,28 @@ public partial class SurveyTablesBase : ComponentBase
     private void AddCallbackServices()
     {
         _callbacks.Add(nameof(QuestionTypeDto),
-            (async (dto) => await QuestionTypeService.InsertAsync(dto),
-                async (dto) => await QuestionTypeService.UpdateAsync(dto),
-                async (dto) => await QuestionTypeService.DeleteAsync(dto), GetAllQuestionTypesAsync));
+            (async dto => await QuestionTypeService.InsertForIdAsync(dto),
+                async dto => await QuestionTypeService.UpdateAsync(dto),
+                async dtos => await QuestionTypeService.BulkDeleteAsync(dtos), GetAllQuestionTypesAsync));
         _callbacks.Add(nameof(QuestionChoiceDto),
-            (async (dto) => await QuestionChoiceService.BulkInsertAsync(dto),
-                async (dto) => await QuestionChoiceService.BulkUpdateAsync(dto),
-                async (dto) => await QuestionChoiceService.BulkDeleteAsync(dto), GetAllQuestionChoicesAsync));
+            (async dtos => await QuestionChoiceService.BulkInsertAsync(dtos),
+                async dtos => await QuestionChoiceService.BulkUpdateAsync(dtos),
+                async dtos => await QuestionChoiceService.BulkDeleteAsync(dtos), GetAllQuestionChoicesAsync));
         _callbacks.Add(nameof(SurveyTypeDto),
-            (async (dto) => await SurveyTypeService.InsertAsync(dto),
-                async (dto) => await SurveyTypeService.UpdateAsync(dto),
-                async (dto) => await SurveyTypeService.DeleteAsync(dto), GetAllSurveyTypesAsync));
+            (async dto => await SurveyTypeService.InsertForIdAsync(dto),
+                async dto => await SurveyTypeService.UpdateAsync(dto),
+                async dtos => await SurveyTypeService.BulkDeleteAsync(dtos), GetAllSurveyTypesAsync));
         _callbacks.Add(nameof(SurveyDto),
-            (async (dto) => await SurveyService.InsertAsync(dto), async (dto) => await SurveyService.UpdateAsync(dto),
-                async (dto) => await SurveyService.DeleteAsync(dto), GetAllSurveysAsync));
+            (async dto => await SurveyService.InsertForIdAsync(dto), async dto => await SurveyService.UpdateAsync(dto),
+                async dtos => await SurveyService.BulkDeleteAsync(dtos), GetAllSurveysAsync));
         _callbacks.Add(nameof(SurveyQuestionnaireDto),
-            (async (dto) => await SurveyQuestionnaireService.InsertAsync(dto),
-                async (dto) => await SurveyQuestionnaireService.UpdateAsync(dto),
-                async (dto) => await SurveyQuestionnaireService.DeleteAsync(dto), GetAllSurveyQuestionnairesAsync));
+            (async dto => await SurveyQuestionnaireService.InsertForIdAsync(dto),
+                async dto => await SurveyQuestionnaireService.UpdateAsync(dto),
+                async dtos => await SurveyQuestionnaireService.BulkDeleteAsync(dtos), GetAllSurveyQuestionnairesAsync));
         _callbacks.Add(nameof(SurveyQuestionDto),
-            (async (dto) => await SurveyQuestionService.InsertAsync(dto),
-                async (dto) => await SurveyQuestionService.UpdateAsync(dto),
-                async (dto) => await SurveyQuestionService.DeleteAsync(dto), GetAllSurveyQuestionsAsync));
+            (async dto => await SurveyQuestionService.InsertForIdAsync(dto),
+                async dto => await SurveyQuestionService.UpdateAsync(dto),
+                async dtos => await SurveyQuestionService.BulkDeleteAsync(dtos), GetAllSurveyQuestionsAsync));
     }
 
     protected void SetRowHighlight(object dto)
@@ -157,11 +165,10 @@ public partial class SurveyTablesBase : ComponentBase
         StateHasChanged();
     }
 
-    public async Task DeleteAsync<T>(T dto, int id)
+    public async Task DeleteAsync<T>(T dto)
     {
         SetRowHighlight(dto);
-        var options = new DialogOptions { Position = DialogPosition.Center };
-        var dialog = await DialogService.ShowAsync<DeleteItemDialog>(null, options);
+        var dialog = await DialogService.ShowAsync<DeleteItemDialog>(null);
         var result = await dialog.Result;
 
         if (!result.Canceled)
@@ -193,9 +200,8 @@ public partial class SurveyTablesBase : ComponentBase
 
     public async Task CreateAsync<T, T1>() where T1 : ComponentBase
     {
-        var options = new DialogOptions { Position = DialogPosition.Center };
         var tableName = typeof(T).Name.Replace("Dto", string.Empty);
-        var dialog = await DialogService.ShowAsync<T1>($"New {tableName}", options);
+        var dialog = await DialogService.ShowAsync<T1>($"New {tableName}");
         var result = await dialog.Result;
 
         await CreateNewItemAsync<T>(result, tableName);
@@ -208,7 +214,7 @@ public partial class SurveyTablesBase : ComponentBase
             object resultData;
             if (result.Data.IsGenericList())
             {
-                resultData = (List<T>)result.Data;
+                resultData = result.Data;
             }
             else
             {
@@ -238,7 +244,7 @@ public partial class SurveyTablesBase : ComponentBase
 
     protected async Task EditMultiItemsAsync<T, T1>(T dto) where T1 : ComponentBase
     {
-        var parameters = new DialogParameters { { nameof(dto), dto } };
+        var parameters = new DialogParameters { { "Model", dto } };
         var tableName = typeof(T).Name.Replace("Dto", string.Empty);
         var dialog = await DialogService.ShowAsync<T1>($"Edit {tableName}", parameters);
         var result = await dialog.Result;
@@ -329,5 +335,35 @@ public partial class SurveyTablesBase : ComponentBase
     {
         QuestionChoices = await QuestionChoiceService.GetAllAsync();
         MudGridSurvey.Items = Surveys;
+    }
+
+    private async Task DeleteSelectedAsync<T>(IEnumerable<T> items)
+    {
+        var dialog = await DialogService.ShowAsync<DeleteItemDialog>("Delete selected items?");
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var dtoName = typeof(T).Name;
+            var tableName = dtoName.Replace("Dto", string.Empty);
+            
+            var (insert, update, delete, getAll) = _callbacks[dtoName];
+            var response = await delete.Invoke(items.ToList());
+            string message;
+
+            if (response)
+            {
+                message = $"Items from {tableName} has been deleted.";
+                await getAll.Invoke();
+                StateHasChanged();
+            }
+            else
+            {
+                message = $"There was an error deleting items from {tableName}.";
+            }
+
+            ShowSnackBar(response, message);
+            StateHasChanged();
+        }
     }
 }
