@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using RithmicSoulSharedLibrary.Extensions;
+﻿using RithmicSoulSharedLibrary.Extensions;
 
 namespace RithmicSoul.Admin.Client.Utilities;
 

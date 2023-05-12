@@ -1,18 +1,16 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using RithmicSoul.Admin.Client.Dtos;
-using RithmicSoul.Admin.Client.Enums;
-using RithmicSoul.Admin.Client.Interfaces;
-using RithmicSoul.Admin.Client.Logging;
-using RithmicSoul.Admin.Client.Models;
-using RithmicSoul.Admin.Client.Pages.Surveys.Dialogs;
-using RithmicSoul.Admin.Client.Services;
-using RithmicSoul.Models.Survey;
+using RithmicSoul.Admin.Client.Views.Dialogs;
+using RithmicSoul.Admin.Core.Dtos;
+using RithmicSoul.Admin.Core.Enums;
+using RithmicSoul.Admin.Core.Interfaces;
+using RithmicSoul.Admin.Infrastructure.Logging;
 using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoul.Models.Survey.Models;
 using RithmicSoulDatabaseLibrary.Interfaces;
 using RithmicSoulDatabaseLibrary.Utilities;
 using RithmicSoulSharedLibrary.Extensions;
+
 namespace RithmicSoul.Admin.Client.Pages.Surveys;
 
 public partial class SurveyTables : ComponentBase

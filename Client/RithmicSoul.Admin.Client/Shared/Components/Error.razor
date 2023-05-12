@@ -1,6 +1,5 @@
-﻿@inherits ErrorBoundary
-@using Microsoft.Extensions.Logging
-@using RithmicSoul.Admin.Client.Logging
+﻿@using RithmicSoul.Admin.Infrastructure.Logging
+@inherits ErrorBoundary
 @inject ConsoleRedirectLogger<Error> Logger
 
 @if (CurrentException is null)

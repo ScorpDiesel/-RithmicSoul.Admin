@@ -1,13 +1,12 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.JSInterop;
-using Microsoft.JSInterop.WebAssembly;
 using MudBlazor;
 using MudBlazor.Services;
 using NetCore.AutoRegisterDi;
-using RithmicSoul.Admin.Client.Logging;
-using RithmicSoul.Admin.Client.Services;
+using RithmicSoul.Admin.Client.Logger;
+using RithmicSoul.Admin.Core.Interfaces;
+using RithmicSoul.Admin.Infrastructure.Logging;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 namespace RithmicSoul.Admin.Client.Client
@@ -17,10 +16,11 @@ namespace RithmicSoul.Admin.Client.Client
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.Services.AddSingleton<WebAssemblyJSRuntime, CustomWebAssemblyJSRuntime>();
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
-            builder.Services.AddSingleton(typeof(ConsoleRedirectLogger<>));
+            builder.Services.AddScoped<IJsInteropLogger, JsInteropLogger>();
+
+            builder.Services.AddScoped(typeof(ConsoleRedirectLogger<>));
             //builder.Services.AddSingleton(_ => new PeriodicTimerService());
             builder.Services.AddHttpClientInterceptor();
             if (builder.HostEnvironment.IsDevelopment())
@@ -38,7 +38,7 @@ namespace RithmicSoul.Admin.Client.Client
                 config.LoadingBarColor = "#fc8236";
             });
 
-            var registered = builder.Services.RegisterAssemblyPublicNonGenericClasses()
+            var registered = builder.Services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(Program)), Assembly.GetAssembly(typeof(Infrastructure.Services.QuestionTypeService)))
                 .Where(c => c.Name.EndsWith("Service"))
                 .AsPublicImplementedInterfaces();
 

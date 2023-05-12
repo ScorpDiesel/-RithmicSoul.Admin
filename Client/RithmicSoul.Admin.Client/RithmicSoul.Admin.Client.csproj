@@ -12,8 +12,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.5" PrivateAssets="all" />
     <PackageReference Include="MudBlazor" Version="6.2.3" />
     <PackageReference Include="NetCore.AutoRegisterDi" Version="2.1.0" />
-    <PackageReference Include="RithmicSoul.Models" Version="2023.5.10.1" />
-    <PackageReference Include="RithmicSoulDatabaseLibrary" Version="2023.5.11.2" />
     <PackageReference Include="RithmicSoulSharedLibrary" Version="2023.5.10.1" />
     <PackageReference Include="Serialize.Linq" Version="2.0.0" />
     <PackageReference Include="Toolbelt.Blazor.LoadingBar" Version="13.1.2" />
@@ -22,11 +20,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Models\" />
-    <Folder Include="Dtos\" />
+    <Folder Include="Logger\" />
+    <Folder Include="ViewModels\" />
     <Folder Include="Utilities\" />
-    <Folder Include="Pages\Views\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\RithmicSoul.Admin.Core\RithmicSoul.Admin.Core.csproj" />
+    <ProjectReference Include="..\..\RithmicSoul.Admin.Infrastructure\RithmicSoul.Admin.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

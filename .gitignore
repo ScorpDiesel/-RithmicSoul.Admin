@@ -17,3 +17,7 @@
 /Client/obj
 /Client/RithmicSoul.Admin.Client/bin/Debug/net7.0
 /Client/RithmicSoul.Admin.Client/obj
+/RithmicSoul.Admin.Core/bin/Debug/net7.0
+/RithmicSoul.Admin.Core/obj
+/RithmicSoul.Admin.Infrastructure/bin/Debug/net7.0
+/RithmicSoul.Admin.Infrastructure/obj

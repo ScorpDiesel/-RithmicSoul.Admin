@@ -1,10 +1,7 @@
-﻿using Azure;
-using Google.Protobuf.WellKnownTypes;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using RithmicSoul.Admin.Client.Interfaces;
-using RithmicSoul.Admin.Client.Models;
-using RithmicSoul.Admin.Client.Services;
+using RithmicSoul.Admin.Core.Interfaces;
+using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoulDatabaseLibrary.Interfaces;
 
@@ -68,7 +65,7 @@ public partial class NewSurveyForm : ComponentBase
 
     private void RemoveQuestion(int index)
     {
-        if (Model.SurveyQuestions.Count > 1) Model.SurveyQuestions.RemoveAt(index);
+        if (Model.SurveyQuestions.Count > 0) Model.SurveyQuestions.RemoveAt(index);
     }
 
 
