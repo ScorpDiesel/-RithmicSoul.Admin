@@ -69,7 +69,7 @@ public class SurveyTypeService : IService<SurveyTypeDto>
 
     public async Task<IEnumerable<SurveyTypeDto>> GetAllAsync()
     {
-        return await _httpClient.GetFromJsonAsync<ObservableCollection<SurveyTypeDto>>("SurveyType/GetAll");
+        return await _httpClient.GetFromJsonAsync<IEnumerable<SurveyTypeDto>>("SurveyType/GetAll");
     }
 
     public async Task<IEnumerable<SurveyTypeDto>> GetAsync(Expression<Func<SurveyTypeDto, bool>> expression)

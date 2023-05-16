@@ -28,7 +28,8 @@ namespace RithmicSoul.Admin.Client.Client
             {
                 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:7129/api/") }
                     .EnableIntercept(sp));
-            }            else
+            }
+            else
             {
                 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri($"{ builder.HostEnvironment.BaseAddress }api/") }
                     .EnableIntercept(sp));
