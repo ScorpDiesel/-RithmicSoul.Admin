@@ -44,7 +44,7 @@
                     <MudGrid>
                         <MudItem xs="12">
                             <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
-                                <MudDataGrid Items="@AuthoredSurveys" T="AuthoredSurveyDto" Hover="true" FixedHeader="true" Style="height: 560px;"
+                                @*<MudDataGrid Items="@AuthoredSurveys" T="AuthoredSurveyDto" Hover="true" FixedHeader="true" Style="height: 560px;"
                                              EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
                                              RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
                                              Groupable="true" GroupExpanded="false"
@@ -73,7 +73,7 @@
                                     <PagerContent>
                                         <MudDataGridPager T="AuthoredSurveyDto" DisableRowsPerPage="true" />
                                     </PagerContent>
-                                </MudDataGrid>
+                                </MudDataGrid>*@
                             </MudPaper>
                         </MudItem>
                     </MudGrid>
