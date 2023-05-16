@@ -47,13 +47,13 @@ public partial class NewQuestionChoiceDialog : ComponentBase
 
     private void AddQuestionChoice()
     {
-        if (Model.QuestionChoices.Count <= 15) Model.QuestionChoices.Add(string.Empty);
+        if (Model.QuestionChoices.Count <= _appSettings.SurveyQuestionsMaxCount) Model.QuestionChoices.Add(string.Empty);
     }
 
 
     private void RemoveQuestionChoice(int index)
     {
-        if (Model.QuestionChoices.Count > 1) Model.QuestionChoices.RemoveAt(index);
+        if (Model.QuestionChoices.Count > _appSettings.SurveyQuestionsMinCount) Model.QuestionChoices.RemoveAt(index);
     }
 
     protected void QuestionTypeChangeEvent(string value)

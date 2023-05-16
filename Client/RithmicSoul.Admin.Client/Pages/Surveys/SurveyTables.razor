@@ -102,11 +102,11 @@
                                         <RsDataGrid T="SurveyQuestionDto" TableName="@SurveyQuestionTableName"
                                             CanCreate="true" CanDelete="true" CanEdit="true" TDialog="typeof(SurveyQuestionDialog)"
                                             CanGroup="true" GroupExpanded="false" GroupBy="QuestionTypeName"
-                                            ApiService="@SurveyQuestionService" ColumnsToHide="new []{1}"></RsDataGrid>
+                                            ApiService="@SurveyQuestionService" ColumnsToHide="new []{1,2}"></RsDataGrid>
                                     </MudPaper>
                                 </MudItem>
                                 <MudItem xs="12">
-                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
+                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; overflow-y: auto">
                                         <RsDataGrid T="QuestionChoiceDto" TableName="@QuestionChoiceTableName"
                                             TEditDialog="typeof(EditQuestionChoiceDialog)" TDialog="typeof(NewQuestionChoiceDialog)"
                                             CanCreate="true" CanDelete="true" CanEdit="true"

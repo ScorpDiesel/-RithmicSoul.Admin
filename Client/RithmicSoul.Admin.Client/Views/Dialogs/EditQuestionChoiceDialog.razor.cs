@@ -39,8 +39,8 @@ public partial class EditQuestionChoiceDialog : ComponentBase
         DtoList.AddRange(dtos.ToList());
         _oldDtoList.AddRange(dtos.ToList());
         _surveyQuestions = await SurveyQuestionService?.GetAllAsync();
+        _questionTypeName = _surveyQuestions.FirstOrDefault(q => q.QuestionText == Model.QuestionText)?.QuestionTypeName;
         _surveyQuestions = _surveyQuestions.Where(s => _chooseableList.Contains(s.QuestionTypeName));
-        _questionTypeName = _surveyQuestions?.FirstOrDefault()?.QuestionTypeName;
 
         ToggleLoadingScreen(false);
     }
