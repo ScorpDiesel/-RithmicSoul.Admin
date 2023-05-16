@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
 using MudBlazor.Services;
 using NetCore.AutoRegisterDi;
+using RithmicSoul.Admin.Client.Configuration;
 using RithmicSoul.Admin.Client.Logger;
 using RithmicSoul.Admin.Core.Interfaces;
 using RithmicSoul.Admin.Infrastructure.Logging;
@@ -18,8 +19,8 @@ namespace RithmicSoul.Admin.Client.Client
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
+            builder.Services.Configure<AppSettings>(builder.Configuration.GetSection(nameof(AppSettings)));
             builder.Services.AddScoped<IJsInteropLogger, JsInteropLogger>();
-
             builder.Services.AddScoped(typeof(ConsoleRedirectLogger<>));
             //builder.Services.AddSingleton(_ => new PeriodicTimerService());
             builder.Services.AddHttpClientInterceptor();

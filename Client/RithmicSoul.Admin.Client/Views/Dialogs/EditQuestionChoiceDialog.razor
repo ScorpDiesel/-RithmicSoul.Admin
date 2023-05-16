@@ -30,7 +30,7 @@
                 <MudText>Add Question Choices</MudText>
                 <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.AddCircle" OnClick="@AddQuestionChoice" />
                 </MudStack>
-                @foreach (var choice in _dtoList.Select((value, index) => new { index, value }))
+                @foreach (var choice in DtoList.Select((value, index) => new { index, value }))
                 {
                     var value = choice.value;
                     var index = choice.index;

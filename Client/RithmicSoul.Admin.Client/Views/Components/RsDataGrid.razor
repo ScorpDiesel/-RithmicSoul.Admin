@@ -1,0 +1,62 @@
+﻿@using RithmicSoul.Models.Survey.Dtos
+@using RithmicSoul.Admin.Client.Views.Dialogs
+@using RithmicSoul.Admin.Core.Enums
+@typeparam T 
+
+<MudDataGrid Items="@_items" T="T" Hover="true" FixedHeader="true" Style="height: 560px;"
+     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
+     RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
+     Groupable="@CanGroup" GroupExpanded="@GroupExpanded" MultiSelection="@MultiSelection"
+             Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="thisDataGrid">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Table: @TableName</MudText>
+        <MudSpacer />
+        @if (CanGroup)
+        {
+            <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldMore" Class="mt-0" OnClick="@thisDataGrid.ExpandAllGroups"/>
+            <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldLess" Class="mt-0" OnClick="@thisDataGrid.CollapseAllGroups"/>
+        }
+        @if (CanCreate)
+        {
+            <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await CreateAsync(); })"/>
+        }
+        <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(); })" />
+    </ToolBarContent>
+    <Columns>
+        @if (MultiSelection)
+        {
+            <SelectColumn T="T" ShowInFooter="false"/>
+        }
+        @if (_items is null)
+        {
+            return;
+        }
+        @foreach (var property in _properties.Select((value, index) => new { index, value }))
+        {
+            var value = property.value;
+            var thisIndex = property.index + 1;
+            if (ColumnsToHide is not null && ColumnsToHide.Contains(thisIndex))
+            {
+                continue;
+            }
+            @CreateColumn(value)
+            ;
+        }
+        <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
+            <CellTemplate>
+                @if (CanEdit)
+                {
+                    <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditAsync(context.Item); })"/>
+                }
+                @if (CanDelete)
+                {
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item); }"/>
+                }
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+
+    <PagerContent>
+        <MudDataGridPager T="T" DisableRowsPerPage="true" />
+    </PagerContent>
+</MudDataGrid>

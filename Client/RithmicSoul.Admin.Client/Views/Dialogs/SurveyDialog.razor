@@ -5,8 +5,9 @@
 <MudDialog>
     <DialogContent>
         <MudForm>
-            <MudSelect T="int?" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="@nameof(_dto.SurveyTypeId)" AnchorOrigin="Origin.BottomCenter"
-                       @bind-Value="@SelectedSurveyTypeId">
+            <MudSelect T="int?" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="@nameof(Model.SurveyTypeName)" AnchorOrigin="Origin.BottomCenter"
+                       @bind-Value="@Model.SurveyTypeId">
+               @* <MudSelectItem T="int?" Value="0" Disabled="true">Select...</MudSelectItem>*@
                 @if (_surveyTypes == null)
                 {
                     return;
@@ -16,8 +17,8 @@
                     <MudSelectItem T="int?" Value="@st.SurveyTypeId">@st.SurveyTypeName</MudSelectItem>
                 }
             </MudSelect>
-            <MudTextField T="string" Label="@nameof(_dto.SurveyName)" Class="mb-8" @bind-Value="@_dto.SurveyName" Required></MudTextField>
-            <MudTextField T="string" Label="@nameof(_dto.SurveyDescription)" Class="mb-8" @bind-Value="@_dto.SurveyDescription" Required></MudTextField>
+            <MudTextField T="string" Label="@nameof(Model.SurveyName)" Class="mb-8" @bind-Value="@Model.SurveyName" Required></MudTextField>
+            <MudTextField T="string" Label="@nameof(Model.SurveyDescription)" Class="mb-8" @bind-Value="@Model.SurveyDescription" Required></MudTextField>
         </MudForm>
     </DialogContent>
     <DialogActions>
@@ -29,24 +30,28 @@
 @code {
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
-    public int? SelectedSurveyTypeId
-    {
-        get => _dto.SurveyTypeId == 0 ? null : _dto.SurveyTypeId;
-        set => _dto.SurveyTypeId = value ?? 0;
-    }
 
-    private SurveyDto _dto = new();
-    private IEnumerable<SurveyTypeDto> _surveyTypes;
+    [Parameter]
+    public SurveyDto? Model { get; set; }
+
+    //public int? SelectedSurveyTypeId
+    //{
+    //    get => Model.SurveyTypeId == 0 ? null : Model.SurveyTypeId;
+    //    set => Model.SurveyTypeId = value ?? 0;
+    //}
+
+    private IEnumerable<SurveyTypeDto>? _surveyTypes;
 
     protected override async Task OnInitializedAsync()
     {
         _surveyTypes = await SurveyTypeService.GetAllAsync();
+        Model ??= new SurveyDto();
     }
 
     void Save()
     {
-        Console.WriteLine(_dto.SurveyTypeId);
-        MudDialog.Close(DialogResult.Ok(_dto));
+        Console.WriteLine(Model.SurveyTypeId);
+        MudDialog.Close(DialogResult.Ok(Model));
     }
 
     void Cancel() => MudDialog.Cancel();

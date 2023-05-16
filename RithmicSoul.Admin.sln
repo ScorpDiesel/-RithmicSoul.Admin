@@ -7,9 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{53CA61
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RithmicSoul.Admin.Client", "Client\RithmicSoul.Admin.Client\RithmicSoul.Admin.Client.csproj", "{875C51AF-D755-41FC-B6AB-EA2EAAF877C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RithmicSoul.Admin.Core", "RithmicSoul.Admin.Core\RithmicSoul.Admin.Core.csproj", "{76A4B9DB-4E6B-4AC3-A52C-6645A067B297}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RithmicSoul.Admin.Core", "RithmicSoul.Admin.Core\RithmicSoul.Admin.Core.csproj", "{76A4B9DB-4E6B-4AC3-A52C-6645A067B297}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RithmicSoul.Admin.Infrastructure", "RithmicSoul.Admin.Infrastructure\RithmicSoul.Admin.Infrastructure.csproj", "{DD5FD52F-4AB2-482E-AAE8-E2B9033A5620}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RithmicSoul.Admin.Infrastructure", "RithmicSoul.Admin.Infrastructure\RithmicSoul.Admin.Infrastructure.csproj", "{DD5FD52F-4AB2-482E-AAE8-E2B9033A5620}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

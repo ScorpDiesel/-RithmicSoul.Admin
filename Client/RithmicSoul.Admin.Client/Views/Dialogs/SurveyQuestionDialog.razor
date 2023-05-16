@@ -2,21 +2,23 @@
 @using RithmicSoulDatabaseLibrary.Interfaces
 @inject IService<QuestionTypeDto> QuestionTypeService
 
-<MudDialog>
+<MudDialog Style="Width: 400px;">
     <DialogContent>
         <MudForm>
-            <MudSelect T="int?" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="@nameof(_dto.QuestionTypeName)" AnchorOrigin="Origin.BottomCenter"
-                       @bind-Value="@SelectedQuestionTypeId">
+            <MudSelect T="int" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="@nameof(Model.QuestionTypeName)" AnchorOrigin="Origin.BottomCenter"
+                @bind-Value="@Model.QuestionTypeId" Style="mb-5">
+                <MudSelectItem T="int" Value="0" Disabled="true">Select...</MudSelectItem>
                 @if (_questionTypes == null)
                 {
                     return;
                 }
                 @foreach (var sq in _questionTypes)
                 {
-                    <MudSelectItem T="int?" Value="@sq.QuestionTypeId">@sq.QuestionTypeName</MudSelectItem>
+                    <MudSelectItem T="int" Value="@sq.QuestionTypeId">@sq.QuestionTypeName</MudSelectItem>
                 }
             </MudSelect>
-            <MudTextField T="string" Label="QuestionText" Class="mb-8" @bind-Value="@_dto.QuestionText" Required></MudTextField>
+            <MudTextField T="string" Label="QuestionText" Class="mb-8" @bind-Value="@Model.QuestionText" FullWidth="true" 
+                Lines="3" Required></MudTextField>
         </MudForm>
     </DialogContent>
     <DialogActions>
@@ -28,23 +30,21 @@
 @code {
     [CascadingParameter] 
     MudDialogInstance MudDialog { get; set; }
-    public int? SelectedQuestionTypeId
-    {
-        get => _dto.QuestionTypeId == 0 ? null : _dto.QuestionTypeId;
-        set => _dto.QuestionTypeId = value ?? 0;
-    }
 
-    private SurveyQuestionDto _dto = new();
+    [Parameter]
+    public SurveyQuestionDto? Model { get; set; }
+    
     private IEnumerable<QuestionTypeDto> _questionTypes;
 
     protected override async Task OnInitializedAsync()
     {
+        Model ??= new SurveyQuestionDto();
         _questionTypes = await QuestionTypeService.GetAllAsync();
     }
 
     void Save()
     {
-        MudDialog.Close(DialogResult.Ok(_dto));
+        MudDialog.Close(DialogResult.Ok(Model));
     }
 
     void Cancel() => MudDialog.Cancel();

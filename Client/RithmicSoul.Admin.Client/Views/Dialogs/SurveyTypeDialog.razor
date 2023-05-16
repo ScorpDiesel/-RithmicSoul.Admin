@@ -3,8 +3,7 @@
 <MudDialog>
     <DialogContent>
         <MudForm>
-            <MudTextField T="int" Label="@nameof(_dto.SurveyQuestionId)" Class="mb-8" @bind-Value="@_dto.SurveyQuestionId" Required></MudTextField>
-            <MudTextField T="int" Label="@nameof(_dto.SurveyId)" Class="mb-8" @bind-Value="@_dto.SurveyId" Required></MudTextField>
+            <MudTextField T="string" Label="@nameof(Model.SurveyTypeName)" Class="mb-8" @bind-Value="@Model.SurveyTypeName" Required></MudTextField>
         </MudForm>
     </DialogContent>
     <DialogActions>
@@ -17,11 +16,17 @@
     [CascadingParameter] 
     MudDialogInstance MudDialog { get; set; }
 
-    private SurveyQuestionnaireDto _dto = new();
+    [Parameter]
+    public SurveyTypeDto? Model { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Model ??= new SurveyTypeDto();
+    }
 
     void Save()
     {
-        MudDialog.Close(DialogResult.Ok(_dto));
+        MudDialog.Close(DialogResult.Ok(Model));
     }
 
     void Cancel() => MudDialog.Cancel();

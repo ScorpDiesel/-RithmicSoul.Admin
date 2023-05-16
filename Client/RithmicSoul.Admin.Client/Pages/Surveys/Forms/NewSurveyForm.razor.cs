@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Options;
 using MudBlazor;
+using RithmicSoul.Admin.Client.Configuration;
 using RithmicSoul.Admin.Core.Interfaces;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
@@ -15,30 +17,20 @@ public partial class NewSurveyForm : ComponentBase
     protected IEnumerable<QuestionChoiceDto> _questionChoices;
     protected AuthoredSurvey Model = new();
     protected string? _selectedQuestionTypeName;
+    private AppSettings _appSettings;
 
-    [Inject]
-    NavigationManager Navigation { get; set; }
-
-    [Inject]
-    IService<SurveyTypeDto> SurveyTypeService { get; set; }
-
-    [Inject]
-    IService<SurveyQuestionDto> SurveyQuestionService { get; set; }
-
-    [Inject]
-    IService<QuestionTypeDto> QuestionTypeService { get; set; }
-
-    [Inject]
-    IService<QuestionChoiceDto> QuestionChoiceService { get; set; }
-
-    [Inject]
-    IAuthoredSurveyService AuthoredSurveyService { get; set; }
-
-    [Inject]
-    ISnackbar Snackbar { get; set; }
+    [Inject] NavigationManager Navigation { get; set; }
+    [Inject] IService<SurveyTypeDto> SurveyTypeService { get; set; }
+    [Inject] IService<SurveyQuestionDto> SurveyQuestionService { get; set; }
+    [Inject] IService<QuestionTypeDto> QuestionTypeService { get; set; }
+    [Inject] IService<QuestionChoiceDto> QuestionChoiceService { get; set; }
+    [Inject] IAuthoredSurveyService AuthoredSurveyService { get; set; }
+    [Inject] ISnackbar Snackbar { get; set; }
+    [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        _appSettings = AppSettingsOptions.Value;
         _surveyTypes = await SurveyTypeService.GetAllAsync();
         _surveyQuestions = await SurveyQuestionService.GetAllAsync();
         _questionTypes = await QuestionTypeService.GetAllAsync();
@@ -53,7 +45,7 @@ public partial class NewSurveyForm : ComponentBase
 
     private void AddQuestion()
     {
-        if (Model.SurveyQuestions.Count < 10) Model.SurveyQuestions.Add(new int());
+        if (Model.SurveyQuestions.Count < _appSettings.SurveyQuestionsMaxCount) Model.SurveyQuestions.Add(new int());
     }
 
     private void QuestionChanged(int id)
@@ -65,7 +57,7 @@ public partial class NewSurveyForm : ComponentBase
 
     private void RemoveQuestion(int index)
     {
-        if (Model.SurveyQuestions.Count > 0) Model.SurveyQuestions.RemoveAt(index);
+        if (Model.SurveyQuestions.Count > _appSettings.SurveyQuestionsMinCount) Model.SurveyQuestions.RemoveAt(index);
     }
 
 
@@ -74,17 +66,7 @@ public partial class NewSurveyForm : ComponentBase
     protected async Task Save()
     {
         var response = await AuthoredSurveyService.SaveAsync(Model);
-        string message;
-
-        if (response)
-        {
-            message = "The new authored survey was created.";
-        }
-        else
-        {
-            message = "There was an error creating the new authored survey.";
-        }
-
+        var message = response ? _appSettings.AuthoredSurveyCreationSuccessMessage : _appSettings.AuthoredSurveyCreationFailureMessage;
         ShowSnackBar(response, message);
         //Navigation.NavigateTo("/surveys");
     }

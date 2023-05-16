@@ -10,17 +10,19 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.5" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
     <PackageReference Include="MudBlazor" Version="6.2.3" />
     <PackageReference Include="NetCore.AutoRegisterDi" Version="2.1.0" />
     <PackageReference Include="RithmicSoulSharedLibrary" Version="2023.5.10.1" />
     <PackageReference Include="Serialize.Linq" Version="2.0.0" />
-    <PackageReference Include="Toolbelt.Blazor.LoadingBar" Version="13.1.2" />
+    <PackageReference Include="Toolbelt.Blazor.LoadingBar" Version="13.2.0" />
     <PackageReference Include="Blazored.FluentValidation" Version="2.1.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Logger\" />
+    <Folder Include="Configuration\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Utilities\" />
   </ItemGroup>
