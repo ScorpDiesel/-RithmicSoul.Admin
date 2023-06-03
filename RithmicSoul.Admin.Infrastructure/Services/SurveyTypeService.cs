@@ -18,13 +18,16 @@ public class SurveyTypeService : IService<SurveyTypeDto>
 
     public async Task<bool> InsertAsync(SurveyTypeDto dto)
     {
-        throw new NotImplementedException();
+        var response = await _httpClient.PostAsJsonAsync("SurveyType/Insert", dto);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<object> InsertForIdAsync(SurveyTypeDto dto)
     {
         var response = await _httpClient.PostAsJsonAsync("SurveyType/Insert", dto);
-        return response.IsSuccessStatusCode;
+        response = response.EnsureSuccessStatusCode();
+        var responseObj = response.Content.ReadAsStringAsync();
+        return responseObj.Result;
     }
 
     public async Task<bool> BulkInsertAsync(List<SurveyTypeDto> dtos)

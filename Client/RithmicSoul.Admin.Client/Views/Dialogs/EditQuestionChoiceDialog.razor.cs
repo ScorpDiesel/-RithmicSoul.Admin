@@ -3,7 +3,9 @@ using Microsoft.Extensions.Options;
 using MudBlazor;
 using RithmicSoul.Admin.Client.Configuration;
 using RithmicSoul.Models.Survey.Dtos;
+using RithmicSoul.Models.Survey.Models;
 using RithmicSoulDatabaseLibrary.Interfaces;
+using RithmicSoulDatabaseLibrary.Utilities;
 
 namespace RithmicSoul.Admin.Client.Views.Dialogs;
 
@@ -18,7 +20,7 @@ public partial class EditQuestionChoiceDialog : ComponentBase
     
     private string? _questionTypeName;
     private readonly List<string> _chooseableList = new();
-
+    private string QuestionChoiceTableName = EntityUtility.GetTableName<QuestionChoice>();
     protected readonly List<QuestionChoiceDto> DtoList = new();
     private readonly List<QuestionChoiceDto> _oldDtoList = new();
     private IEnumerable<SurveyQuestionDto>? _surveyQuestions;
@@ -30,19 +32,21 @@ public partial class EditQuestionChoiceDialog : ComponentBase
     protected override async Task OnInitializedAsync()
     {
         ToggleLoadingScreen(true);
+        await SetFieldsAsync();
+        ToggleLoadingScreen(false);
+    }
 
+    private async Task SetFieldsAsync()
+    {
         _appSettings = AppSettingsOptions.Value;
-        _chooseableList.Add(_appSettings.QuestionChoicesChooseableMultipleChoice);
-        _chooseableList.Add(_appSettings.QuestionChoicesDeleteCheckbox);
-        _chooseableList.Add(_appSettings.QuestionChoicesChooseableDemographic);
+        _chooseableList.Add(_appSettings.QuestionChoicesMultipleChoice);
+        _chooseableList.Add(_appSettings.QuestionChoicesCheckbox);
         var dtos = await QuestionChoiceService?.GetAsync(q => q.QuestionId == Model.QuestionId);
         DtoList.AddRange(dtos.ToList());
         _oldDtoList.AddRange(dtos.ToList());
         _surveyQuestions = await SurveyQuestionService?.GetAllAsync();
         _questionTypeName = _surveyQuestions.FirstOrDefault(q => q.QuestionText == Model.QuestionText)?.QuestionTypeName;
         _surveyQuestions = _surveyQuestions.Where(s => _chooseableList.Contains(s.QuestionTypeName));
-
-        ToggleLoadingScreen(false);
     }
 
     private void ToggleLoadingScreen(bool hide)
@@ -76,21 +80,33 @@ public partial class EditQuestionChoiceDialog : ComponentBase
     private async Task SaveAsync()
     {
         var isDeleteSuccessful = await QuestionChoiceService?.BulkDeleteAsync(_oldDtoList);
-        if (!isDeleteSuccessful) ShowSnackBar();
+        if (!isDeleteSuccessful) ShowSnackBar(isDeleteSuccessful);
 
         foreach (var choice in DtoList)
         {
             choice.QuestionId = Model.QuestionId;
         }
-        
-        MudDialog?.Close(DialogResult.Ok(DtoList));
+
+        var isBulkInsertSuccessful = await QuestionChoiceService.BulkInsertAsync(DtoList);
+        ShowSnackBar(isBulkInsertSuccessful);
+        MudDialog?.Close(DialogResult.Ok(true));
     }
 
     private void Cancel() => MudDialog?.Cancel();
 
-    private void ShowSnackBar()
+    private void ShowSnackBar(bool isSuccessful)
     {
         Snackbar?.Clear();
-        Snackbar?.Add(_appSettings.QuestionChoicesDeleteFailureMessage, Severity.Error);
+        string message;
+        if (isSuccessful)
+        {
+            message = string.Format(_appSettings.ItemsCreatedSuccessMessageTemplate, QuestionChoiceTableName);
+            Snackbar?.Add(message, Severity.Success);
+        }
+        else
+        {
+            message = string.Format(_appSettings.ItemsCreatedFailureMessageTemplate, QuestionChoiceTableName);
+            Snackbar?.Add(message, Severity.Error);
+        }
     }
 }

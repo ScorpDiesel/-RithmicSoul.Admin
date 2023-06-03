@@ -18,13 +18,16 @@ public class QuestionChoiceService : IService<QuestionChoiceDto>
 
     public async Task<bool> InsertAsync(QuestionChoiceDto dto)
     {
-        throw new NotImplementedException();
+        var response = await _httpClient.PostAsJsonAsync("QuestionChoice/Insert", dto);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<object> InsertForIdAsync(QuestionChoiceDto dto)
     {
         var response = await _httpClient.PostAsJsonAsync("QuestionChoice/Insert", dto);
-        return response.IsSuccessStatusCode;
+        response = response.EnsureSuccessStatusCode();
+        var responseObj = response.Content.ReadAsStringAsync();
+        return responseObj.Result;
     }
 
     public async Task<bool> BulkInsertAsync(List<QuestionChoiceDto> dtos)

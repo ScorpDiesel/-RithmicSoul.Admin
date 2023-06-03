@@ -84,14 +84,14 @@
                             <MudGrid>
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
-                                        <RsDataGrid T="SurveyDto" TableName="@SurveyTableName"
+                                        <RsDataGrid T="SurveyDto" ReturnIdOnInsert="true"
                                             ApiService="@SurveyService" ColumnsToHide="new []{1, 2}"></RsDataGrid>
                                     </MudPaper>
                                 </MudItem>
 
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
-                                        <RsDataGrid T="SurveyQuestionnaireDto" TableName="@SurveyQuestionnaireTableName"
+                                        <RsDataGrid T="SurveyQuestionnaireDto"
                                             CanGroup="true" GroupExpanded="false" GroupBy="SurveyName"
                                             ApiService="@SurveyQuestionnaireService" ColumnsToHide="new []{1,2,3}"></RsDataGrid>
                                     </MudPaper>
@@ -99,18 +99,19 @@
 
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; overflow-y: auto">
-                                        <RsDataGrid T="SurveyQuestionDto" TableName="@SurveyQuestionTableName"
+                                        <RsDataGrid T="SurveyQuestionDto"
                                             CanCreate="true" CanDelete="true" CanEdit="true" TDialog="typeof(SurveyQuestionDialog)"
-                                            CanGroup="true" GroupExpanded="false" GroupBy="QuestionTypeName"
+                                            CanGroup="true" GroupExpanded="false" GroupBy="QuestionTypeName" 
                                             ApiService="@SurveyQuestionService" ColumnsToHide="new []{1,2}"></RsDataGrid>
                                     </MudPaper>
                                 </MudItem>
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; overflow-y: auto">
-                                        <RsDataGrid T="QuestionChoiceDto" TableName="@QuestionChoiceTableName"
+                                        <RsDataGrid T="QuestionChoiceDto"
                                             TEditDialog="typeof(EditQuestionChoiceDialog)" TDialog="typeof(NewQuestionChoiceDialog)"
-                                            CanCreate="true" CanDelete="true" CanEdit="true"
-                                            CanGroup="true" GroupExpanded="false" ApiService="@QuestionChoiceService" ColumnsToHide="new []{1,2}"
+                                            CanCreate="true" CanDelete="true" CanEdit="true" 
+                                            ColumnsToHide="new []{1,2}"
+                                            CanGroup="true" GroupExpanded="false" ApiService="@QuestionChoiceService"
                                             GroupBy="QuestionText" MultiSelection="true"></RsDataGrid>
                                     </MudPaper>
                                 </MudItem>
@@ -120,14 +121,14 @@
                             <MudGrid>
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
-                                        <RsDataGrid T="SurveyTypeDto" TableName="@SurveyTypeTableName"
+                                        <RsDataGrid T="SurveyTypeDto"
                                             CanCreate="true" CanDelete="true" CanEdit="true" TDialog="typeof(SurveyTypeDialog)"
                                             ApiService="@SurveyTypeService"></RsDataGrid>
                                     </MudPaper>
                                 </MudItem>
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; ">
-                                        <RsDataGrid T="QuestionTypeDto" TableName="@QuestionTypeTableName" 
+                                        <RsDataGrid T="QuestionTypeDto"
                                             CanCreate="true" CanDelete="true" CanEdit="true" TDialog="typeof(QuestionTypeDialog)"
                                             ApiService="@QuestionTypeService"></RsDataGrid>
                                     </MudPaper>

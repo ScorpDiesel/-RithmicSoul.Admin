@@ -13,12 +13,18 @@
         <MudSpacer />
         @if (CanGroup)
         {
-            <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldMore" Class="mt-0" OnClick="@thisDataGrid.ExpandAllGroups"/>
-            <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldLess" Class="mt-0" OnClick="@thisDataGrid.CollapseAllGroups"/>
+            @if (!_isExpanded)
+            {
+                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldMore" Class="mt-0" OnClick="@ExpandGroups"/>
+            }
+            else
+            {
+                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldLess" Class="mt-0" OnClick="@CollapseGroups" />
+            }
         }
         @if (CanCreate)
         {
-            <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await CreateAsync(); })"/>
+            <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await ShowNewItemDialogAsync(); })"/>
         }
         <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(); })" />
     </ToolBarContent>
@@ -46,7 +52,7 @@
             <CellTemplate>
                 @if (CanEdit)
                 {
-                    <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditAsync(context.Item); })"/>
+                    <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await ShowEditItemDialogAsync(context.Item); })"/>
                 }
                 @if (CanDelete)
                 {

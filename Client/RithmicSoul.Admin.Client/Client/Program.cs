@@ -40,7 +40,7 @@ namespace RithmicSoul.Admin.Client.Client
                 config.LoadingBarColor = "#fc8236";
             });
 
-            var registered = builder.Services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(Program)), Assembly.GetAssembly(typeof(Infrastructure.Services.QuestionTypeService)))
+            var registered = builder.Services.RegisterAssemblyPublicNonGenericClasses(typeof(Program).Assembly, typeof(Infrastructure.Services.QuestionTypeService).Assembly)
                 .Where(c => c.Name.EndsWith("Service"))
                 .AsPublicImplementedInterfaces();
 
