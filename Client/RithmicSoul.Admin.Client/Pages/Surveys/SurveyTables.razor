@@ -115,6 +115,14 @@
                                             GroupBy="QuestionText" MultiSelection="true"></RsDataGrid>
                                     </MudPaper>
                                 </MudItem>
+                                <MudItem xs="12">
+                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 650px; overflow-y: auto">
+                                        <RsDataGridWithDetailRow T="AdinkraSymbolDto" DetailRowColumns="new []{5,6}"
+                                            TEditDialog="typeof(EditQuestionChoiceDialog)" TDialog="typeof(NewQuestionChoiceDialog)"
+                                            CanCreate="true" CanDelete="true" CanEdit="true" ColumnsToHide="new []{1,5,6}" 
+                                            ApiService="@AdinkraSymbolService"></RsDataGridWithDetailRow>
+                                    </MudPaper>
+                                </MudItem>
                             </MudGrid>
                         </MudItem>
                         <MudItem xs="4">

@@ -1,16 +1,18 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Options;
 using MudBlazor;
 using RithmicSoul.Admin.Client.Configuration;
 using RithmicSoul.Admin.Client.Views.Dialogs;
 using RithmicSoulDatabaseLibrary.Interfaces;
 using RithmicSoulSharedLibrary.Extensions;
+using Winista.Mime;
 
 namespace RithmicSoul.Admin.Client.Views.Components;
 
-public partial class RsDataGrid<T> : ComponentBase where T : class
+public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
 {
     [Inject] ISnackbar? Snackbar { get; set; }
     [Inject] IDialogService? DialogService { get; set; }
@@ -29,6 +31,7 @@ public partial class RsDataGrid<T> : ComponentBase where T : class
     [Parameter] public Type TDialog { get; set; }
     [Parameter] public List<int>? FilterIds { get; set; }
     [Parameter] public string? ColumnToFilter { get; set; }
+    [Parameter] public int[]? DetailRowColumns { get; set; }
 
     private IEnumerable<PropertyInfo> _properties;
     private IEnumerable<T> _items;
@@ -93,26 +96,123 @@ public partial class RsDataGrid<T> : ComponentBase where T : class
 
     private RenderFragment CreateColumn(PropertyInfo propertyInfo)
     {
+        Dictionary<string, object> attributeDictionary = new();
+        var parameterExp = Expression.Parameter(typeof(T), propertyInfo.Name);
+        var propertyExp = Expression.Property(parameterExp, propertyInfo);
+        var convertExp = Expression.Convert(propertyExp, typeof(object));
+        var lambdaExp = Expression.Lambda<Func<T, object>>(convertExp, parameterExp);
+
+        attributeDictionary[_appSettings.RsDataGridRenderFragmentPropertyAttribute] = lambdaExp;
+        attributeDictionary[_appSettings.RsDataGridRenderFragmentTitleAttribute] = propertyInfo.Name.SplitCamelCase();
+        if (propertyInfo.Name == GroupBy)
+            attributeDictionary[_appSettings.RsDataGridRenderFragmentGroupingAttribute] = true;
+
+        return CreateRenderFragment(attributeDictionary, typeof(PropertyColumn<T, object>));
+    }
+
+    private List<RenderFragment> CreateDetailRowContent(object rowItem)
+    {
+        MimeTypes mimeTypes = new();
+        List<RenderFragment> fragments = new();
+
+        foreach (var item in rowItem.GetType().GetProperties().Select((value, index) => new { index, value }))
+        {
+            if (DetailRowColumns is not null && !DetailRowColumns.Contains(item.index + 1)) continue;
+
+            var property = item.value;
+            var contentValue = property.GetValue(rowItem);
+            MimeType mimeType;
+
+            if (contentValue is byte[] bytes)
+            {
+                mimeType = mimeTypes.GetMimeType(bytes);
+            }
+            else
+            {
+                mimeType = mimeTypes.GetMimeType((string)contentValue);
+            }
+
+            if (mimeType is null) continue;
+
+            var (attributeDictionary, htmlElement) = GetHtmlElementFromMimeType(mimeType, contentValue);
+            var fragment = CreateRenderFragment(attributeDictionary, htmlElement);
+            fragments.Add(fragment);
+        }
+
+        return fragments;
+    }
+
+    private (Dictionary<string, object> attributeDictionary, string htmlElement) GetHtmlElementFromMimeType(MimeType mimeType, object content)
+    {
+        (Dictionary<string, object> attributeDictionary, string htmlElement) elementTuple = (null, null);
+        Dictionary<string, object> attrDict = new();
+
+        switch (mimeType.PrimaryType)
+        {
+            case "image":
+                var element = "img";
+                var imageSrcBase64String = Convert.ToBase64String((byte[])content);
+                var imageSrc = $"data:{ mimeType.Name };base64,{ imageSrcBase64String }";
+                attrDict["src"] = imageSrc;
+                attrDict["width"] = "200";
+                elementTuple = (attrDict, element);
+                break;
+            case "audio":
+                element = "audio";
+                var audioSrcBase64String = Convert.ToBase64String((byte[])content);
+                var audioSrc = $"data:{ mimeType.Name };base64,{ audioSrcBase64String }";
+                attrDict["src"] = audioSrc;
+                attrDict["controls"] = "controls";
+                elementTuple = (attrDict, element);
+                break;
+            case "text":
+                break;
+        }
+
+        return elementTuple;
+    }
+
+    private RenderFragment? CreateRenderFragment(Dictionary<string, object>? attributeDictionary = null, string? htmlElement = null, string? textContent = null)
+    {
+        if (attributeDictionary is null && htmlElement is null && textContent is null) return null;
+
+        if (htmlElement is null && textContent is null) 
+            throw new ArgumentNullException($"{nameof(htmlElement)} and {nameof(textContent)} cannot both be null.");
+
+        if (htmlElement is null && attributeDictionary is not null) throw new ArgumentNullException(nameof(htmlElement));
+
         return builder =>
         {
-            // Create a parameter for the lambda expression
-            var parameterExp = Expression.Parameter(typeof(T), propertyInfo.Name);
+            var seq = 0;
+            if (htmlElement is not null) builder.OpenElement(seq, htmlElement);
 
-            // Create a property access expression for the specified property
-            var propertyExp = Expression.Property(parameterExp, propertyInfo);
+            if (attributeDictionary is not null)
+                foreach (var attribute in attributeDictionary)
+                {
+                    var name = attribute.Key;
+                    var value = attribute.Value;
+                    builder.AddAttribute(++seq, name, value);
+                }
 
-            // Because Property expects a Func<T, object>, we may need to convert the property 
-            // expression to object if the property type is a value type
-            var convertExp = Expression.Convert(propertyExp, typeof(object));
+            if (textContent is not null) builder.AddContent(++seq, textContent);
+            builder.CloseComponent();
+        };
+    }
 
-            // Create a lambda expression for the property access expression
-            var lambdaExp = Expression.Lambda<Func<T, object>>(convertExp, parameterExp);
+    private RenderFragment CreateRenderFragment(Dictionary<string, object> attributeDictionary, Type componentType) 
+    {
+        return builder =>
+        {
+            var seq = 0;
+            builder.OpenComponent(seq, componentType);
+            foreach (var attribute in attributeDictionary)
+            {
+                var name = attribute.Key;
+                var value = attribute.Value;
+                builder.AddAttribute(++seq, name, value);
+            }
 
-            builder.OpenComponent(0, typeof(PropertyColumn<T, object>));
-            builder.AddAttribute(1, _appSettings.RsDataGridRenderFragmentPropertyAttribute, lambdaExp);
-            builder.AddAttribute(2, _appSettings.RsDataGridRenderFragmentTitleAttribute, propertyInfo.Name.SplitCamelCase()); 
-            if (propertyInfo.Name == GroupBy) builder.AddAttribute(3, _appSettings.RsDataGridRenderFragmentGroupingAttribute, true);
-            builder?.CloseComponent();
+            builder.CloseComponent();
         };
     }
 

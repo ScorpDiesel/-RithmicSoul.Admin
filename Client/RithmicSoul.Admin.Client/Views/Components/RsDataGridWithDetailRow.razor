@@ -1,7 +1,4 @@
-﻿@using RithmicSoul.Models.Survey.Dtos
-@using RithmicSoul.Admin.Client.Views.Dialogs
-@using RithmicSoul.Admin.Core.Enums
-@typeparam T
+﻿@typeparam T
 
 <MudDataGrid Items="@_items" T="T" Hover="true" FixedHeader="true" Style="height: 560px;"
      EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
@@ -29,6 +26,7 @@
         <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(); })" />
     </ToolBarContent>
     <Columns>
+        <HierarchyColumn T="T" />
         @if (MultiSelection)
         {
             <SelectColumn T="T" ShowInFooter="false" />
@@ -60,6 +58,16 @@
             </CellTemplate>
         </TemplateColumn>
     </Columns>
+    <ChildRowContent>
+        @foreach (var fragment in CreateDetailRowContent(context.Item))
+        {
+            <MudCard Style="width: fit-content; padding:40px; margin-right: 10px">
+                <RsCardContent>
+                    @fragment
+                </RsCardContent>
+            </MudCard>
+        }
+    </ChildRowContent>
     <PagerContent>
         <MudDataGridPager T="T" DisableRowsPerPage="true" />
     </PagerContent>

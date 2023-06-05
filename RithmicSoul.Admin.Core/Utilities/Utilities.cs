@@ -1,8 +1,9 @@
-﻿using RithmicSoulSharedLibrary.Extensions;
+﻿using System.Runtime.InteropServices;
+using RithmicSoulSharedLibrary.Extensions;
 
-namespace RithmicSoul.Admin.Client.Utilities;
+namespace RithmicSoul.Admin.Core.Utilities;
 
-public static class ModelUtilities
+public static class Utilities
 {
     public static IList<T1>? MapToModelWithCollection<T1, T>(T model)
     {

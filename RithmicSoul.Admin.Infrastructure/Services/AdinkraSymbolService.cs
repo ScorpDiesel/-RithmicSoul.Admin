@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoulDatabaseLibrary.Interfaces;
 using Serialize.Linq.Serializers;
+using System.Globalization;
 
 namespace RithmicSoul.Admin.Infrastructure.Services;
 
@@ -72,6 +73,7 @@ public class AdinkraSymbolService : IService<AdinkraSymbolDto>
 
     public async Task<IEnumerable<AdinkraSymbolDto>> GetAllAsync()
     {
+        var textInfo = new CultureInfo("en-US", false).TextInfo;
         return await _httpClient.GetFromJsonAsync<IEnumerable<AdinkraSymbolDto>>("AdinkraSymbol/GetAll");
     }
 
