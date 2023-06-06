@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using MudBlazor;
 using RithmicSoul.Admin.Client.Configuration;
 using RithmicSoul.Admin.Client.Views.Dialogs;
+using RithmicSoul.Admin.Core.Utilities;
 using RithmicSoulDatabaseLibrary.Interfaces;
 using RithmicSoulSharedLibrary.Extensions;
 using Winista.Mime;
@@ -112,7 +113,6 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
 
     private List<RenderFragment> CreateDetailRowContent(object rowItem)
     {
-        MimeTypes mimeTypes = new();
         List<RenderFragment> fragments = new();
 
         foreach (var item in rowItem.GetType().GetProperties().Select((value, index) => new { index, value }))
@@ -121,17 +121,7 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
 
             var property = item.value;
             var contentValue = property.GetValue(rowItem);
-            MimeType mimeType;
-
-            if (contentValue is byte[] bytes)
-            {
-                mimeType = mimeTypes.GetMimeType(bytes);
-            }
-            else
-            {
-                mimeType = mimeTypes.GetMimeType((string)contentValue);
-            }
-
+            var mimeType = Utilities.GetMimeTypeString((string)contentValue);
             if (mimeType is null) continue;
 
             var (attributeDictionary, htmlElement) = GetHtmlElementFromMimeType(mimeType, contentValue);
@@ -142,25 +132,23 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
         return fragments;
     }
 
-    private (Dictionary<string, object> attributeDictionary, string htmlElement) GetHtmlElementFromMimeType(MimeType mimeType, object content)
+    private (Dictionary<string, object> attributeDictionary, string htmlElement) GetHtmlElementFromMimeType(string mimeType, object content)
     {
         (Dictionary<string, object> attributeDictionary, string htmlElement) elementTuple = (null, null);
         Dictionary<string, object> attrDict = new();
 
-        switch (mimeType.PrimaryType)
+        switch (mimeType)
         {
             case "image":
                 var element = "img";
-                var imageSrcBase64String = Convert.ToBase64String((byte[])content);
-                var imageSrc = $"data:{ mimeType.Name };base64,{ imageSrcBase64String }";
+                var imageSrc = content;
                 attrDict["src"] = imageSrc;
                 attrDict["width"] = "200";
                 elementTuple = (attrDict, element);
                 break;
             case "audio":
                 element = "audio";
-                var audioSrcBase64String = Convert.ToBase64String((byte[])content);
-                var audioSrc = $"data:{ mimeType.Name };base64,{ audioSrcBase64String }";
+                var audioSrc = content;
                 attrDict["src"] = audioSrc;
                 attrDict["controls"] = "controls";
                 elementTuple = (attrDict, element);

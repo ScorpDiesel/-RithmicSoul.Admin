@@ -1,152 +1,158 @@
 ﻿@page "/surveys"
 
 @using RithmicSoul.Models.Survey.Dtos;
-@using RithmicSoul.Admin.Core.Enums
 @using RithmicSoul.Admin.Client.Views.Dialogs
-@using RithmicSoul.Admin.Core.Dtos
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 <PageTitle>Surveys</PageTitle>
-
-<MudContainer Class="mt-16 mb-16" MaxWidth="MaxWidth.ExtraExtraLarge">
-    <MudGrid Justify="Justify.FlexStart" Spacing="1">
-        <MudItem xs="3">
-            <MudGrid>
-                <MudItem xs="10">
-                    <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;">
-                        <MudList Clickable="true">
-                            <MudListItem Text="Credit Survey" Icon="@Icons.Material.Filled.Add" OnClick="@OpenSurveyForm" />
-                            <MudListItem Text="Edit Survey" Icon="@Icons.Material.Filled.Edit" />
-                            <MudListItem Text="Delete Survey" Icon="@Icons.Material.Filled.Delete" />
-                            @*<MudDivider />
-                            <MudListItem Text="Trash" />
-                            <MudListItem Text="Spam" />*@
-                        </MudList>
-                    </MudPaper>
+@*<AuthorizeView>
+    <NotAuthorized>
+        <a href="authentication/login">Login In</a>
+    </NotAuthorized>
+    <Authorized>*@
+        <MudContainer Class="mt-16 mb-16" MaxWidth="MaxWidth.ExtraExtraLarge">
+            <MudGrid Justify="Justify.FlexStart" Spacing="1">
+                <MudItem xs="3">
+                    <MudGrid>
+                        <MudItem xs="10">
+                            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;">
+                                <MudList Clickable="true">
+                                    <MudListItem Text="Credit Survey" Icon="@Icons.Material.Filled.Add" OnClick="@OpenSurveyForm"/>
+                                    <MudListItem Text="Edit Survey" Icon="@Icons.Material.Filled.Edit"/>
+                                    <MudListItem Text="Delete Survey" Icon="@Icons.Material.Filled.Delete"/>
+                                    @*<MudDivider />
+                                    <MudListItem Text="Trash" />
+                                    <MudListItem Text="Spam" />*@
+                                </MudList>
+                            </MudPaper>
+                        </MudItem>
+                    </MudGrid>
+                    <MudGrid>
+                        <MudItem xs="10">
+                            <MudStack>
+                                <MudPaper Elevation="2" Class="pa-4 mt-8" Style="height: 600px">
+                                    <MudText Typo="Typo.h6" Class="pb-10">Console</MudText>
+                                    <MudItem Style="height: 480px;overflow-y: auto;white-space: pre-line;">
+                                        @ConsoleOutput
+                                    </MudItem>
+                                </MudPaper>
+                            </MudStack>
+                        </MudItem>
+                    </MudGrid>
                 </MudItem>
-            </MudGrid>
-            <MudGrid>
-                <MudItem xs="10">
-                    <MudStack>
-                        <MudPaper Elevation="2" Class="pa-4 mt-8" Style="height: 600px">
-                            <MudText Typo="Typo.h6" Class="pb-10">Console</MudText>
-                            <MudItem Style="height: 480px;overflow-y: auto;white-space: pre-line;">
-                            @ConsoleOutput
-                            </MudItem>
-                        </MudPaper>
-                    </MudStack>
-                </MudItem>
-            </MudGrid>
-        </MudItem>
 
-        <MudItem xs="9">
-            <MudGrid>
-                <MudItem xs="12">
+                <MudItem xs="9">
                     <MudGrid>
                         <MudItem xs="12">
-                            <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
-                                @*<MudDataGrid Items="@AuthoredSurveys" T="AuthoredSurveyDto" Hover="true" FixedHeader="true" Style="height: 560px;"
-                                             EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
-                                             RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
-                                             Groupable="true" GroupExpanded="false"
-                                             Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridAuthoredSurvey">
-                                    <ToolBarContent>
+                            <MudGrid>
+                                <MudItem xs="12">
+                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
+                                        @*<MudDataGrid Items="@AuthoredSurveys" T="AuthoredSurveyDto" Hover="true" FixedHeader="true" Style="height: 560px;"
+                                        EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
+                                        RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
+                                        Groupable="true" GroupExpanded="false"
+                                        Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="MudGridAuthoredSurvey">
+                                        <ToolBarContent>
                                         <MudText Typo="Typo.h6">Authored Surveys</MudText>
                                         <MudSpacer />
                                         <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldMore" Class="mt-0" OnClick="@MudGridAuthoredSurvey.ExpandAllGroups" />
                                         <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldLess" Class="mt-0" OnClick="@MudGridAuthoredSurvey.CollapseAllGroups" />
                                         <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await CreateAsync<SurveyDto, SurveyDialog>(); })" />
                                         <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(EntityType.Survey); })" />
-                                    </ToolBarContent>
-                                    <Columns>
+                                        </ToolBarContent>
+                                        <Columns>
                                         <PropertyColumn Property="q => q.SurveyName" IsEditable="false" Grouping="true"/>
                                         <PropertyColumn Property="q => q.SurveyTypeName" IsEditable="false" />
                                         <PropertyColumn Property="q => q.SurveyDescription" />
                                         <PropertyColumn Property="q => q.SurveyQuestionText" />
                                         <PropertyColumn Property="q => q.DateCreated" IsEditable="false" />
                                         <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
-                                            <CellTemplate>
-                                                <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
-                                                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" />
-                                            </CellTemplate>
+                                        <CellTemplate>
+                                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await EditByContextAsync(context); })" />
+                                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" />
+                                        </CellTemplate>
                                         </TemplateColumn>
-                                    </Columns>
-                                    <PagerContent>
+                                        </Columns>
+                                        <PagerContent>
                                         <MudDataGridPager T="AuthoredSurveyDto" DisableRowsPerPage="true" />
-                                    </PagerContent>
-                                </MudDataGrid>*@
-                            </MudPaper>
-                        </MudItem>
-                    </MudGrid>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudGrid>
-                        <MudItem xs="8">
-                            <MudGrid>
-                                <MudItem xs="12">
-                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
-                                        <RsDataGrid T="SurveyDto" ReturnIdOnInsert="true"
-                                            ApiService="@SurveyService" ColumnsToHide="new []{1, 2}"></RsDataGrid>
-                                    </MudPaper>
-                                </MudItem>
-
-                                <MudItem xs="12">
-                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
-                                        <RsDataGrid T="SurveyQuestionnaireDto"
-                                            CanGroup="true" GroupExpanded="false" GroupBy="SurveyName"
-                                            ApiService="@SurveyQuestionnaireService" ColumnsToHide="new []{1,2,3}"></RsDataGrid>
-                                    </MudPaper>
-                                </MudItem>
-
-                                <MudItem xs="12">
-                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; overflow-y: auto">
-                                        <RsDataGrid T="SurveyQuestionDto"
-                                            CanCreate="true" CanDelete="true" CanEdit="true" TDialog="typeof(SurveyQuestionDialog)"
-                                            CanGroup="true" GroupExpanded="false" GroupBy="QuestionTypeName" 
-                                            ApiService="@SurveyQuestionService" ColumnsToHide="new []{1,2}"></RsDataGrid>
-                                    </MudPaper>
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; overflow-y: auto">
-                                        <RsDataGrid T="QuestionChoiceDto"
-                                            TEditDialog="typeof(EditQuestionChoiceDialog)" TDialog="typeof(NewQuestionChoiceDialog)"
-                                            CanCreate="true" CanDelete="true" CanEdit="true" 
-                                            ColumnsToHide="new []{1,2}"
-                                            CanGroup="true" GroupExpanded="false" ApiService="@QuestionChoiceService"
-                                            GroupBy="QuestionText" MultiSelection="true"></RsDataGrid>
-                                    </MudPaper>
-                                </MudItem>
-                                <MudItem xs="12">
-                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 650px; overflow-y: auto">
-                                        <RsDataGridWithDetailRow T="AdinkraSymbolDto" DetailRowColumns="new []{5,6}"
-                                            TEditDialog="typeof(EditQuestionChoiceDialog)" TDialog="typeof(NewQuestionChoiceDialog)"
-                                            CanCreate="true" CanDelete="true" CanEdit="true" ColumnsToHide="new []{1,5,6}" 
-                                            ApiService="@AdinkraSymbolService"></RsDataGridWithDetailRow>
+                                        </PagerContent>
+                                        </MudDataGrid>*@
                                     </MudPaper>
                                 </MudItem>
                             </MudGrid>
                         </MudItem>
-                        <MudItem xs="4">
+                        <MudItem xs="12">
                             <MudGrid>
-                                <MudItem xs="12">
-                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
-                                        <RsDataGrid T="SurveyTypeDto"
-                                            CanCreate="true" CanDelete="true" CanEdit="true" TDialog="typeof(SurveyTypeDialog)"
-                                            ApiService="@SurveyTypeService"></RsDataGrid>
-                                    </MudPaper>
+                                <MudItem xs="8">
+                                    <MudGrid>
+                                        <MudItem xs="12">
+                                            <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
+                                                <RsDataGrid T="SurveyDto" ReturnIdOnInsert="true"
+                                                            ApiService="@SurveyService" ColumnsToHide="new[] { 1, 2 }"></RsDataGrid>
+                                            </MudPaper>
+                                        </MudItem>
+
+                                        <MudItem xs="12">
+                                            <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
+                                                <RsDataGrid T="SurveyQuestionnaireDto"
+                                                            CanGroup="true" GroupExpanded="false" GroupBy="SurveyName"
+                                                            ApiService="@SurveyQuestionnaireService" ColumnsToHide="new[] { 1, 2, 3 }"></RsDataGrid>
+                                            </MudPaper>
+                                        </MudItem>
+
+                                        <MudItem xs="12">
+                                            <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; overflow-y: auto">
+                                                <RsDataGrid T="SurveyQuestionDto"
+                                                            CanCreate="true" CanDelete="true" CanEdit="true" TDialog="typeof(SurveyQuestionDialog)"
+                                                            CanGroup="true" GroupExpanded="false" GroupBy="QuestionTypeName"
+                                                            ApiService="@SurveyQuestionService" ColumnsToHide="new[] { 1, 2 }"></RsDataGrid>
+                                            </MudPaper>
+                                        </MudItem>
+                                        <MudItem xs="12">
+                                            <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; overflow-y: auto">
+                                                <RsDataGrid T="QuestionChoiceDto"
+                                                            TEditDialog="typeof(EditQuestionChoiceDialog)" TDialog="typeof(NewQuestionChoiceDialog)"
+                                                            CanCreate="true" CanDelete="true" CanEdit="true"
+                                                            ColumnsToHide="new[] { 1, 2 }"
+                                                            CanGroup="true" GroupExpanded="false" ApiService="@QuestionChoiceService"
+                                                            GroupBy="QuestionText" MultiSelection="true"></RsDataGrid>
+                                            </MudPaper>
+                                        </MudItem>
+                                        <MudItem xs="12">
+                                            <MudPaper Elevation="2" Class="pa-4" Style="height: 650px; overflow-y: auto">
+                                                <RsDataGridWithDetailRow T="AdinkraSymbolDto" DetailRowColumns="new[] { 5, 6 }"
+                                                                         TEditDialog="typeof(EditQuestionChoiceDialog)" TDialog="typeof(NewQuestionChoiceDialog)"
+                                                                         CanCreate="true" CanDelete="true" CanEdit="true" ColumnsToHide="new[] { 1, 5, 6 }"
+                                                                         ApiService="@AdinkraSymbolService"></RsDataGridWithDetailRow>
+                                            </MudPaper>
+                                        </MudItem>
+                                    </MudGrid>
                                 </MudItem>
-                                <MudItem xs="12">
-                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; ">
-                                        <RsDataGrid T="QuestionTypeDto"
-                                            CanCreate="true" CanDelete="true" CanEdit="true" TDialog="typeof(QuestionTypeDialog)"
-                                            ApiService="@QuestionTypeService"></RsDataGrid>
-                                    </MudPaper>
+                                <MudItem xs="4">
+                                    <MudGrid>
+                                        <MudItem xs="12">
+                                            <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
+                                                <RsDataGrid T="SurveyTypeDto"
+                                                            CanCreate="true" CanDelete="true" CanEdit="true" TDialog="typeof(SurveyTypeDialog)"
+                                                            ApiService="@SurveyTypeService"></RsDataGrid>
+                                            </MudPaper>
+                                        </MudItem>
+                                        <MudItem xs="12">
+                                            <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; ">
+                                                <RsDataGrid T="QuestionTypeDto"
+                                                            CanCreate="true" CanDelete="true" CanEdit="true" TDialog="typeof(QuestionTypeDialog)"
+                                                            ApiService="@QuestionTypeService"></RsDataGrid>
+                                            </MudPaper>
+                                        </MudItem>
+                                    </MudGrid>
                                 </MudItem>
                             </MudGrid>
                         </MudItem>
                     </MudGrid>
                 </MudItem>
             </MudGrid>
-        </MudItem>
-    </MudGrid>
-</MudContainer>
-
+        </MudContainer>
+@*    </Authorized>
+</AuthorizeView>
+*@

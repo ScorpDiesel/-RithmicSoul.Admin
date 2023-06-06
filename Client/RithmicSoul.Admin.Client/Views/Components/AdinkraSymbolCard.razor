@@ -1,0 +1,23 @@
+﻿@using MudBlazor
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderActions>
+            <MudIconButton Size="Size.Large" Icon="@Icons.Material.Filled.Favorite" Color="@IconButtonColor" OnClick="@SymbolClickedAsync" />
+        </CardHeaderActions>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">@SymbolName</MudText>
+            <MudText Typo="Typo.body1">@SymbolTranslation</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <div style="text-align: center;">
+        <img src="@ImgSrc" Width="300" Style="padding:40px;" />
+    </div>
+    <MudCardContent>
+        <MudText Typo="Typo.body2" Style="margin-bottom:20px">@SymbolMeaning</MudText>
+        <hr style="margin-bottom: 20px"/>
+        <div style="text-align: center;">
+            <audio controls="controls" src="@AudioSrc" ></audio>
+        </div>
+    </MudCardContent>
+</MudCard>

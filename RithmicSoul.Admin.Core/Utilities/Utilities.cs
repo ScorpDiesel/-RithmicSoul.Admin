@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using RithmicSoulSharedLibrary.Extensions;
+﻿using RithmicSoulSharedLibrary.Extensions;
 
 namespace RithmicSoul.Admin.Core.Utilities;
 
@@ -28,12 +27,20 @@ public static class Utilities
                 mapToTypeProperty?.SetValue(mapToModel, propertyValue);
             }
 
-
-
             collection.Add(mapToModel);
         }
 
-
         return collection;
+    }
+
+    public static string? GetMimeTypeString(string dataString)
+    {
+        if (string.IsNullOrEmpty(dataString)) return null;
+        if (!dataString.Contains('/')) return null;
+
+        var s = dataString.Split("/")[0];
+        if (!s.Contains("data:")) return null;
+
+        return s.Split(":")[1];
     }
 }

@@ -53,7 +53,7 @@
                 }
                 @if (CanDelete)
                 {
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item); }" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(async () => { await DeleteAsync(context.Item); })" />
                 }
             </CellTemplate>
         </TemplateColumn>

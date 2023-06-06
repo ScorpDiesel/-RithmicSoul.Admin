@@ -19,6 +19,12 @@ namespace RithmicSoul.Admin.Client.Client
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
+            builder.Services.AddMsalAuthentication(options =>
+            {
+                options.ProviderOptions.LoginMode = "redirect";
+                options.ProviderOptions.DefaultAccessTokenScopes.Add("https://graph.microsoft.com/User.Read");
+                builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
+            });
             builder.Services.Configure<AppSettings>(builder.Configuration.GetSection(nameof(AppSettings)));
             builder.Services.AddScoped<IJsInteropLogger, JsInteropLogger>();
             builder.Services.AddScoped(typeof(ConsoleRedirectLogger<>));
