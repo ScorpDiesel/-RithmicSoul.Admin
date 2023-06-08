@@ -14,30 +14,37 @@
         <MudItem style="margin: 40px 0; display: flex; flex-direction: row;">
             <MudText Typo="Typo.h4">Please select the Adinkra symbols you like by clicking the</MudText>
             <MudIcon Style="margin-left: 10px" Size="Size.Large" Icon="@Icons.Material.Filled.Favorite" />
-        </MudItem>
-        <div style="text-align: right">
-            <MudButton StartIcon="@Icons.Material.Filled.NavigateBefore" OnClick="@PreviousPage" Disabled="@(!HasPreviousPage)">Previous</MudButton>
-            <MudButton EndIcon="@Icons.Material.Filled.NavigateNext" OnClick="@NextPage" Disabled="@(!HasNextPage)">Next</MudButton>
-        </div>
-        <MudGrid>
-
+            <MudText>@(string.Join(", ", _symbolLikes))</MudText>
+            </MudItem>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
+            <MudText Class="mr-8" Color="Color.Default" Style="font-size:.875rem;font-weight:500">PAGE @(_currentPage + 1) OF @_pageSize</MudText>
+            <div>
+                <MudButton StartIcon="@Icons.Material.Filled.NavigateBefore" OnClick="@PreviousPageAsync" Disabled="@(!HasPreviousPage)">Previous</MudButton>
+                <MudButton EndIcon="@Icons.Material.Filled.NavigateNext" OnClick="@NextPageAsync" Disabled="@(!HasNextPage)">Next</MudButton>
+            </div>
+        </MudStack>
+        <MudGrid Class="mt-8 mb-8">
             @foreach (var symbol in CurrentSymbols)
             {
-                <MudItem xs="12" sm="6" md="3" lg="2" xl="2">
-                    <AdinkraSymbolCard ImgSrc="@symbol.ImageBase64MimeTypeDataString"
-                       AudioSrc="@symbol.AudioBase64MimeTypeDataString"
-                       SymbolName="@symbol.SymbolName" SymbolMeaning="@symbol.SymbolMeaning"
-                       SymbolTranslation="@symbol.SymbolTranslation"
+                <MudItem xs="12" sm="6" md="3" lg="2" xl="2" Style="min-width:414.66px !important">
+                    <AdinkraSymbolCard Style="max-height: 560px; height: 560px"
                        SymbolId="@symbol.SymbolId"
-                       SymbolLikes="@_symbolLikes"
+                       SymbolName="@symbol.SymbolName" SymbolMeaning="@symbol.SymbolMeaning"
+                       ImgSrcUrl=@($"{_baseAddress}AdinkraSymbol/GetImageDataById/{symbol.SymbolId}/300")
+                       AudioSrcUrl=@($"{_baseAddress}AdinkraSymbol/GetAudioDataById/{symbol.SymbolId}")
+                       SymbolTranslation="@symbol.SymbolTranslation"
+                       IsSelected="@(_symbolLikes.Contains(symbol.SymbolId))"
                        OnSymbolClicked="@(isSelected => TallySymbolLikes(isSelected, symbol.SymbolId))" />
                 </MudItem>
             }
         </MudGrid>
-        <div style="text-align: right">
-            <MudButton StartIcon="@Icons.Material.Filled.NavigateBefore" OnClick="@PreviousPage" Disabled="@(!HasPreviousPage)">Previous</MudButton>
-            <MudButton EndIcon="@Icons.Material.Filled.NavigateNext" OnClick="@NextPage" Disabled="@(!HasNextPage)">Next</MudButton>
-        </div>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
+            <MudText Class="mr-8" Color="Color.Default" Style="font-size:.875rem;font-weight:500">PAGE @(_currentPage + 1) OF @_pageSize</MudText>
+            <div>
+                <MudButton StartIcon="@Icons.Material.Filled.NavigateBefore" OnClick="@PreviousPageAsync" Disabled="@(!HasPreviousPage)">Previous</MudButton>
+                <MudButton EndIcon="@Icons.Material.Filled.NavigateNext" OnClick="@NextPageAsync" Disabled="@(!HasNextPage)">Next</MudButton>
+            </div>
+        </MudStack>
     }
 </MudContainer>
 

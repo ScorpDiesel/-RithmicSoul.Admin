@@ -1,23 +1,59 @@
 ﻿@using MudBlazor
+@using RithmicSoulSharedLibrary.Extensions
 
-<MudCard>
-    <MudCardHeader>
-        <CardHeaderActions>
-            <MudIconButton Size="Size.Large" Icon="@Icons.Material.Filled.Favorite" Color="@IconButtonColor" OnClick="@SymbolClickedAsync" />
-        </CardHeaderActions>
-        <CardHeaderContent>
-            <MudText Typo="Typo.h6">@SymbolName</MudText>
-            <MudText Typo="Typo.body1">@SymbolTranslation</MudText>
-        </CardHeaderContent>
-    </MudCardHeader>
-    <div style="text-align: center;">
-        <img src="@ImgSrc" Width="300" Style="padding:40px;" />
+<MudCard Style="@Style" @onmouseover="@CardElevationUp" @onmouseout="@CardElevationDown" Elevation="@_elevation">
+    <div style="@_loadingStyle" class="centered-container">
+        <svg class="spinner" viewBox="0 0 50 50">
+            <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+        </svg>
     </div>
-    <MudCardContent>
-        <MudText Typo="Typo.body2" Style="margin-bottom:20px">@SymbolMeaning</MudText>
-        <hr style="margin-bottom: 20px"/>
+    <div style="@_contentStyle">
+        <MudCardHeader>
+            <CardHeaderActions>
+                <MudIconButton Size="Size.Large" Icon="@Icons.Material.Filled.Favorite" Color="@IconButtonColor" OnClick="@SymbolClickedAsync"/>
+            </CardHeaderActions>
+            <CardHeaderContent>
+                @if (IsStringLengthTooLong(SymbolName, _maxNameLength))
+                {
+                    <MudTooltip Text="@SymbolName" Placement="Placement.Top">
+                        <MudText Typo="Typo.h6">@SymbolName.Truncate(_maxNameLength)</MudText>
+                    </MudTooltip>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h6">@SymbolName</MudText>
+                }
+                @if (IsStringLengthTooLong(SymbolTranslation, _maxTranslationLength))
+                {
+                    <MudTooltip Text="@SymbolTranslation" Placement="Placement.Top">
+                        <MudText Typo="Typo.body1" Style="cursor:pointer;">@SymbolTranslation.Truncate(_maxTranslationLength)</MudText>
+                    </MudTooltip>
+                }
+                else
+                {
+                    <MudText Typo="Typo.body1">@SymbolTranslation</MudText>
+                }
+            </CardHeaderContent>
+        </MudCardHeader>
         <div style="text-align: center;">
-            <audio controls="controls" src="@AudioSrc" ></audio>
+            <img src="@ImgSrcUrl" Width="300" Style="padding:40px;" alt="@SymbolName"
+                 @onload="@DisplayContent"/>
         </div>
-    </MudCardContent>
+        <MudCardContent>
+            @if (IsStringLengthTooLong(SymbolMeaning, _maxMeaningLength))
+            {
+                <MudTooltip Text="@SymbolMeaning" Placement="Placement.Top">
+                    <MudText Typo="Typo.body2" Class="cursor-default" Style="margin-bottom:4px">@SymbolMeaning.Truncate(_maxMeaningLength)</MudText>
+                </MudTooltip>
+            }
+            else
+            {
+                <MudText Typo="Typo.body2" Style="margin-bottom:20px">@SymbolMeaning</MudText>
+            }
+            <hr style="margin-bottom: 20px"/>
+            <div style="text-align: center;">
+                <audio controls="controls" src=""></audio>
+            </div>
+        </MudCardContent>
+    </div>
 </MudCard>

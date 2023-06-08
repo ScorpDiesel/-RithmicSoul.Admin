@@ -5,7 +5,7 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar>
+    <MudAppBar Class="@_visibility">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         Rithmic Soul Site Administration
         <MudSpacer />
@@ -17,7 +17,9 @@
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
             <Error>
-                @Body
+                <CascadingValue Value="HideMenus">
+                    @Body
+                </CascadingValue>
             </Error>
         </MudContainer>
     </MudMainContent>
@@ -25,10 +27,18 @@
 @code {
     bool _drawerOpen = true;
     private MudTheme _theme = new();
-    private bool _isDarkMode = false;
+    private bool _isDarkMode;
+    private string _visibility = "";
+    EventCallback HideMenus => EventCallback.Factory.Create(this, HideDrawerAndAppBar);
 
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    void HideDrawerAndAppBar()
+    {
+        _visibility = "invisible";
+        _drawerOpen = false;
     }
 }
