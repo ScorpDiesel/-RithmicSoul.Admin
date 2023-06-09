@@ -5,22 +5,13 @@ using RithmicSoul.Admin.Client.Pages.Surveys;
 
 namespace RithmicSoul.Admin.Client.Views.Components;
 
-public partial class AdinkraSymbolCard : ComponentBase
+public partial class AdinkraSymbolCardSmall : ComponentBase
 {
     [Parameter] public int SymbolId { get; set; }
-    [Parameter] public string SymbolName { get; set; }
-    [Parameter] public string SymbolTranslation { get; set; }
-    [Parameter] public string SymbolMeaning { get; set; }
     [Parameter] public string ImgSrcUrl { get; set; }
     [Parameter] public string AudioSrcUrl { get; set; }
     [Parameter] public string Style { get; set; }
-    [Parameter] public EventCallback<bool> OnSymbolClicked { get; set; }
-    [Parameter] public bool IsSelected { get; set; }
-    [Parameter] public AdinkraSurvey Parent { get; set; }
-
-    private int _maxMeaningLength = 50;
-    private int _maxTranslationLength = 35;
-    private int _maxNameLength = 25;
+    
     private int _elevation = 1;
     private bool _isLoaded;
     private string _contentStyle;
@@ -29,7 +20,6 @@ public partial class AdinkraSymbolCard : ComponentBase
     protected override void OnInitialized()
     {
         _isLoaded = true;
-        Parent.NewPage += HideContent;
         HideContent(null, null);
     }
 
@@ -38,17 +28,6 @@ public partial class AdinkraSymbolCard : ComponentBase
         if (_isLoaded) return;
         HideContent(null, null);
     }
-
-    public async Task SymbolClickedAsync()
-    {
-        DisplayContent(null);
-        IsSelected = !IsSelected;
-        await OnSymbolClicked.InvokeAsync(IsSelected);
-    }
-
-    private Color IconButtonColor => IsSelected ? Color.Error : Color.Default;
-
-    private bool IsStringLengthTooLong(string str, int maxLength) => str.Length > maxLength;
 
     private void CardElevationUp() => _elevation = 7;
 
@@ -66,10 +45,4 @@ public partial class AdinkraSymbolCard : ComponentBase
         _contentStyle = "display: none;";
         _loadingStyle = "";
     }
-
-    public void Dispose()
-    {
-        Parent.NewPage -= HideContent;
-    }
-
 }

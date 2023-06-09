@@ -15,6 +15,7 @@ namespace RithmicSoul.Admin.Client.Views.Components;
 
 public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
 {
+    [Inject] private HttpClient _httpClient { get; set; }
     [Inject] ISnackbar? Snackbar { get; set; }
     [Inject] IDialogService? DialogService { get; set; }
     [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
@@ -42,6 +43,7 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
     private DialogParameters _dialogParameters;
     private bool _isExpanded;
     protected string TableName;
+    private string? _baseAddress;
 
     protected override async Task OnInitializedAsync()
     {
@@ -52,6 +54,7 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
     private void SetFields()
     {
         _appSettings = AppSettingsOptions.Value;
+        _baseAddress = _httpClient.BaseAddress?.ToString();
         TableName = typeof(T).Name.Replace("Dto", string.Empty).SplitCamelCase();
         _dialogParameters = new DialogParameters
         {
@@ -111,7 +114,7 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
         return CreateRenderFragment(attributeDictionary, typeof(PropertyColumn<T, object>));
     }
 
-    private List<RenderFragment> CreateDetailRowContent(object rowItem)
+    private List<RenderFragment> CreateDetailRowContentFromColumn(object rowItem)
     {
         List<RenderFragment> fragments = new();
 
@@ -132,12 +135,42 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
         return fragments;
     }
 
+    private List<RenderFragment> CreateDetailRowContentFromColumn(string elementType, string columnName, object rowItem, string? contentUrlTemplate = null)
+    {
+        List<RenderFragment> fragments = new();
+        var columnValue = GetColumnValueByColumnName(rowItem, columnName) ?? string.Empty;
+        if (!string.IsNullOrEmpty(contentUrlTemplate)) columnValue = string.Format($"{_baseAddress}{contentUrlTemplate}", columnValue);
+
+        var (attributeDictionary, htmlElement) = GetHtmlElementFromMimeType(elementType, columnValue);
+        var fragment = CreateRenderFragment(attributeDictionary, htmlElement);
+        fragments.Add(fragment);
+
+        return fragments;
+    }
+
+    private object? GetColumnValueByColumnName(object rowItem, string columnName)
+    {
+        var property = rowItem.GetType()
+            .GetProperty(columnName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+        return property?.GetValue(rowItem, null);
+    }
+
+    private List<RenderFragment> CreateDetailRowContent(string elementType, string content)
+    {
+        List<RenderFragment> fragments = new();
+        var (attributeDictionary, htmlElement) = GetHtmlElementFromMimeType(elementType, content);
+        var fragment = CreateRenderFragment(attributeDictionary, htmlElement);
+        fragments.Add(fragment);
+
+        return fragments;
+    }
+
     private (Dictionary<string, object> attributeDictionary, string htmlElement) GetHtmlElementFromMimeType(string mimeType, object content)
     {
         (Dictionary<string, object> attributeDictionary, string htmlElement) elementTuple = (null, null);
         Dictionary<string, object> attrDict = new();
 
-        switch (mimeType)
+        switch (mimeType.ToLower())
         {
             case "image":
                 var element = "img";

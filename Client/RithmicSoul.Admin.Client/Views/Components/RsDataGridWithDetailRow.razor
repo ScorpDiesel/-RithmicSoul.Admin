@@ -59,13 +59,12 @@
         </TemplateColumn>
     </Columns>
     <ChildRowContent>
-        @foreach (var fragment in CreateDetailRowContent(context.Item))
-        {
-            <MudCard Style="width: fit-content; padding:40px; margin-right: 10px">
-                <RsCardContent>
-                    @fragment
-                </RsCardContent>
-            </MudCard>
+        @{
+            var value = GetColumnValueByColumnName(context.Item, "SymbolId");
+            var symbolId = Convert.ToInt32(value);
+            <AdinkraSymbolCardSmall Style="width: 400px; height: 410px" SymbolId="@symbolId"
+                ImgSrcUrl=@($"{_baseAddress}AdinkraSymbol/GetImageDataById/{@symbolId}/200")
+                AudioSrcUrl=@($"{_baseAddress}AdinkraSymbol/GetAudioDataById/{@symbolId}")/>
         }
     </ChildRowContent>
     <PagerContent>
