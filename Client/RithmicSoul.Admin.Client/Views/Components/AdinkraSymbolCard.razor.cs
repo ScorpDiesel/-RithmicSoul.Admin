@@ -28,16 +28,15 @@ public partial class AdinkraSymbolCard : ComponentBase
 
     protected override void OnInitialized()
     {
+        _isLoaded = true;
         Parent.NewPage += HideContent;
         HideContent(null, null);
-        Console.WriteLine("initialized");
     }
 
     protected override void OnAfterRender(bool firstRender)
     {
         if (_isLoaded) return;
         HideContent(null, null);
-        Console.WriteLine("rendered");
     }
 
     public async Task SymbolClickedAsync()
@@ -80,4 +79,10 @@ public partial class AdinkraSymbolCard : ComponentBase
         _contentStyle = "display: none;";
         _loadingStyle = "";
     }
+
+    public void Dispose()
+    {
+        Parent.NewPage -= HideContent;
+    }
+
 }
