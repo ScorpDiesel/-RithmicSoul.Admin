@@ -37,6 +37,8 @@ public partial class RsDataGrid<T> : ComponentBase where T : class
     private AppSettings _appSettings;
     private bool _isExpanded;
     protected string TableName;
+    private string _contentStyle;
+    private string _loadingStyle;
 
     protected override async Task OnInitializedAsync()
     {
@@ -232,5 +234,17 @@ public partial class RsDataGrid<T> : ComponentBase where T : class
     {
         var items = await ApiService?.GetAllAsync();
         Items = items;
+    }
+
+    private void DisplayContent(EventArgs obj)
+    {
+        _contentStyle = "";
+        _loadingStyle = "display: none;";
+    }
+
+    private void HideContent(object sender, EventArgs e)
+    {
+        _contentStyle = "display: none;";
+        _loadingStyle = "";
     }
 }

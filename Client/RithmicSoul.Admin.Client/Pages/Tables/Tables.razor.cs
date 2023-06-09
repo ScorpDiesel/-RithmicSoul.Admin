@@ -1,18 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Options;
-using MudBlazor;
-using RithmicSoul.Admin.Client.Configuration;
-using RithmicSoul.Admin.Client.Views.Dialogs;
-using RithmicSoul.Admin.Core.Dtos;
-using RithmicSoul.Admin.Core.Enums;
 using RithmicSoul.Admin.Core.Interfaces;
 using RithmicSoul.Models.Survey.Dtos;
-using RithmicSoul.Models.Survey.Models;
 using RithmicSoulDatabaseLibrary.Interfaces;
 
-namespace RithmicSoul.Admin.Client.Pages.Surveys;
+namespace RithmicSoul.Admin.Client.Pages.Tables;
 
-public partial class SurveyTables : ComponentBase
+public partial class Tables : ComponentBase
 {
     [Inject] IService<QuestionTypeDto> QuestionTypeService { get; set; }
     [Inject] IService<SurveyDto> SurveyService { get; set; }
