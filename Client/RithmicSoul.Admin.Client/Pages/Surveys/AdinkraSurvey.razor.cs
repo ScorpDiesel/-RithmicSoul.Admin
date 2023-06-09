@@ -13,6 +13,8 @@ public partial class AdinkraSurvey : ComponentBase
     private IEnumerable<AdinkraSymbolDto>? CurrentSymbols => _allSymbols?.Skip(_currentPage * _pageSize).Take(_pageSize); [CascadingParameter]
     public EventCallback HideMenus { get; set; }
 
+    public event EventHandler NewPage;
+
     private int _pageSize = 10;
     private int _currentPage;
     private HashSet<int> _symbolLikes = new();
@@ -28,16 +30,18 @@ public partial class AdinkraSurvey : ComponentBase
     private bool HasPreviousPage => _currentPage > 0;
     private bool HasNextPage => (_currentPage + 1) * _pageSize < _allSymbols?.Count();
 
-    private void PreviousPageAsync()
+    private void PreviousPage()
     {
         if (!HasPreviousPage) return;
         _currentPage--;
+        NewPage.Invoke(this, EventArgs.Empty);
     }
 
-    private void NextPageAsync()
+    private void NextPage()
     {
         if (!HasNextPage) return;
         _currentPage++;
+        NewPage.Invoke(this, EventArgs.Empty);
     }
 
     public void TallySymbolLikes(bool isSelected, int symbolId)
