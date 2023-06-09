@@ -3,7 +3,7 @@
 @using RithmicSoul.Admin.Core.Enums
 @typeparam T
 
-<MudDataGrid Items="@_items" T="T" Hover="true" FixedHeader="true" Style="height: 560px;"
+<MudDataGrid Items="@Items" T="T" Hover="true" FixedHeader="true" Style="height: 560px;"
      EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
      RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
      Groupable="@CanGroup" GroupExpanded="@GroupExpanded" MultiSelection="@MultiSelection"
@@ -26,14 +26,14 @@
         {
             <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await ShowNewItemDialogAsync(); })" />
         }
-        <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await RefreshAsync(); })" />
+        <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await UpdateItemsAsync(); })" />
     </ToolBarContent>
     <Columns>
         @if (MultiSelection)
         {
             <SelectColumn T="T" ShowInFooter="false" />
         }
-        @if (_items is null)
+        @if (Items is null)
         {
             return;
         }
@@ -55,7 +55,7 @@
                 }
                 @if (CanDelete)
                 {
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="async () => { await DeleteAsync(context.Item); }" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(async () => { await DeleteAsync(context.Item); })" />
                 }
             </CellTemplate>
         </TemplateColumn>

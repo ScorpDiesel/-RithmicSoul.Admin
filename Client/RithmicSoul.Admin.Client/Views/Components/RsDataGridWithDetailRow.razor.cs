@@ -34,9 +34,9 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
     [Parameter] public List<int>? FilterIds { get; set; }
     [Parameter] public string? ColumnToFilter { get; set; }
     [Parameter] public int[]? DetailRowColumns { get; set; }
+    [Parameter] public IEnumerable<T> Items { get; set; }
 
     private IEnumerable<PropertyInfo> _properties;
-    private IEnumerable<T> _items;
     private MudDataGrid<T> thisDataGrid;
     private Dictionary<(string, int), string> RowHighlight = new();
     private AppSettings _appSettings;
@@ -67,7 +67,7 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
     {
         if (FilterIds is null)
         {
-            _items = await ApiService?.GetAllAsync();
+            //_items = await ApiService?.GetAllAsync();
         }
         else
         {
@@ -82,7 +82,7 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
                 if (FilterIds.Contains((int)value)) filteredResults?.Add(item);
             }
 
-            _items = await ApiService.GetAllAsync();
+            //_items = await ApiService.GetAllAsync();
         }
     }
 
@@ -237,53 +237,50 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
         };
     }
 
-    private async Task CreateNewItemAsync<T>(DialogResult result)
+    private async Task CreateNewItemAsync<T>(object data)
     {
-        if (!result.Canceled)
+        dynamic resultData;
+        bool isSuccessful;
+
+        if (data.IsGenericList())
         {
-            dynamic resultData;
-            bool isSuccessful;
-
-            if (result.Data.IsGenericList())
-            {
-                resultData = (List<T>)result.Data;
-                isSuccessful = await ApiService?.BulkInsertAsync(resultData);
-            }
-            else
-            {
-                resultData = (T)result.Data;
-                if (ReturnIdOnInsert)
-                {
-                    var id = await ApiService?.InsertForIdAsync(resultData);
-                    isSuccessful = id is int; //TODO: Figure out what to do with the id
-                }
-                else
-                {
-                    isSuccessful = await ApiService?.InsertAsync(resultData);
-                }
-            }
-
-            string message;
-
-            if (isSuccessful)
-            {
-                message = string.Format(_appSettings.ItemCreatedSuccessMessageTemplate, TableName);
-                await RefreshAsync();
-            }
-            else
-            {
-                message = string.Format(_appSettings.ItemCreatedFailureMessageTemplate, TableName);
-            }
-
-            ShowSnackBar(isSuccessful, message);
+            resultData = (List<T>)data;
+            isSuccessful = await ApiService?.BulkInsertAsync(resultData);
         }
+        else
+        {
+            resultData = (T)data;
+            if (ReturnIdOnInsert)
+            {
+                var id = await ApiService?.InsertForIdAsync(resultData);
+                isSuccessful = id is int; //TODO: Figure out what to do with the id
+            }
+            else
+            {
+                isSuccessful = await ApiService?.InsertAsync(resultData);
+            }
+        }
+
+        string message;
+
+        if (isSuccessful)
+        {
+            message = string.Format(_appSettings.ItemCreatedSuccessMessageTemplate, TableName);
+            await UpdateItemsAsync();
+        }
+        else
+        {
+            message = string.Format(_appSettings.ItemCreatedFailureMessageTemplate, TableName);
+        }
+
+        ShowSnackBar(isSuccessful, message);
     }
 
     public async Task ShowNewItemDialogAsync()
     {
-        var dialog = await DialogService?.ShowAsync(TDialog, $"New {TableName}", _dialogParameters)!;
+        var dialog = await DialogService?.ShowAsync(TDialog, $"New {TableName}")!;
         var result = await dialog.Result;
-        await CreateNewItemAsync<T>(result);
+        if (!result.Canceled) await CreateNewItemAsync<T>(result.Data);
     }
 
     private async Task UpdateItemAsync(T dto)
@@ -366,10 +363,9 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
         Snackbar?.Add(message, isSuccess ? Severity.Success : Severity.Error);
     }
 
-    public async Task RefreshAsync()
+    public async Task UpdateItemsAsync()
     {
         var items = await ApiService?.GetAllAsync();
-        thisDataGrid.Items = items;
-        StateHasChanged();
+        Items = items;
     }
 }

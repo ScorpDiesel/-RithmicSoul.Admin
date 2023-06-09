@@ -1,16 +1,16 @@
-﻿using System.Linq.Expressions;
-using System.Reflection;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using MudBlazor;
 using RithmicSoul.Admin.Client.Configuration;
 using RithmicSoul.Admin.Client.Views.Dialogs;
 using RithmicSoulDatabaseLibrary.Interfaces;
 using RithmicSoulSharedLibrary.Extensions;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace RithmicSoul.Admin.Client.Views.Components;
 
-public partial class RsDataGrid<T> : ComponentBase where T : class
+public class RsDataGridBase<T> : ComponentBase where T : class
 {
     [Inject] ISnackbar? Snackbar { get; set; }
     [Inject] IDialogService? DialogService { get; set; }
@@ -81,7 +81,7 @@ public partial class RsDataGrid<T> : ComponentBase where T : class
         _isExpanded = false;
     }
 
-    private RenderFragment CreateColumn(PropertyInfo propertyInfo)
+    private RenderFragment CreateColumn<T>(PropertyInfo propertyInfo)
     {
         return builder =>
         {
@@ -190,7 +190,7 @@ public partial class RsDataGrid<T> : ComponentBase where T : class
     public async Task ShowEditItemDialogAsync<T>(T dto)
     {
         SetRowHighlight(dto);
-        var dialogParameters = new DialogParameters { {"Model", dto} };
+        var dialogParameters = new DialogParameters { { "Model", dto } };
         IDialogReference? dialog;
 
         if (TEditDialog is not null)
