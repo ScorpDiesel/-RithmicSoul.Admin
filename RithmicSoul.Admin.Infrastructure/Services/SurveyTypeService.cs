@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Net.Http.Json;
 using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoulDatabaseLibrary.Interfaces;
+using RithmicSoulSharedLibrary.Extensions;
 using Serialize.Linq.Serializers;
 
 namespace RithmicSoul.Admin.Infrastructure.Services;
@@ -61,8 +62,8 @@ public class SurveyTypeService : IService<SurveyTypeDto>
 
     public async Task<bool> BulkDeleteAsync(List<SurveyTypeDto> dtos)
     {
-        //var response = await _httpClient.DeleteAsJsonAsync("v2/SurveyTypes", dtos);
-        //return response.IsSuccessStatusCode;
+        var response = await _httpClient.DeleteAsJsonAsync("v2/SurveyTypes", dtos);
+        return response.IsSuccessStatusCode;
         return false;
     }
 
@@ -92,14 +93,14 @@ public class SurveyTypeService : IService<SurveyTypeDto>
 
     public async Task<bool> DeleteAsync(Expression<Func<SurveyTypeDto, bool>> expression)
     {
-        //// Serialize the expression
-        //var serializer = new ExpressionSerializer(new JsonSerializer());
-        //var serializedExpression = serializer.SerializeText(expression);
-        //// Send the serialized expression as an HTTP request
-        //var content = new StringContent(serializedExpression);
-        //var response = await _httpClient.DeleteAsJsonAsync("v1/SurveyTypes", content);
-        //if (!response.IsSuccessStatusCode) throw new Exception("Delete failed");
-        //return response.IsSuccessStatusCode;
+        // Serialize the expression
+        var serializer = new ExpressionSerializer(new JsonSerializer());
+        var serializedExpression = serializer.SerializeText(expression);
+        // Send the serialized expression as an HTTP request
+        var content = new StringContent(serializedExpression);
+        var response = await _httpClient.DeleteAsJsonAsync("v1/SurveyTypes", content);
+        if (!response.IsSuccessStatusCode) throw new Exception("Delete failed");
+        return response.IsSuccessStatusCode;
         return false;
     }
 }
