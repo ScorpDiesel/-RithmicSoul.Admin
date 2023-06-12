@@ -85,7 +85,7 @@ public class SurveyService : IService<SurveyDto>
 
         // Send the serialized expression as an HTTP request
         var content = new StringContent(serializedExpression);
-        var response = await _httpClient.PostAsync("v1/Surveys", content);
+        var response = await _httpClient.PostAsync("v3/Surveys", content);
         if (!response.IsSuccessStatusCode) return null;
 
         return await response.Content.ReadFromJsonAsync<IEnumerable<SurveyDto>>();

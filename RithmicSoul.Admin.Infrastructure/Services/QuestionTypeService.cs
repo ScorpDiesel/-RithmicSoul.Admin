@@ -83,7 +83,7 @@ public class QuestionTypeService : IService<QuestionTypeDto>
 
         // Send the serialized expression as an HTTP request
         var content = new StringContent(serializedExpression);
-        var response = await _httpClient.PostAsync("v2/QuestionTypes", content);
+        var response = await _httpClient.PostAsync("v3/QuestionTypes", content);
         if (!response.IsSuccessStatusCode) return null;
 
         return await response.Content.ReadFromJsonAsync<IEnumerable<QuestionTypeDto>>();

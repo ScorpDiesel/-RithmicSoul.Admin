@@ -84,7 +84,7 @@ public class QuestionChoiceService : IService<QuestionChoiceDto>
 
         // Send the serialized expression as an HTTP request
         var content = new StringContent(serializedExpression);
-        var response = await _httpClient.PostAsync("v2/QuestionChoices", content);
+        var response = await _httpClient.PostAsync("v3/QuestionChoices", content);
         if (!response.IsSuccessStatusCode) return null;
 
         return await response.Content.ReadFromJsonAsync<IEnumerable<QuestionChoiceDto>>();
