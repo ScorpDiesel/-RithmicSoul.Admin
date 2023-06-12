@@ -30,8 +30,8 @@
                     <AdinkraSymbolCard Style="max-height: 560px; height: 560px"
                        SymbolId="@symbol.SymbolId"
                        SymbolName="@symbol.SymbolName" SymbolMeaning="@symbol.SymbolMeaning"
-                       ImgSrcUrl=@($"{_baseAddress}AdinkraSymbol/GetImageDataById/{symbol.SymbolId}/300")
-                       AudioSrcUrl=@($"{_baseAddress}AdinkraSymbol/GetAudioDataById/{symbol.SymbolId}")
+                       ImgSrcUrl=@($"{_baseAddress}v2/AdinkraSymbols/{symbol.SymbolId}/300")
+                       AudioSrcUrl=@($"{_baseAddress}v2/AdinkraSymbols/{symbol.SymbolId}")
                        SymbolTranslation="@symbol.SymbolTranslation"
                        IsSelected="@(_symbolLikes.Contains(symbol.SymbolId))"
                        OnSymbolClicked="@(isSelected => TallySymbolLikes(isSelected, symbol.SymbolId))"
