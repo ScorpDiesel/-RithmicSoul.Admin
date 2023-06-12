@@ -83,29 +83,47 @@ public partial class RsDataGrid<T> : ComponentBase where T : class
         _isExpanded = false;
     }
 
-    private RenderFragment CreateColumn(PropertyInfo propertyInfo)
+    protected List<RenderFragment> CreateColumn()
     {
-        return builder =>
+        var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+        var columns = new List<RenderFragment>();
+        foreach (var item in properties.Select((value, index) => new { index, value }))
         {
-            // Create a parameter for the lambda expression
-            var parameterExp = Expression.Parameter(typeof(T), propertyInfo.Name);
+            var property = item.value;
+            var thisIndex = item.index + 1;
+            if (ColumnsToHide is not null && ColumnsToHide.Contains(thisIndex)) continue;
 
-            // Create a property access expression for the specified property
-            var propertyExp = Expression.Property(parameterExp, propertyInfo);
-
-            // Because Property expects a Func<T, object>, we may need to convert the property 
-            // expression to object if the property type is a value type
+            Dictionary<string, object> attributeDictionary = new();
+            var parameterExp = Expression.Parameter(typeof(T), property.Name);
+            var propertyExp = Expression.Property(parameterExp, property);
             var convertExp = Expression.Convert(propertyExp, typeof(object));
-
-            // Create a lambda expression for the property access expression
             var lambdaExp = Expression.Lambda<Func<T, object>>(convertExp, parameterExp);
 
-            builder.OpenComponent(0, typeof(PropertyColumn<T, object>));
-            builder.AddAttribute(1, _appSettings.RsDataGridRenderFragmentPropertyAttribute, lambdaExp);
-            builder.AddAttribute(2, _appSettings.RsDataGridRenderFragmentTitleAttribute, propertyInfo.Name.SplitCamelCase());
-            if (propertyInfo.Name == GroupBy) builder.AddAttribute(3, _appSettings.RsDataGridRenderFragmentGroupingAttribute, true);
-            builder?.CloseComponent();
-        };
+            attributeDictionary[_appSettings.RsDataGridRenderFragmentPropertyAttribute] = lambdaExp;
+            attributeDictionary[_appSettings.RsDataGridRenderFragmentTitleAttribute] =
+                property.Name.SplitCamelCase();
+            if (property.Name == GroupBy)
+                attributeDictionary[_appSettings.RsDataGridRenderFragmentGroupingAttribute] = true;
+
+            columns.Add(CreateRenderFragment(attributeDictionary, typeof(PropertyColumn<T, object>)));
+        }
+        return columns;
+    }
+
+    private RenderFragment CreateColumn(PropertyInfo propertyInfo)
+    {
+        Dictionary<string, object> attributeDictionary = new();
+        var parameterExp = Expression.Parameter(typeof(T), propertyInfo.Name);
+        var propertyExp = Expression.Property(parameterExp, propertyInfo);
+        var convertExp = Expression.Convert(propertyExp, typeof(object));
+        var lambdaExp = Expression.Lambda<Func<T, object>>(convertExp, parameterExp);
+
+        attributeDictionary[_appSettings.RsDataGridRenderFragmentPropertyAttribute] = lambdaExp;
+        attributeDictionary[_appSettings.RsDataGridRenderFragmentTitleAttribute] = propertyInfo.Name.SplitCamelCase();
+        if (propertyInfo.Name == GroupBy)
+            attributeDictionary[_appSettings.RsDataGridRenderFragmentGroupingAttribute] = true;
+
+        return CreateRenderFragment(attributeDictionary, typeof(PropertyColumn<T, object>));
     }
 
     private async Task CreateNewItemAsync<T>(object data)
@@ -145,6 +163,23 @@ public partial class RsDataGrid<T> : ComponentBase where T : class
         }
 
         ShowSnackBar(isSuccessful, message);
+    }
+
+    private RenderFragment CreateRenderFragment(Dictionary<string, object> attributeDictionary, Type componentType)
+    {
+        return builder =>
+        {
+            var seq = 0;
+            builder.OpenComponent(seq, componentType);
+            foreach (var attribute in attributeDictionary)
+            {
+                var name = attribute.Key;
+                var value = attribute.Value;
+                builder.AddAttribute(++seq, name, value);
+            }
+
+            builder.CloseComponent();
+        };
     }
 
     public async Task ShowNewItemDialogAsync()
