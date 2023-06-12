@@ -100,4 +100,14 @@ public class QuestionChoiceService : IService<QuestionChoiceDto>
         var response = await _httpClient.DeleteAsJsonAsync("v2/QuestionChoices", content);
         return response.IsSuccessStatusCode;
     }
+
+    public async Task<IEnumerable<QuestionChoiceDto>> GetAllFromViewAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<QuestionChoiceDto>> GetFromViewAsync(Expression<Func<QuestionChoiceDto, bool>> expression)
+    {
+        throw new NotImplementedException();
+    }
 }
