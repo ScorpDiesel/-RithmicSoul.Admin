@@ -15,7 +15,7 @@ public partial class NewSurveyForm : ComponentBase
     protected IEnumerable<SurveyQuestionDto> _surveyQuestions;
     protected IEnumerable<QuestionTypeDto> _questionTypes;
     protected IEnumerable<QuestionChoiceDto> _questionChoices;
-    protected AuthoredSurvey Model = new();
+    protected DraftSurvey Model = new();
     protected string? _selectedQuestionTypeName;
     private AppSettings _appSettings;
 
@@ -24,7 +24,6 @@ public partial class NewSurveyForm : ComponentBase
     [Inject] IService<SurveyQuestionDto> SurveyQuestionService { get; set; }
     [Inject] IService<QuestionTypeDto> QuestionTypeService { get; set; }
     [Inject] IService<QuestionChoiceDto> QuestionChoiceService { get; set; }
-    [Inject] IAuthoredSurveyService AuthoredSurveyService { get; set; }
     [Inject] ISnackbar Snackbar { get; set; }
     [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
 
@@ -65,9 +64,8 @@ public partial class NewSurveyForm : ComponentBase
 
     protected async Task Save()
     {
-        var response = await AuthoredSurveyService.SaveAsync(Model);
-        var message = response ? _appSettings.AuthoredSurveyCreationSuccessMessage : _appSettings.AuthoredSurveyCreationFailureMessage;
-        ShowSnackBar(response, message);
-        //Navigation.NavigateTo("/surveys");
+        //var response = await AuthoredSurveyService.SaveAsync(Model);
+        //var message = response ? _appSettings.AuthoredSurveyCreationSuccessMessage : _appSettings.AuthoredSurveyCreationFailureMessage;
+        //ShowSnackBar(response, message);
     }
 }

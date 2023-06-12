@@ -14,43 +14,29 @@ namespace RithmicSoul.Admin.Client.Pages.Surveys;
 
 public partial class Surveys : ComponentBase
 {
-    [Inject] IService<QuestionTypeDto> QuestionTypeService { get; set; }
-    [Inject] IService<SurveyDto> SurveyService { get; set; }
-    [Inject] IService<SurveyQuestionDto> SurveyQuestionService { get; set; }
-    [Inject] IService<SurveyQuestionnaireDto> SurveyQuestionnaireService { get; set; }
-    [Inject] IService<SurveyTypeDto> SurveyTypeService { get; set; }
-    [Inject] IService<QuestionChoiceDto> QuestionChoiceService { get; set; }
+    [Inject] IDialogService? DialogService { get; set; }
     [Inject] IService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
-    //[Inject] IAuthoredSurveyService AuthoredSurveyService { get; set; }
+    [Inject] IService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
     [Inject] NavigationManager Navigation { get; set; }
 
-    private IEnumerable<QuestionTypeDto> _questionTypes;
-    private IEnumerable<SurveyTypeDto> _surveyTypes;
-    private IEnumerable<SurveyDto> _surveys;
-    private IEnumerable<SurveyQuestionnaireDto> _surveyQuestionnaires;
-    private IEnumerable<SurveyQuestionDto> _surveyQuestions;
-    private IEnumerable<QuestionChoiceDto> _questionChoices;
     private IEnumerable<AdinkraSymbolDto> _adinkraSymbols;
-
-    //[Inject]
-    //protected PeriodicTimerService TimerService { get; set; }
-    protected string ConsoleOutput;
+    private IEnumerable<AuthoredSurveyDto> _authoredSurveys;
 
     protected override async Task OnInitializedAsync()
     {
-        _questionTypes = await QuestionTypeService.GetAllAsync();
-        _surveyTypes = await SurveyTypeService.GetAllAsync();
-        _surveys = await SurveyService.GetAllAsync();
-        _surveyQuestionnaires = await SurveyQuestionnaireService.GetAllAsync();
-        _surveyQuestions = await SurveyQuestionService.GetAllAsync();
-        _questionChoices = await QuestionChoiceService.GetAllAsync();
-        _adinkraSymbols = await AdinkraSymbolService.GetAllAsync();
+        _authoredSurveys = await AuthoredSurveyService.GetAllAsync();
     }
 
-    protected void OpenSurveyForm()
+    private void NewSurvey() => Navigation.NavigateTo("/surveys/new");
+
+    private async Task SelectSurveyDialogAsync()
     {
-        Navigation.NavigateTo("/SurveyForm");
+        var dialog = await DialogService?.ShowAsync<SelectSurveyDialog>("Select a survey to edit")!;
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            var id = (int)result.Data;
+            Navigation.NavigateTo($"/surveys/{id}");
+        }
     }
-
-    public async Task RefreshAsync() => StateHasChanged();
 }

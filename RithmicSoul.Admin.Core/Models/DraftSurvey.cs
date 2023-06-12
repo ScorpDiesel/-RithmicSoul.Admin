@@ -2,7 +2,7 @@
 
 namespace RithmicSoul.Admin.Core.Models;
 
-public class AuthoredSurvey
+public class DraftSurvey
 {
     public int SurveyId { get; set; }
 

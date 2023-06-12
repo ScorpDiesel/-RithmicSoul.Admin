@@ -1,9 +1,8 @@
 ﻿@page "/surveys"
 
-@using RithmicSoul.Models.Survey.Dtos;
-@using RithmicSoul.Admin.Client.Views.Dialogs
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using RithmicSoul.Models.Survey.Dtos
 
 <PageTitle>Surveys</PageTitle>
 @*<AuthorizeView>
@@ -18,12 +17,9 @@
                 <MudItem xs="10">
                     <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;">
                         <MudList Clickable="true">
-                            <MudListItem Text="Credit Survey" Icon="@Icons.Material.Filled.Add" OnClick="@OpenSurveyForm" />
-                            <MudListItem Text="Edit Survey" Icon="@Icons.Material.Filled.Edit" />
+                            <MudListItem Text="Credit Survey" Icon="@Icons.Material.Filled.Add" OnClick="@NewSurvey" />
+                            <MudListItem Text="Edit Survey" Icon="@Icons.Material.Filled.Edit" OnClick="@SelectSurveyDialogAsync" />
                             <MudListItem Text="Delete Survey" Icon="@Icons.Material.Filled.Delete" />
-                            @*<MudDivider />
-                            <MudListItem Text="Trash" />
-                            <MudListItem Text="Spam" />*@
                         </MudList>
                     </MudPaper>
                 </MudItem>
@@ -34,7 +30,7 @@
                         <MudPaper Elevation="2" Class="pa-4 mt-8" Style="height: 600px">
                             <MudText Typo="Typo.h6" Class="pb-10">Console</MudText>
                             <MudItem Style="height: 480px;overflow-y: auto;white-space: pre-line;">
-                                @ConsoleOutput
+
                             </MudItem>
                         </MudPaper>
                     </MudStack>
@@ -47,8 +43,10 @@
                 <MudItem xs="12">
                     <MudGrid>
                         <MudItem xs="12">
-                            <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
-                                <!-- Authored Survey -->
+                            <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; overflow-y: auto">
+                                <RsDataGrid T="AuthoredSurveyDto"
+                                            Items="@_authoredSurveys"
+                                            ApiService="@AuthoredSurveyService"></RsDataGrid>
                             </MudPaper>
                         </MudItem>
                     </MudGrid>

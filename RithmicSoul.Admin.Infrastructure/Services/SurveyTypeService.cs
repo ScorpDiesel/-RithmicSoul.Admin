@@ -86,8 +86,8 @@ public class SurveyTypeService : IService<SurveyTypeDto>
         // Send the serialized expression as an HTTP request
         var content = new StringContent(serializedExpression);
         var response = await _httpClient.PostAsync("v2/SurveyTypes", content);
-        if (!response.IsSuccessStatusCode) throw new Exception("Failed to get response");
-        
+        if (!response.IsSuccessStatusCode) return null;
+
         return await response.Content.ReadFromJsonAsync<IEnumerable<SurveyTypeDto>>();
     }
 
@@ -99,8 +99,16 @@ public class SurveyTypeService : IService<SurveyTypeDto>
         // Send the serialized expression as an HTTP request
         var content = new StringContent(serializedExpression);
         var response = await _httpClient.DeleteAsJsonAsync("v1/SurveyTypes", content);
-        if (!response.IsSuccessStatusCode) throw new Exception("Delete failed");
         return response.IsSuccessStatusCode;
-        return false;
+    }
+
+    public async Task<IEnumerable<SurveyTypeDto>> GetAllFromViewAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<SurveyTypeDto>> GetFromViewAsync(Expression<Func<SurveyTypeDto, bool>> expression)
+    {
+        throw new NotImplementedException();
     }
 }

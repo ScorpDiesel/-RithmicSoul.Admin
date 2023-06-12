@@ -64,7 +64,6 @@ public class QuestionChoiceService : IService<QuestionChoiceDto>
     {
         var response = await _httpClient.DeleteAsJsonAsync("v2/QuestionChoices", dtos);
         return response.IsSuccessStatusCode;
-        return false;
     }
 
     public async Task<QuestionChoiceDto> GetByIdAsync(int id)
@@ -86,8 +85,8 @@ public class QuestionChoiceService : IService<QuestionChoiceDto>
         // Send the serialized expression as an HTTP request
         var content = new StringContent(serializedExpression);
         var response = await _httpClient.PostAsync("v2/QuestionChoices", content);
-        if (!response.IsSuccessStatusCode) throw new Exception("Failed to get response");
-        
+        if (!response.IsSuccessStatusCode) return null;
+
         return await response.Content.ReadFromJsonAsync<IEnumerable<QuestionChoiceDto>>();
     }
 
@@ -99,8 +98,6 @@ public class QuestionChoiceService : IService<QuestionChoiceDto>
         // Send the serialized expression as an HTTP request
         var content = new StringContent(serializedExpression);
         var response = await _httpClient.DeleteAsJsonAsync("v2/QuestionChoices", content);
-        if (!response.IsSuccessStatusCode) throw new Exception("Delete failed");
         return response.IsSuccessStatusCode;
-        return false;
     }
 }

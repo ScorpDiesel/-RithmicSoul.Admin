@@ -1,6 +1,6 @@
 ﻿namespace RithmicSoul.Admin.Core.Dtos;
 
-public class AuthoredSurveyDto
+public class DraftSurveyDto
 {
     public string SurveyName { get; set; }
 

@@ -1,0 +1,26 @@
+﻿@using RithmicSoulSharedLibrary.Extensions
+<MudDialog>
+    <DialogContent>
+        <MudSelect T="int" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="@nameof(Model.SurveyName).SplitCamelCase()" AnchorOrigin="Origin.BottomCenter"
+                   @bind-Value="@Model.SurveyId">
+            <MudSelectItem T="int" Value="0" Disabled="true">Select...</MudSelectItem>
+            @if (_surveys == null)
+            {
+                return;
+            }
+            @foreach (var st in _surveys)
+            {
+                <MudSelectItem T="int" Value="@st.SurveyId">@st.SurveyName</MudSelectItem>
+            }
+        </MudSelect>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="@SelectSurvey">Select</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    
+
+}

@@ -14,8 +14,6 @@ public partial class Tables : ComponentBase
     [Inject] IService<SurveyTypeDto> SurveyTypeService { get; set; }
     [Inject] IService<QuestionChoiceDto> QuestionChoiceService { get; set; }
     [Inject] IService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
-    //[Inject] IAuthoredSurveyService AuthoredSurveyService { get; set; }
-    [Inject] NavigationManager Navigation { get; set; }
 
     private IEnumerable<QuestionTypeDto> _questionTypes;
     private IEnumerable<SurveyTypeDto> _surveyTypes;
@@ -24,11 +22,7 @@ public partial class Tables : ComponentBase
     private IEnumerable<SurveyQuestionDto> _surveyQuestions;
     private IEnumerable<QuestionChoiceDto> _questionChoices;
     private IEnumerable<AdinkraSymbolDto> _adinkraSymbols;
-
-    //[Inject]
-    //protected PeriodicTimerService TimerService { get; set; }
-    protected string ConsoleOutput;
-
+    
     protected override async Task OnInitializedAsync()
     {
         _questionTypes = await QuestionTypeService.GetAllAsync();
@@ -39,11 +33,4 @@ public partial class Tables : ComponentBase
         _questionChoices = await QuestionChoiceService.GetAllAsync();
         _adinkraSymbols = await AdinkraSymbolService.GetAllAsync();
     }
-
-    protected void OpenSurveyForm()
-    {
-        Navigation.NavigateTo("/SurveyForm");
-    }
-
-    public async Task RefreshAsync() => StateHasChanged();
 }
