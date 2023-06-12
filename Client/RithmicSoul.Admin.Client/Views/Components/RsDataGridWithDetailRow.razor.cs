@@ -98,6 +98,29 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
         _isExpanded = false;
     }
 
+    protected List<RenderFragment> CreateColumn()
+    {
+        var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+        var columns = new List<RenderFragment>();
+        foreach (var property in properties)
+        {
+            Dictionary<string, object> attributeDictionary = new();
+            var parameterExp = Expression.Parameter(typeof(T), property.Name);
+            var propertyExp = Expression.Property(parameterExp, property);
+            var convertExp = Expression.Convert(propertyExp, typeof(object));
+            var lambdaExp = Expression.Lambda<Func<T, object>>(convertExp, parameterExp);
+
+            attributeDictionary[_appSettings.RsDataGridRenderFragmentPropertyAttribute] = lambdaExp;
+            attributeDictionary[_appSettings.RsDataGridRenderFragmentTitleAttribute] =
+                property.Name.SplitCamelCase();
+            if (property.Name == GroupBy)
+                attributeDictionary[_appSettings.RsDataGridRenderFragmentGroupingAttribute] = true;
+
+            columns.Add(CreateRenderFragment(attributeDictionary, typeof(PropertyColumn<T, object>)));
+        }
+        return columns;
+    }
+
     private RenderFragment CreateColumn(PropertyInfo propertyInfo)
     {
         Dictionary<string, object> attributeDictionary = new();

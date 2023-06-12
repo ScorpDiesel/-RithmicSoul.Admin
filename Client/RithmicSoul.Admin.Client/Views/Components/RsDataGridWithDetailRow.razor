@@ -1,10 +1,11 @@
-﻿@typeparam T
+﻿@*@inherits RsDataGridBase<T>*@
+@typeparam T
 
 <MudDataGrid Items="@Items" T="T" Hover="true" FixedHeader="true" Style="height: 560px;"
-     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
-     RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
-     Groupable="@CanGroup" GroupExpanded="@GroupExpanded" MultiSelection="@MultiSelection"
-     Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="thisDataGrid">
+             EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
+             RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
+             Groupable="@CanGroup" GroupExpanded="@GroupExpanded" MultiSelection="@MultiSelection"
+             Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="thisDataGrid">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Table: @TableName</MudText>
         <MudSpacer />
@@ -35,7 +36,7 @@
         {
             return;
         }
-        @foreach (var property in _properties.Select((value, index) => new { index, value }))
+        @*@foreach (var property in _properties.Select((value, index) => new { index, value }))
         {
             var value = property.value;
             var thisIndex = property.index + 1;
@@ -43,7 +44,11 @@
             {
                 continue;
             }
-            @CreateColumn(value)
+            @(CreateColumn<T>(value))
+        }*@
+        @foreach (var column in CreateColumn())
+        {
+            @column
         }
         <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
             <CellTemplate>
@@ -63,8 +68,8 @@
             var value = GetColumnValueByColumnName(context.Item, "SymbolId");
             var symbolId = Convert.ToInt32(value);
             <AdinkraSymbolCardSmall Style="width: 400px; height: 410px" SymbolId="@symbolId"
-                ImgSrcUrl=@($"{_baseAddress}AdinkraSymbol/GetImageDataById/{@symbolId}/200")
-                AudioSrcUrl=@($"{_baseAddress}AdinkraSymbol/GetAudioDataById/{@symbolId}")/>
+                ImgSrcUrl=@($"{_baseAddress}v2/AdinkraSymbols/{@symbolId}/200")
+                AudioSrcUrl=@($"{_baseAddress}v2/AdinkraSymbols/{@symbolId}") />
         }
     </ChildRowContent>
     <PagerContent>
