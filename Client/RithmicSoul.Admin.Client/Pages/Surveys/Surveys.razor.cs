@@ -21,7 +21,7 @@ public partial class Surveys : ComponentBase
     [Inject] IService<SurveyTypeDto> SurveyTypeService { get; set; }
     [Inject] IService<QuestionChoiceDto> QuestionChoiceService { get; set; }
     [Inject] IService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
-    [Inject] IAuthoredSurveyService AuthoredSurveyService { get; set; }
+    //[Inject] IAuthoredSurveyService AuthoredSurveyService { get; set; }
     [Inject] NavigationManager Navigation { get; set; }
 
     private IEnumerable<QuestionTypeDto> _questionTypes;
