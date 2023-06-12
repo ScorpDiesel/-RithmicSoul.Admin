@@ -1,4 +1,5 @@
-﻿@page "/SurveyForm"
+﻿@page "/surveys/new"
+@page "/surveys/{id:int}"
 
 <MudContainer Class="mt-4" MaxWidth="MaxWidth.ExtraExtraLarge">
     <MudGrid>
@@ -17,6 +18,7 @@
                         <MudItem xs="12">
                             <MudStack Row="true" Class="mt-8" AlignItems="AlignItems.Center">
                                 <MudSelect T="int" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="Survey Type" AnchorOrigin="Origin.BottomCenter"
+                                           Converter="@ConvertIdToName"
                                            Style="width: 100px" @bind-Value="@Model.SurveyTypeId">
                                     <MudSelectItem T="int" Value="0" Disabled="true">Select...</MudSelectItem>
                                     @if (_surveyTypes == null)
@@ -39,38 +41,40 @@
 
                     <MudPaper Class="pa-4 mt-8" Elevation="3" Outlined="true">
                         <MudText Typo="Typo.h6" Class="pb-10">Survey Questions</MudText>
-                        <div style="height: 720px; overflow-y: scroll;">
-
-                            @foreach (var question in Model.SurveyQuestions.Select((value, index) => new { index, value }))
-                            {
-                                var value = question.value;
-                                var thisIndex = question.index;
-                                <MudPaper Class="pa-4 mt-8" Outlined="true">
-                                    <MudText Typo="Typo.h6" Class="mb-5">@($"Question #{thisIndex + 1}")</MudText>
+                        <div style="height: 720px; overflow-y: auto;@_scrollToBottom">
+                            <div>
+                                @foreach (var question in Model.SurveyQuestionIds.Select((value, index) => new { index, value }))
+                                {
+                                    var value = question.value;
+                                    var thisIndex = question.index;
+                                    <MudPaper Class="pa-4 mt-8" Outlined="true">
+                                        <MudStack Row="true" Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Class="mb-5">
+                                            <MudText Typo="Typo.h6">@($"Question #{thisIndex + 1}")</MudText>
+                                            <MudSpacer/>
+                                            <MudText Typo="Typo.subtitle2" Style="margin-right: 80px"> Question Type: @GetSelectedQuestionTypeName(value)</MudText>
+                                        </MudStack>
                                         <MudGrid>
-                                            @*<MudItem xs="3">
-                                                <MudText>@thisIndex</MudText>
-                                            </MudItem>*@
                                             <MudItem xs="12">
                                                 <MudStack Row="true" Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                                                    <MudSelect T="int?" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="Survey Question" AnchorOrigin="Origin.BottomCenter"
-                                                        @bind-Value="@Model.SurveyQuestions[thisIndex]">
-                                                        <MudSelectItem T="int?" Value="0" Disabled="true">Select...</MudSelectItem>
+                                                    <MudSelect T="int" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="Survey Question" AnchorOrigin="Origin.BottomCenter"
+                                                               @bind-Value="@Model.SurveyQuestionIds[thisIndex]">
+                                                        <MudSelectItem T="int" Value="0" Disabled="true">Select...</MudSelectItem>
                                                         @if (_surveyQuestions == null)
                                                         {
                                                             return;
                                                         }
                                                         @foreach (var sq in _surveyQuestions)
                                                         {
-                                                            <MudSelectItem T="int?" Value="@sq.QuestionId">@sq.QuestionText</MudSelectItem>
+                                                            <MudSelectItem T="int" Value="@sq.QuestionId">@sq.QuestionText</MudSelectItem>
                                                         }
                                                     </MudSelect>
-                                                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.DoNotDisturbOn" OnClick="@(()=> { RemoveQuestion(thisIndex); })" />
-                                            </MudStack>
-                                        </MudItem>
-                                    </MudGrid>
-                                </MudPaper>
-                            }
+                                                    <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.DoNotDisturbOn" OnClick="@(() => { RemoveQuestion(thisIndex); })"/>
+                                                </MudStack>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </MudPaper>
+                                }
+                            </div>
                         </div>
                     </MudPaper>
                 </MudForm>

@@ -22,6 +22,7 @@
   <ItemGroup>
     <Folder Include="Logger\" />
     <Folder Include="Configuration\" />
+    <Folder Include="Pages\Surveys\Forms\" />
     <Folder Include="ViewModels\" />
   </ItemGroup>
 

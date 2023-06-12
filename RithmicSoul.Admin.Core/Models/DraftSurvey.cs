@@ -20,7 +20,5 @@ public class DraftSurvey
     public DateTime DateCreated { get; set; }
 
     [Required]
-    public List<int?> SurveyQuestions { get; set; } = new();
-
-    public List<string> SurveyQuestionTextList { get; set; } = new();
+    public List<int> SurveyQuestions { get; set; } = new();
 }
