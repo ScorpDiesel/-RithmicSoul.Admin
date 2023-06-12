@@ -36,16 +36,6 @@
         {
             return;
         }
-        @*@foreach (var property in _properties.Select((value, index) => new { index, value }))
-        {
-            var value = property.value;
-            var thisIndex = property.index + 1;
-            if (ColumnsToHide is not null && ColumnsToHide.Contains(thisIndex))
-            {
-                continue;
-            }
-            @(CreateColumn<T>(value))
-        }*@
         @foreach (var column in CreateColumn())
         {
             @column

@@ -56,11 +56,6 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
         _appSettings = AppSettingsOptions.Value;
         _baseAddress = _httpClient.BaseAddress?.ToString();
         TableName = typeof(T).Name.Replace("Dto", string.Empty).SplitCamelCase();
-        _dialogParameters = new DialogParameters
-        {
-            //{ "OnOperationCompleted", new EventCallback(this, RefreshAsync) }
-        };
-        _properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
     }
 
     private async Task FilterItemsAsync()
@@ -102,8 +97,12 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
     {
         var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
         var columns = new List<RenderFragment>();
-        foreach (var property in properties)
+        foreach (var item in properties.Select((value, index) => new { index, value }))
         {
+            var property = item.value;
+            var thisIndex = item.index + 1;
+            if (ColumnsToHide is not null && ColumnsToHide.Contains(thisIndex)) continue;
+
             Dictionary<string, object> attributeDictionary = new();
             var parameterExp = Expression.Parameter(typeof(T), property.Name);
             var propertyExp = Expression.Property(parameterExp, property);
