@@ -1,5 +1,27 @@
-﻿<h3>ProductSurvey</h3>
+﻿@page "/surveys/product"
 
-@code {
-
-}
+<MudContainer Class="mt-4 mb-12" MaxWidth="MaxWidth.ExtraExtraLarge">
+    <MudText Class="mt-16">@_surveyDescription</MudText>
+    <MudGrid>
+        <MudItem xs="4">
+            <MudPaper Class="pa-10">
+                <MudGrid>
+                    <MudItem xs="12">
+                        @if (_questions is null)
+                        {
+                            return;
+                        }
+                        @foreach (var question in _questions.Distinct().Select((value, index) => new { index, value }))
+                        {
+                            var questionText = question.value;
+                            var thisIndex = question.index + 1;
+                            <QuestionResponse Items="@_authoredSurveys"
+                              QuestionTextTypography="Typo.body1"
+                              QuestionText="@questionText" />
+                        }
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>

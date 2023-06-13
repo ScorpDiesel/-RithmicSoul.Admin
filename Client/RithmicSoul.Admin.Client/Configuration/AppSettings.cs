@@ -28,4 +28,9 @@ public class AppSettings
     public string QuestionChoicesCheckbox { get; set; }
     public string QuestionTypeNameCssVisibilityVisible { get; set; }
     public string QuestionTypeNameCssVisibilityHidden { get; set; }
+    public string YesNoChoices { get; set; }
+    public string YesNoIndeterminateChoices { get; set; }
+    public string TrueFalseChoices { get; set; }
+    public string TrueFalseIndeterminateChoices { get; set; }
+    public string LikerScaleChoices { get; set; }
 }

@@ -1,0 +1,14 @@
+﻿<MudPaper Class="pa-4 mt-8" Outlined="true">
+    <MudStack>
+        <MudStack Row="true" Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Class="mb-1">
+            <MudText Class="@_questionClass" Typo="Typo.h6">@_questionNumberText</MudText>
+            <MudText Typo="@QuestionTextTypography">@QuestionText</MudText>
+        </MudStack>
+        <MudStack Class="mt-3 ml-5">
+            @foreach (var choice in _choices)
+            {
+                @CreateRenderFragment(choice)
+            }
+        </MudStack>
+    </MudStack>
+</MudPaper>
