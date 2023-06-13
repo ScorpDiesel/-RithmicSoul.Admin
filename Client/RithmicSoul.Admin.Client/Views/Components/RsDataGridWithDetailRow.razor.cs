@@ -56,6 +56,7 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
         _appSettings = AppSettingsOptions.Value;
         _baseAddress = _httpClient.BaseAddress?.ToString();
         TableName = typeof(T).Name.Replace("Dto", string.Empty).SplitCamelCase();
+        _properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
     }
 
     private async Task FilterItemsAsync()
@@ -93,47 +94,56 @@ public partial class RsDataGridWithDetailRow<T> : ComponentBase where T : class
         _isExpanded = false;
     }
 
-    protected List<RenderFragment> CreateColumn()
-    {
-        var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-        var columns = new List<RenderFragment>();
-        foreach (var item in properties.Select((value, index) => new { index, value }))
-        {
-            var property = item.value;
-            var thisIndex = item.index + 1;
-            if (ColumnsToHide is not null && ColumnsToHide.Contains(thisIndex)) continue;
+    //protected List<RenderFragment> CreateColumn()
+    //{
+    //    var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+    //    var columns = new List<RenderFragment>();
+    //    foreach (var item in properties.Select((value, index) => new { index, value }))
+    //    {
+    //        var property = item.value;
+    //        var thisIndex = item.index + 1;
+    //        if (ColumnsToHide is not null && ColumnsToHide.Contains(thisIndex)) continue;
 
-            Dictionary<string, object> attributeDictionary = new();
-            var parameterExp = Expression.Parameter(typeof(T), property.Name);
-            var propertyExp = Expression.Property(parameterExp, property);
-            var convertExp = Expression.Convert(propertyExp, typeof(object));
-            var lambdaExp = Expression.Lambda<Func<T, object>>(convertExp, parameterExp);
+    //        Dictionary<string, object> attributeDictionary = new();
+    //        var parameterExp = Expression.Parameter(typeof(T), property.Name);
+    //        var propertyExp = Expression.Property(parameterExp, property);
+    //        var convertExp = Expression.Convert(propertyExp, typeof(object));
+    //        var lambdaExp = Expression.Lambda<Func<T, object>>(convertExp, parameterExp);
 
-            attributeDictionary[_appSettings.RsDataGridRenderFragmentPropertyAttribute] = lambdaExp;
-            attributeDictionary[_appSettings.RsDataGridRenderFragmentTitleAttribute] =
-                property.Name.SplitCamelCase();
-            if (property.Name == GroupBy)
-                attributeDictionary[_appSettings.RsDataGridRenderFragmentGroupingAttribute] = true;
+    //        attributeDictionary[_appSettings.RsDataGridRenderFragmentPropertyAttribute] = lambdaExp;
+    //        attributeDictionary[_appSettings.RsDataGridRenderFragmentTitleAttribute] =
+    //            property.Name.SplitCamelCase();
+    //        if (property.Name == GroupBy)
+    //            attributeDictionary[_appSettings.RsDataGridRenderFragmentGroupingAttribute] = true;
 
-            columns.Add(CreateRenderFragment(attributeDictionary, typeof(PropertyColumn<T, object>)));
-        }
-        return columns;
-    }
+    //        columns.Add(CreateRenderFragment(attributeDictionary, typeof(PropertyColumn<T, object>)));
+    //    }
+    //    return columns;
+    //}
 
     private RenderFragment CreateColumn(PropertyInfo propertyInfo)
     {
-        Dictionary<string, object> attributeDictionary = new();
-        var parameterExp = Expression.Parameter(typeof(T), propertyInfo.Name);
-        var propertyExp = Expression.Property(parameterExp, propertyInfo);
-        var convertExp = Expression.Convert(propertyExp, typeof(object));
-        var lambdaExp = Expression.Lambda<Func<T, object>>(convertExp, parameterExp);
+        return builder =>
+        {
+            // Create a parameter for the lambda expression
+            var parameterExp = Expression.Parameter(typeof(T), propertyInfo.Name);
 
-        attributeDictionary[_appSettings.RsDataGridRenderFragmentPropertyAttribute] = lambdaExp;
-        attributeDictionary[_appSettings.RsDataGridRenderFragmentTitleAttribute] = propertyInfo.Name.SplitCamelCase();
-        if (propertyInfo.Name == GroupBy)
-            attributeDictionary[_appSettings.RsDataGridRenderFragmentGroupingAttribute] = true;
+            // Create a property access expression for the specified property
+            var propertyExp = Expression.Property(parameterExp, propertyInfo);
 
-        return CreateRenderFragment(attributeDictionary, typeof(PropertyColumn<T, object>));
+            // Because Property expects a Func<T, object>, we may need to convert the property 
+            // expression to object if the property type is a value type
+            var convertExp = Expression.Convert(propertyExp, typeof(object));
+
+            // Create a lambda expression for the property access expression
+            var lambdaExp = Expression.Lambda<Func<T, object>>(convertExp, parameterExp);
+
+            builder.OpenComponent(0, typeof(PropertyColumn<T, object>));
+            builder.AddAttribute(1, _appSettings.RsDataGridRenderFragmentPropertyAttribute, lambdaExp);
+            builder.AddAttribute(2, _appSettings.RsDataGridRenderFragmentTitleAttribute, propertyInfo.Name.SplitCamelCase());
+            if (propertyInfo.Name == GroupBy) builder.AddAttribute(3, _appSettings.RsDataGridRenderFragmentGroupingAttribute, true);
+            builder?.CloseComponent();
+        };
     }
 
     private List<RenderFragment> CreateDetailRowContentFromColumn(object rowItem)

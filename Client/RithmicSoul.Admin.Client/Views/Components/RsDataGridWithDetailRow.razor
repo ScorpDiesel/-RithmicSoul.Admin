@@ -1,11 +1,10 @@
-﻿@*@inherits RsDataGridBase<T>*@
-@typeparam T
+﻿@typeparam T
 
 <MudDataGrid Items="@Items" T="T" Hover="true" FixedHeader="true" Style="height: 560px;"
-             EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
-             RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
-             Groupable="@CanGroup" GroupExpanded="@GroupExpanded" MultiSelection="@MultiSelection"
-             Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="thisDataGrid">
+     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
+     RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
+     Groupable="@CanGroup" GroupExpanded="@GroupExpanded" MultiSelection="@MultiSelection"
+     Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="thisDataGrid">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Table: @TableName</MudText>
         <MudSpacer />
@@ -36,9 +35,15 @@
         {
             return;
         }
-        @foreach (var column in CreateColumn())
+        @foreach (var property in _properties.Select((value, index) => new { index, value }))
         {
-            @column
+            var value = property.value;
+            var thisIndex = property.index + 1;
+            if (ColumnsToHide is not null && ColumnsToHide.Contains(thisIndex))
+            {
+                continue;
+            }
+            @CreateColumn(value)
         }
         <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
             <CellTemplate>

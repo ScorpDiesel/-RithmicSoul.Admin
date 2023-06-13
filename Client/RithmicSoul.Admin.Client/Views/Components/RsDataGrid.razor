@@ -37,9 +37,15 @@
         {
             return;
         }
-        @foreach (var column in CreateColumn())
+        @foreach (var property in _properties.Select((value, index) => new { index, value }))
         {
-            @column
+            var value = property.value;
+            var thisIndex = property.index + 1;
+            if (ColumnsToHide is not null && ColumnsToHide.Contains(thisIndex))
+            {
+                continue;
+            }
+            @CreateColumn(value)
         }
         <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
             <CellTemplate>
