@@ -4,6 +4,13 @@
     <MudText Class="mt-16">@_surveyDescription</MudText>
     <MudGrid>
         <MudItem xs="4">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
+                <MudText Class="mr-8" Color="Color.Default" Style="font-size:.875rem;font-weight:500">PAGE @(_currentPage + 1) OF @(_questions?.Count())</MudText>
+                <div>
+                    <MudButton StartIcon="@Icons.Material.Filled.NavigateBefore" OnClick="@PreviousPage" Disabled="@(!HasPreviousPage)">Previous</MudButton>
+                    <MudButton EndIcon="@Icons.Material.Filled.NavigateNext" OnClick="@NextPage" Disabled="@(!HasNextPage)">Next</MudButton>
+                </div>
+            </MudStack>
             <MudPaper Class="pa-10">
                 <MudGrid>
                     <MudItem xs="12">
@@ -11,9 +18,13 @@
                         {
                             return;
                         }
-                        @foreach (var question in _questions.Distinct().Select((value, index) => new { index, value }))
+                        @foreach (var question in _questions.Select((value, index) => new { index, value }))
                         {
                             var questionText = question.value;
+                            if (CurrentQuestion != questionText)
+                            {
+                                continue;
+                            }
                             var thisIndex = question.index + 1;
                             <QuestionResponse Items="@_authoredSurveys"
                               QuestionTextTypography="Typo.body1"

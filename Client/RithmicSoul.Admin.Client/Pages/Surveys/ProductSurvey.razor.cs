@@ -9,20 +9,42 @@ namespace RithmicSoul.Admin.Client.Pages.Surveys;
 public partial class ProductSurvey : ComponentBase
 {
     [Inject] IService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
-
+    [CascadingParameter] public EventCallback HideMenus { get; set; }
 
     private DraftSurveyDto? Model = new();
     private string _surveyDescription;
     private IEnumerable<AuthoredSurveyDto> _authoredSurveys;
     private IEnumerable<string> _questions;
+    private int _pageSize = 1;
+    private int _currentPage;
+    private string CurrentQuestion => _questions.Skip(_currentPage * _pageSize).Take(_pageSize).First();
+
 
     protected override async Task OnInitializedAsync()
     {
+        await SetFieldsAsync();
+    }
+
+    private async Task SetFieldsAsync()
+    {
+        await HideMenus.InvokeAsync();
         _authoredSurveys = await AuthoredSurveyService.GetAllAsync();
         _surveyDescription = _authoredSurveys.First().SurveyDescription;
-        _questions = _authoredSurveys.Select(q => q.QuestionText);
+        _questions = _authoredSurveys.Select(q => q.QuestionText).Distinct();
+    }
 
-        //_choices = items.GroupBy(q => q.QuestionText)
-        //    .Select(g => (Type: g.Key, Text: g.Select(x => x.ChoiceText).ToList()));
+    private bool HasPreviousPage => _currentPage > 0;
+    private bool HasNextPage => (_questions is null) ? false : (_currentPage + 1) * _pageSize < _questions.Count();
+
+    private void PreviousPage()
+    {
+        if (!HasPreviousPage) return;
+        _currentPage--;
+    }
+
+    private void NextPage()
+    {
+        if (!HasNextPage) return;
+        _currentPage++;
     }
 }

@@ -10,8 +10,8 @@ public partial class AdinkraSurvey : ComponentBase
     [Inject] private IService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
 
     private IEnumerable<AdinkraSymbolDto>? _allSymbols;
-    private IEnumerable<AdinkraSymbolDto>? CurrentSymbols => _allSymbols?.Skip(_currentPage * _pageSize).Take(_pageSize); [CascadingParameter]
-    public EventCallback HideMenus { get; set; }
+    private IEnumerable<AdinkraSymbolDto>? CurrentSymbols => _allSymbols?.Skip(_currentPage * _pageSize).Take(_pageSize);
+    [CascadingParameter] public EventCallback HideMenus { get; set; }
 
     public event EventHandler NewPage;
 
@@ -21,6 +21,11 @@ public partial class AdinkraSurvey : ComponentBase
     private string? _baseAddress;
 
     protected override async Task OnInitializedAsync()
+    {
+        await SetFieldsAsync();
+    }
+
+    private async Task SetFieldsAsync()
     {
         await HideMenus.InvokeAsync();
         _baseAddress = _httpClient.BaseAddress?.ToString();
