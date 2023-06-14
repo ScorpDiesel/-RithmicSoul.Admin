@@ -45,6 +45,8 @@ public partial class ProductSurvey : ComponentBase
     {
         if (!HasPreviousPage) return;
         _currentPage--;
+        var keyExists = _questionResponses.ContainsKey(CurrentQuestion);
+        if (!keyExists) return;
         var response = _questionResponses[CurrentQuestion];
         NewPage.Invoke(this, response.responses);
     }
@@ -53,6 +55,8 @@ public partial class ProductSurvey : ComponentBase
     {
         if (!HasNextPage) return;
         _currentPage++;
+        var keyExists = _questionResponses.ContainsKey(CurrentQuestion);
+        if (!keyExists) return;
         var response = _questionResponses[CurrentQuestion];
         NewPage.Invoke(this, response.responses);
     }
