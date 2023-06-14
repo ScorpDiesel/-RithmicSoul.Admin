@@ -83,7 +83,14 @@ public partial class ProductSurvey : ComponentBase
             {
                 var existingResponses = _questionResponses[response.QuestionText].responses;
                 existingResponses.Remove(response.Response);
-                _questionResponses[response.QuestionText] = (response.QuestionType, existingResponses);
+                if (!existingResponses.Any())
+                {
+                    _questionResponses.Remove(response.QuestionText);
+                }
+                else
+                {
+                    _questionResponses[response.QuestionText] = (response.QuestionType, existingResponses);
+                }
             }
         }
         else
