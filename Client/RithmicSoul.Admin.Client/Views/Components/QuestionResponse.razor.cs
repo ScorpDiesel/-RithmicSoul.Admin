@@ -32,7 +32,7 @@ public partial class QuestionResponse : ComponentBase
 
     private void SetFields()
     {
-        Parent.NewPage += UpdateValues;
+        Parent.NewPage += UpdateValue;
         _appSettings = AppSettingsOptions.Value;
         _choices = Items.Where(c => c.QuestionText == QuestionText)
             .GroupBy(q => q.QuestionText)
@@ -49,11 +49,6 @@ public partial class QuestionResponse : ComponentBase
             _questionNumberText = $"Question #{QuestionNumber}";
             _questionClass = "mr-5";
         }
-    }
-
-    private void UpdateValues(object? sender, List<object> e)
-    {
-        
     }
 
     private RenderFragment CreateRenderFragment((string QuestionType, List<string> QuestionChoices) choices)
@@ -198,5 +193,11 @@ public partial class QuestionResponse : ComponentBase
         };
 
         await OnValueChanged.InvokeAsync(response);
+    }
+
+    private void UpdateValue(object? sender, (string questionType, List<object> responses) e)
+    {
+        var questionType = e.questionType;
+        var response = e.responses;
     }
 }
