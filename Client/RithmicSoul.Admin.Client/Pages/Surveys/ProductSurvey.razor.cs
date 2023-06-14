@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Azure;
+using Microsoft.AspNetCore.Components;
 using RithmicSoul.Admin.Core.Dtos;
+using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoul.Models.Survey.Models;
 using RithmicSoulDatabaseLibrary.Interfaces;
@@ -10,13 +12,16 @@ public partial class ProductSurvey : ComponentBase
 {
     [Inject] IService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
     [CascadingParameter] public EventCallback HideMenus { get; set; }
-
-    private DraftSurveyDto? Model = new();
+    
     private string _surveyDescription;
     private IEnumerable<AuthoredSurveyDto> _authoredSurveys;
     private IEnumerable<string> _questions;
     private int _pageSize = 1;
     private int _currentPage;
+    private Dictionary<string, (string questionType, List<object> responses)> _questionResponses = new();
+
+    public event EventHandler<List<object>> NewPage;
+
     private string CurrentQuestion => _questions.Skip(_currentPage * _pageSize).Take(_pageSize).First();
 
 
@@ -34,17 +39,53 @@ public partial class ProductSurvey : ComponentBase
     }
 
     private bool HasPreviousPage => _currentPage > 0;
-    private bool HasNextPage => (_questions is null) ? false : (_currentPage + 1) * _pageSize < _questions.Count();
+    private bool HasNextPage => _questions is null ? false : (_currentPage + 1) * _pageSize < _questions.Count();
 
     private void PreviousPage()
     {
         if (!HasPreviousPage) return;
         _currentPage--;
+        var response = _questionResponses[CurrentQuestion];
+        NewPage.Invoke(this, response.responses);
     }
 
     private void NextPage()
     {
         if (!HasNextPage) return;
         _currentPage++;
+        var response = _questionResponses[CurrentQuestion];
+        NewPage.Invoke(this, response.responses);
+    }
+    private void QuestionValueChanged(QuestionResponseObject response)
+    {
+        if (response.QuestionType == "Checkbox")
+        {
+            if (response.isSelected)
+            {
+                List<object> existingResponses;
+                if (_questionResponses.ContainsKey(response.QuestionText))
+                {
+                    existingResponses = _questionResponses[response.QuestionText].responses;
+                    existingResponses.Add(response.Response);
+                    _questionResponses[response.QuestionText] = (response.QuestionType, existingResponses);
+                }
+                else
+                {
+                    existingResponses = new() { response.Response };
+                    _questionResponses.Add(response.QuestionText, (response.QuestionType, existingResponses));
+                }
+            }
+            else
+            {
+                var existingResponses = _questionResponses[response.QuestionText].responses;
+                existingResponses.Remove(response.Response);
+                _questionResponses[response.QuestionText] = (response.QuestionType, existingResponses);
+            }
+        }
+        else
+        {
+            List<object> responses = new() { response.Response };
+            _questionResponses[response.QuestionText] = (response.QuestionType, responses);
+        }
     }
 }

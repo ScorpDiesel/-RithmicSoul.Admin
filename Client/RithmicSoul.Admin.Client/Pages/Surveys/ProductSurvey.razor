@@ -2,6 +2,7 @@
 
 <MudContainer Class="mt-4 mb-12" MaxWidth="MaxWidth.ExtraExtraLarge">
     <MudText Class="mt-16">@_surveyDescription</MudText>
+    <MudText>@(string.Join("\r\n", _questionResponses.Select(q => $"{q.Key}:{q.Value.questionType}:{string.Join(", ",q.Value.responses)}")))</MudText>
     <MudGrid>
         <MudItem xs="4">
             <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
@@ -27,6 +28,8 @@
                             }
                             var thisIndex = question.index + 1;
                             <QuestionResponse Items="@_authoredSurveys"
+                                OnValueChanged="@QuestionValueChanged"
+                                Parent="this"
                               QuestionTextTypography="Typo.body1"
                               QuestionText="@questionText" />
                         }
