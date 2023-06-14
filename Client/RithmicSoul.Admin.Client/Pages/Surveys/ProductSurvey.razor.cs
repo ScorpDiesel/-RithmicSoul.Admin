@@ -20,8 +20,6 @@ public partial class ProductSurvey : ComponentBase
     private int _currentPage;
     private Dictionary<string, (string questionType, List<object> responses)> _questionResponses = new();
 
-    public event EventHandler<(string questionType, List<object> responses)> NewPage;
-
     private string CurrentQuestion => _questions.Skip(_currentPage * _pageSize).Take(_pageSize).First();
 
 
@@ -45,20 +43,12 @@ public partial class ProductSurvey : ComponentBase
     {
         if (!HasPreviousPage) return;
         _currentPage--;
-        var keyExists = _questionResponses.ContainsKey(CurrentQuestion);
-        if (!keyExists) return;
-        var response = _questionResponses[CurrentQuestion];
-        NewPage.Invoke(this, response);
     }
 
     private void NextPage()
     {
         if (!HasNextPage) return;
         _currentPage++;
-        var keyExists = _questionResponses.ContainsKey(CurrentQuestion);
-        if (!keyExists) return;
-        var response = _questionResponses[CurrentQuestion];
-        NewPage.Invoke(this, response);
     }
     private void QuestionValueChanged(QuestionResponseObject response)
     {

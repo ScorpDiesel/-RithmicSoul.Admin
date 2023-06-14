@@ -6,7 +6,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Options;
 using RithmicSoul.Admin.Core.Models;
-using RithmicSoul.Admin.Client.Pages.Surveys;
 
 namespace RithmicSoul.Admin.Client.Views.Components;
 
@@ -18,14 +17,16 @@ public partial class QuestionResponse : ComponentBase
     [Parameter] public Typo QuestionTextTypography { get; set; }
     [Parameter] public IEnumerable<AuthoredSurveyDto> Items { get; set; }
     [Parameter] public EventCallback<QuestionResponseObject> OnValueChanged { get; set; }
-    [Parameter] public ProductSurvey Parent { get; set; }
 
     private IEnumerable<(string QuestionType, List<string> QuestionChoices)> _choices;
     private AppSettings _appSettings;
     private string _questionNumberText;
     private string _questionClass;
 
-
+    private MudTextField<string> _mudTextField;
+    private MudRating _mudRating;
+    private MudCheckBox<bool> _mudCheckBox;
+    private MudRadio<string> _mudRadio;
 
     protected override void OnInitialized()
     {
@@ -34,7 +35,6 @@ public partial class QuestionResponse : ComponentBase
 
     private void SetFields()
     {
-        Parent.NewPage += UpdateValue;
         _appSettings = AppSettingsOptions.Value;
         _choices = Items.Where(c => c.QuestionText == QuestionText)
             .GroupBy(q => q.QuestionText)
@@ -90,8 +90,10 @@ public partial class QuestionResponse : ComponentBase
         builder.AddAttribute(1, "Lines", 10);
         builder.AddAttribute(2, "Variant", Variant.Outlined);
         builder.AddAttribute(3, "Class", "ml-n2");
-        builder.AddAttribute(4, "ValueChanged",
+        builder.AddAttribute(4, "Value", _mudTextField?.Value);
+        builder.AddAttribute(5, "ValueChanged",
             EventCallback.Factory.Create<string>(this, value => ValueChangedAsync(questionType, value)));
+        builder.AddComponentReferenceCapture(6, inst => { _mudTextField = (MudTextField<string>)inst; });
         builder.CloseComponent();
     }
 
@@ -101,8 +103,10 @@ public partial class QuestionResponse : ComponentBase
         builder.AddAttribute(1, "MaxValue", 10);
         builder.AddAttribute(2, "Size", Size.Large);
         builder.AddAttribute(3, "Class", "ml-n2");
-        builder.AddAttribute(4, "SelectedValueChanged",
+        builder.AddAttribute(4, "SelectedValue", _mudRating?.SelectedValue);
+        builder.AddAttribute(5, "SelectedValueChanged",
             EventCallback.Factory.Create<int>(this, value => ValueChangedAsync(questionType, value)));
+        builder.AddComponentReferenceCapture(6, inst => { _mudRating = (MudRating)inst; });
         builder.CloseComponent();
     }
 
@@ -120,7 +124,8 @@ public partial class QuestionResponse : ComponentBase
                 childBuilder.AddAttribute(childSeq++, "UnCheckedColor", Color.Default);
                 childBuilder.AddAttribute(childSeq++, "Dense", true);
                 childBuilder.AddAttribute(childSeq++, "Label", label);
-                childBuilder.AddAttribute(childSeq++, "CheckedChanged", EventCallback.Factory.Create<bool>(this, (bool value) => ValueChangedAsync(questionType, label, value)));
+                childBuilder.AddAttribute(childSeq++, "CheckedChanged", EventCallback.Factory.Create<bool>(this, value => ValueChangedAsync(questionType, label, value)));
+                //childBuilder.AddComponentReferenceCapture(childSeq, inst => { _mudCheckBox = (MudCheckBox<bool>)inst; });
                 childBuilder.CloseComponent();
             }
         }));
@@ -195,11 +200,5 @@ public partial class QuestionResponse : ComponentBase
         };
 
         await OnValueChanged.InvokeAsync(response);
-    }
-
-    private void UpdateValue(object? sender, (string questionType, List<object> responses) e)
-    {
-        var questionType = e.questionType;
-        var response = e.responses;
     }
 }
