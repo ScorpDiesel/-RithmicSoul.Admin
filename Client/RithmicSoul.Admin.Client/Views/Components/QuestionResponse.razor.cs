@@ -13,7 +13,7 @@ public partial class QuestionResponse : ComponentBase
 {
     [Inject] private IOptions<AppSettings> AppSettingsOptions { get; set; }
     [Parameter] public string QuestionText { get; set; }
-    [Parameter] public int? QuestionNumber { get; set; }
+    [Parameter] public int QuestionNumber { get; set; }
     [Parameter] public Typo QuestionTextTypography { get; set; }
     [Parameter] public IEnumerable<AuthoredSurveyDto> Items { get; set; }
     [Parameter] public EventCallback<QuestionResponseObject> OnValueChanged { get; set; }
@@ -22,11 +22,7 @@ public partial class QuestionResponse : ComponentBase
     private AppSettings _appSettings;
     private string _questionNumberText;
     private string _questionClass;
-
-    private MudTextField<string> _mudTextField;
-    private MudRating _mudRating;
-    private MudCheckBox<bool> _mudCheckBox;
-    private MudRadio<string> _mudRadio;
+    private List<QuestionResponseObject> _questionResponses = new();
 
     protected override void OnInitialized()
     {
@@ -36,21 +32,31 @@ public partial class QuestionResponse : ComponentBase
     private void SetFields()
     {
         _appSettings = AppSettingsOptions.Value;
-        _choices = Items.Where(c => c.QuestionText == QuestionText)
+        //if (QuestionText is null) return;
+        _choices = Items //.Where(c => c.QuestionText == QuestionText)
             .GroupBy(q => q.QuestionText)
             .Select(g => (QuestionType: g.Select(x => x.QuestionTypeName).First(),
                 QuestionChoices: g.Select(x => x.ChoiceText).ToList()));
+
+        //foreach (var item in _choices.Select((value, index) => new { index, value }))
+        //{
+        //    var choice = item.value;
+        //    var index = item.index;
+        //    var questionType = choice.QuestionType;
+        //    var identifier = $"{questionType}{item}";
+        //    identifiers.Add(identifier, questionType);
+        //}
         
-        if (QuestionNumber is null)
-        {
-            _questionNumberText = "";
-            _questionClass = "";
-        }
-        else
-        {
-            _questionNumberText = $"Question #{QuestionNumber}";
-            _questionClass = "mr-5";
-        }
+        //if (QuestionNumber is null)
+        //{
+        //    _questionNumberText = "";
+        //    _questionClass = "";
+        //}
+        //else
+        //{
+        //    _questionNumberText = $"Question #{QuestionNumber}";
+        //    _questionClass = "mr-5";
+        //}
     }
 
     private RenderFragment CreateRenderFragment((string QuestionType, List<string> QuestionChoices) choices)
@@ -90,10 +96,8 @@ public partial class QuestionResponse : ComponentBase
         builder.AddAttribute(1, "Lines", 10);
         builder.AddAttribute(2, "Variant", Variant.Outlined);
         builder.AddAttribute(3, "Class", "ml-n2");
-        builder.AddAttribute(4, "Value", _mudTextField?.Value);
         builder.AddAttribute(5, "ValueChanged",
             EventCallback.Factory.Create<string>(this, value => ValueChangedAsync(questionType, value)));
-        builder.AddComponentReferenceCapture(6, inst => { _mudTextField = (MudTextField<string>)inst; });
         builder.CloseComponent();
     }
 
@@ -103,10 +107,8 @@ public partial class QuestionResponse : ComponentBase
         builder.AddAttribute(1, "MaxValue", 10);
         builder.AddAttribute(2, "Size", Size.Large);
         builder.AddAttribute(3, "Class", "ml-n2");
-        builder.AddAttribute(4, "SelectedValue", _mudRating?.SelectedValue);
         builder.AddAttribute(5, "SelectedValueChanged",
             EventCallback.Factory.Create<int>(this, value => ValueChangedAsync(questionType, value)));
-        builder.AddComponentReferenceCapture(6, inst => { _mudRating = (MudRating)inst; });
         builder.CloseComponent();
     }
 
@@ -114,8 +116,8 @@ public partial class QuestionResponse : ComponentBase
     {
         builder.OpenComponent<MudStack>(0);
         builder.AddAttribute(1, "Row", isRow);
-        builder.AddAttribute(1, "Class", "ml-n3");
-        builder.AddAttribute(2, "ChildContent", (RenderFragment)(childBuilder =>
+        builder.AddAttribute(2, "Class", "ml-n3");
+        builder.AddAttribute(3, "ChildContent", (RenderFragment)(childBuilder =>
         {
             foreach (var label in checkboxLabels)
             {
@@ -125,7 +127,6 @@ public partial class QuestionResponse : ComponentBase
                 childBuilder.AddAttribute(childSeq++, "Dense", true);
                 childBuilder.AddAttribute(childSeq++, "Label", label);
                 childBuilder.AddAttribute(childSeq++, "CheckedChanged", EventCallback.Factory.Create<bool>(this, value => ValueChangedAsync(questionType, label, value)));
-                //childBuilder.AddComponentReferenceCapture(childSeq, inst => { _mudCheckBox = (MudCheckBox<bool>)inst; });
                 childBuilder.CloseComponent();
             }
         }));
@@ -133,16 +134,14 @@ public partial class QuestionResponse : ComponentBase
         builder.CloseComponent();
     }
 
-
     private void CreateRadioGroupFragment(string questionType, RenderTreeBuilder builder, List<string> radioLabels, bool isRow)
     {
         builder.OpenComponent<MudRadioGroup<string>>(0);
         builder.AddAttribute(2, "ChildContent", (RenderFragment)(childBuilder =>
         {
-            childBuilder.OpenComponent<MudStack>(1);
-            childBuilder.AddAttribute(2, "Row", isRow);
-
-            childBuilder.AddAttribute(3, "ChildContent", (RenderFragment)(stackBuilder =>
+            childBuilder.OpenComponent<MudStack>(3);
+            childBuilder.AddAttribute(4, "Row", isRow);
+            childBuilder.AddAttribute(5, "ChildContent", (RenderFragment)(stackBuilder =>
             {
                 var childSeq = 0;
                 foreach (var label in radioLabels)
@@ -153,7 +152,7 @@ public partial class QuestionResponse : ComponentBase
                     stackBuilder.AddAttribute(childSeq++, "Class", "mr-10");
                     stackBuilder.AddAttribute(childSeq++, "onchange", EventCallback.Factory.Create(this, value => ValueChangedAsync(questionType, label)));
                     stackBuilder.AddAttribute(childSeq++, "ChildContent", (RenderFragment)(builder2 => {
-                        builder2.AddContent(childSeq, label);
+                        builder2.AddContent(childSeq++, label);
                     }));
                     stackBuilder.CloseComponent();
                 }
@@ -161,7 +160,6 @@ public partial class QuestionResponse : ComponentBase
 
             childBuilder.CloseComponent();
         }));
-
         builder.CloseComponent();
     }
 
@@ -199,6 +197,7 @@ public partial class QuestionResponse : ComponentBase
             Response = value
         };
 
+        _questionResponses.Add(response);
         await OnValueChanged.InvokeAsync(response);
     }
 }

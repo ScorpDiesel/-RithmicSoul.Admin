@@ -20,7 +20,7 @@ public partial class ProductSurvey : ComponentBase
     private int _currentPage;
     private Dictionary<string, (string questionType, List<object> responses)> _questionResponses = new();
 
-    private string CurrentQuestion => _questions.Skip(_currentPage * _pageSize).Take(_pageSize).First();
+    private string CurrentQuestion => _questions is null ? null : _questions.Skip(_currentPage * _pageSize).Take(_pageSize).First();
 
 
     protected override async Task OnInitializedAsync()

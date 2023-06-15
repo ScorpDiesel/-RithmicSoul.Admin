@@ -5,9 +5,20 @@
             <MudText Typo="@QuestionTextTypography">@QuestionText</MudText>
         </MudStack>
         <MudStack Class="mt-3 ml-5">
-            @foreach (var choice in _choices)
-            {
-                @CreateRenderFragment(choice)
+            @{
+                for (var q = 0; q < _choices.Count(); q++)
+                {
+                    var question = _choices.ElementAt(q);
+                    var style = "none";
+                    if(q == QuestionNumber)
+                    {
+                        style = "block";
+                    }
+                
+                    <div style="display:@style">
+                        @CreateRenderFragment(question)
+                    </div>
+                }
             }
         </MudStack>
     </MudStack>

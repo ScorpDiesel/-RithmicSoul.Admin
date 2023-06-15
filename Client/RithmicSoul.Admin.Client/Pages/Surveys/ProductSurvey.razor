@@ -2,36 +2,28 @@
 
 <MudContainer Class="mt-4 mb-12" MaxWidth="MaxWidth.ExtraExtraLarge">
     <MudText Class="mt-16">@_surveyDescription</MudText>
-    <MudText>@(string.Join("\r\n", _questionResponses.Select(q => $"{q.Key}:{q.Value.questionType}:{string.Join(", ",q.Value.responses)}")))</MudText>
-    <MudGrid>
-        <MudItem xs="4">
-            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
-                <MudText Class="mr-8" Color="Color.Default" Style="font-size:.875rem;font-weight:500">PAGE @(_currentPage + 1) OF @(_questions?.Count())</MudText>
-                <div>
-                    <MudButton StartIcon="@Icons.Material.Filled.NavigateBefore" OnClick="@PreviousPage" Disabled="@(!HasPreviousPage)">Previous</MudButton>
-                    <MudButton EndIcon="@Icons.Material.Filled.NavigateNext" OnClick="@NextPage" Disabled="@(!HasNextPage)">Next</MudButton>
-                </div>
-            </MudStack>
-            <MudPaper Class="pa-10">
-                <MudGrid>
-                    <MudItem xs="12">
-                        @if (_questions is null)
-                        {
-                            return;
-                        }
-                        @foreach (var question in _questions.Select((value, index) => new { index, value }))
-                        {
-                            var questionText = question.value;
-                            if (CurrentQuestion != questionText)
+    <MudText>@(string.Join("\r\n", _questionResponses.Select(q => $"{q.Key}:{q.Value.questionType}:{string.Join(", ", q.Value.responses)}")))</MudText>
+        <MudGrid>
+            <MudItem xs="4">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
+                    <MudText Class="mr-8" Color="Color.Default" Style="font-size:.875rem;font-weight:500">PAGE @(_currentPage + 1) OF @(_questions?.Count())</MudText>
+                    <div>
+                        <MudButton StartIcon="@Icons.Material.Filled.NavigateBefore" OnClick="@PreviousPage" Disabled="@(!HasPreviousPage)">Previous</MudButton>
+                        <MudButton EndIcon="@Icons.Material.Filled.NavigateNext" OnClick="@NextPage" Disabled="@(!HasNextPage)">Next</MudButton>
+                    </div>
+                </MudStack>
+                <MudPaper Class="pa-10">
+                    <MudGrid>
+                        <MudItem xs="12">
+                            @if (_questions is null)
                             {
-                                continue;
+                                return;
                             }
-                            var thisIndex = question.index + 1;
-                            <QuestionResponse Items="@_authoredSurveys"
-                                OnValueChanged="@QuestionValueChanged"
-                              QuestionTextTypography="Typo.body1"
-                              QuestionText="@questionText" />
-                        }
+                        <QuestionResponse Items="@_authoredSurveys"
+                          OnValueChanged="@QuestionValueChanged"
+                          QuestionNumber="@_currentPage"
+                          QuestionTextTypography="Typo.body1"
+                          QuestionText="@CurrentQuestion" />
                     </MudItem>
                 </MudGrid>
             </MudPaper>
