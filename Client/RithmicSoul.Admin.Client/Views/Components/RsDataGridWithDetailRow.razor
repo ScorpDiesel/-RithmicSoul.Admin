@@ -1,4 +1,5 @@
-﻿@typeparam T
+﻿@inherits RsDataGridBase<T>
+@typeparam T
 
 <MudDataGrid Items="@Items" T="T" Hover="true" FixedHeader="true" Style="height: 560px;"
      EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"

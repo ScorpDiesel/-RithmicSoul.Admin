@@ -135,7 +135,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         };
     }
 
-    private async Task CreateNewItemAsync<T>(object data)
+    protected async Task CreateNewItemAsync<T>(object data)
     {
         dynamic resultData;
         bool isSuccessful;
@@ -174,7 +174,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         ShowSnackBar(isSuccessful, message);
     }
 
-    private RenderFragment CreateRenderFragment(Dictionary<string, object> attributeDictionary, Type componentType)
+    protected RenderFragment CreateRenderFragment(Dictionary<string, object> attributeDictionary, Type componentType)
     {
         return builder =>
         {
@@ -268,7 +268,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         RowHighlight?.Remove((dto.GetType().Name, dto.GetHashCode()));
     }
 
-    void ShowSnackBar(bool isSuccess, string message)
+    protected void ShowSnackBar(bool isSuccess, string message)
     {
         Snackbar?.Clear();
         Snackbar?.Add(message, isSuccess ? Severity.Success : Severity.Error);
