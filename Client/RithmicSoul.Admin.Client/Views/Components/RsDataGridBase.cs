@@ -12,9 +12,9 @@ namespace RithmicSoul.Admin.Client.Views.Components;
 
 public class RsDataGridBase<T> : ComponentBase where T : class
 {
-    [Inject] protected ISnackbar? Snackbar { get; set; }
-    [Inject] protected IDialogService? DialogService { get; set; }
-    [Inject] protected IOptions<AppSettings> AppSettingsOptions { get; set; }
+    [Inject] ISnackbar? Snackbar { get; set; }
+    [Inject] IDialogService? DialogService { get; set; }
+    [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
     [Parameter] public IService<T>? ApiService { get; set; }
     [Parameter] public bool CanGroup { get; set; }
     [Parameter] public bool GroupExpanded { get; set; }
@@ -33,10 +33,12 @@ public class RsDataGridBase<T> : ComponentBase where T : class
 
     protected IEnumerable<PropertyInfo> _properties;
     protected MudDataGrid<T> thisDataGrid;
-    protected Dictionary<(string, int), string> RowHighlight = new();
-    protected AppSettings _appSettings;
+    private Dictionary<(string, int), string> RowHighlight = new();
+    private AppSettings _appSettings;
     protected bool _isExpanded;
     protected string TableName;
+    private string _contentStyle;
+    private string _loadingStyle;
 
     protected override async Task OnInitializedAsync()
     {
@@ -44,14 +46,14 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         await FilterItemsAsync();
     }
 
-    protected void SetFields()
+    private void SetFields()
     {
         _appSettings = AppSettingsOptions.Value;
         TableName = typeof(T).Name.Replace("Dto", string.Empty).SplitCamelCase();
         _properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
     }
 
-    protected async Task FilterItemsAsync()
+    private async Task FilterItemsAsync()
     {
         if (FilterIds is null) return;
 
@@ -81,64 +83,59 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         _isExpanded = false;
     }
 
-    protected List<RenderFragment> CreateColumn()
-    {
-        var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-        var columns = new List<RenderFragment>();
-        foreach (var property in properties)
-        {
-            Dictionary<string, object> attributeDictionary = new();
-            var parameterExp = Expression.Parameter(typeof(T), property.Name);
-            var propertyExp = Expression.Property(parameterExp, property);
-            var convertExp = Expression.Convert(propertyExp, typeof(object));
-            var lambdaExp = Expression.Lambda<Func<T, object>>(convertExp, parameterExp);
+    //protected List<RenderFragment> CreateColumn()
+    //{
+    //    var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+    //    var columns = new List<RenderFragment>();
+    //    foreach (var item in properties.Select((value, index) => new { index, value }))
+    //    {
+    //        var property = item.value;
+    //        var thisIndex = item.index + 1;
+    //        if (ColumnsToHide is not null && ColumnsToHide.Contains(thisIndex)) continue;
 
-            attributeDictionary[_appSettings.RsDataGridRenderFragmentPropertyAttribute] = lambdaExp;
-            attributeDictionary[_appSettings.RsDataGridRenderFragmentTitleAttribute] =
-                property.Name.SplitCamelCase();
-            if (property.Name == GroupBy)
-                attributeDictionary[_appSettings.RsDataGridRenderFragmentGroupingAttribute] = true;
+    //        Dictionary<string, object> attributeDictionary = new();
+    //        var parameterExp = Expression.Parameter(typeof(T), property.Name);
+    //        var propertyExp = Expression.Property(parameterExp, property);
+    //        var convertExp = Expression.Convert(propertyExp, typeof(object));
+    //        var lambdaExp = Expression.Lambda<Func<T, object>>(convertExp, parameterExp);
 
-            columns.Add(CreateRenderFragment(attributeDictionary, typeof(PropertyColumn<T, object>)));
-        }
-        return columns;
-    }
+    //        attributeDictionary[_appSettings.RsDataGridRenderFragmentPropertyAttribute] = lambdaExp;
+    //        attributeDictionary[_appSettings.RsDataGridRenderFragmentTitleAttribute] =
+    //            property.Name.SplitCamelCase();
+    //        if (property.Name == GroupBy)
+    //            attributeDictionary[_appSettings.RsDataGridRenderFragmentGroupingAttribute] = true;
 
-    protected RenderFragment CreateColumn<T>(PropertyInfo propertyInfo)
-    {
-        //if (propertyInfo is null) return null;
+    //        columns.Add(CreateRenderFragment(attributeDictionary, typeof(PropertyColumn<T, object>)));
+    //    }
+    //    return columns;
+    //}
 
-        Dictionary<string, object> attributeDictionary = new();
-        var parameterExp = Expression.Parameter(typeof(T), propertyInfo.Name);
-        var propertyExp = Expression.Property(parameterExp, propertyInfo);
-        var convertExp = Expression.Convert(propertyExp, typeof(object));
-        var lambdaExp = Expression.Lambda<Func<T, object>>(convertExp, parameterExp);
-
-        attributeDictionary[_appSettings.RsDataGridRenderFragmentPropertyAttribute] = lambdaExp;
-        attributeDictionary[_appSettings.RsDataGridRenderFragmentTitleAttribute] = propertyInfo.Name.SplitCamelCase();
-        if (propertyInfo.Name == GroupBy)
-            attributeDictionary[_appSettings.RsDataGridRenderFragmentGroupingAttribute] = true;
-
-        return CreateRenderFragment(attributeDictionary, typeof(PropertyColumn<T, object>));
-    }
-
-    protected RenderFragment CreateRenderFragment(Dictionary<string, object> attributeDictionary, Type componentType)
+    protected RenderFragment CreateColumn(PropertyInfo propertyInfo)
     {
         return builder =>
         {
-            var seq = 0;
-            builder.OpenComponent(seq, componentType);
-            foreach (var attribute in attributeDictionary)
-            {
-                var name = attribute.Key;
-                var value = attribute.Value;
-                builder.AddAttribute(++seq, name, value);
-            }
-            builder.CloseComponent();
+            // Create a parameter for the lambda expression
+            var parameterExp = Expression.Parameter(typeof(T), propertyInfo.Name);
+
+            // Create a property access expression for the specified property
+            var propertyExp = Expression.Property(parameterExp, propertyInfo);
+
+            // Because Property expects a Func<T, object>, we may need to convert the property 
+            // expression to object if the property type is a value type
+            var convertExp = Expression.Convert(propertyExp, typeof(object));
+
+            // Create a lambda expression for the property access expression
+            var lambdaExp = Expression.Lambda<Func<T, object>>(convertExp, parameterExp);
+
+            builder.OpenComponent(0, typeof(PropertyColumn<T, object>));
+            builder.AddAttribute(1, _appSettings.RsDataGridRenderFragmentPropertyAttribute, lambdaExp);
+            builder.AddAttribute(2, _appSettings.RsDataGridRenderFragmentTitleAttribute, propertyInfo.Name.SplitCamelCase());
+            if (propertyInfo.Name == GroupBy) builder.AddAttribute(3, _appSettings.RsDataGridRenderFragmentGroupingAttribute, true);
+            builder?.CloseComponent();
         };
     }
 
-    protected async Task CreateNewItemAsync<T>(object data)
+    private async Task CreateNewItemAsync<T>(object data)
     {
         dynamic resultData;
         bool isSuccessful;
@@ -175,6 +172,23 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         }
 
         ShowSnackBar(isSuccessful, message);
+    }
+
+    private RenderFragment CreateRenderFragment(Dictionary<string, object> attributeDictionary, Type componentType)
+    {
+        return builder =>
+        {
+            var seq = 0;
+            builder.OpenComponent(seq, componentType);
+            foreach (var attribute in attributeDictionary)
+            {
+                var name = attribute.Key;
+                var value = attribute.Value;
+                builder.AddAttribute(++seq, name, value);
+            }
+
+            builder.CloseComponent();
+        };
     }
 
     public async Task ShowNewItemDialogAsync()
@@ -264,5 +278,17 @@ public class RsDataGridBase<T> : ComponentBase where T : class
     {
         var items = await ApiService?.GetAllAsync();
         Items = items;
+    }
+
+    private void DisplayContent(EventArgs obj)
+    {
+        _contentStyle = "";
+        _loadingStyle = "display: none;";
+    }
+
+    private void HideContent(object sender, EventArgs e)
+    {
+        _contentStyle = "display: none;";
+        _loadingStyle = "";
     }
 }
