@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Microsoft.VisualStudio.Threading;
 using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoulDatabaseLibrary.Interfaces;
 
@@ -15,7 +16,7 @@ public partial class AdinkraSurvey : ComponentBase
     private IEnumerable<AdinkraSymbolDto>? CurrentSymbols => _allSymbols?.Skip(_currentPage * _pageSize).Take(_pageSize);
     [CascadingParameter] public EventCallback HideMenus { get; set; }
 
-    public event EventHandler NewPage;
+    public event AsyncEventHandler NewPageAsync;
 
     private int _pageSize = 10;
     private int _currentPage;
@@ -24,7 +25,7 @@ public partial class AdinkraSurvey : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await SetFieldsAsync();
+        await InitializeAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -33,7 +34,7 @@ public partial class AdinkraSurvey : ComponentBase
     }
 
 
-    private async Task SetFieldsAsync()
+    private async Task InitializeAsync()
     {
         await HideMenus.InvokeAsync();
         _baseAddress = _httpClient.BaseAddress?.ToString();
@@ -43,18 +44,18 @@ public partial class AdinkraSurvey : ComponentBase
     private bool HasPreviousPage => _currentPage > 0;
     private bool HasNextPage => (_currentPage + 1) * _pageSize < _allSymbols?.Count();
 
-    private void PreviousPage()
+    private async Task PreviousPageAsync()
     {
         if (!HasPreviousPage) return;
         _currentPage--;
-        NewPage.Invoke(this, EventArgs.Empty);
+        await NewPageAsync.InvokeAsync(this, EventArgs.Empty);
     }
 
-    private void NextPage()
+    private async Task NextPageAsync()
     {
         if (!HasNextPage) return;
         _currentPage++;
-        NewPage.Invoke(this, EventArgs.Empty);
+        await NewPageAsync.InvokeAsync(this, EventArgs.Empty);
     }
 
     public void TallySymbolLikes(bool isSelected, int symbolId)

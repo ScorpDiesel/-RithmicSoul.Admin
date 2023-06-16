@@ -23,11 +23,11 @@ public partial class RsDataGridWithDetailRow<T> : RsDataGridBase<T> where T : cl
 
     protected override async Task OnInitializedAsync()
     {
-        SetFields();
+        Initialize();
         await FilterItemsAsync();
     }
 
-    private void SetFields()
+    private void Initialize()
     {
         _appSettings = AppSettingsOptions.Value;
         TableName = typeof(T).Name.Replace("Dto", string.Empty).SplitCamelCase();

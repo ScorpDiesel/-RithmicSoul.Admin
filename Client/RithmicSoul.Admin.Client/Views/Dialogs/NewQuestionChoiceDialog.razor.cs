@@ -33,10 +33,10 @@ public partial class NewQuestionChoiceDialog : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await SetFields();
+        await Initialize();
     }
 
-    private async Task SetFields()
+    private async Task Initialize()
     {
         _appSettings = AppSettingsOptions.Value;
         _questionTypeNameVisibility = _appSettings.QuestionTypeNameCssVisibilityHidden;

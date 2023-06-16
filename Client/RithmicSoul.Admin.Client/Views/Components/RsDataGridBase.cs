@@ -42,11 +42,11 @@ public class RsDataGridBase<T> : ComponentBase where T : class
 
     protected override async Task OnInitializedAsync()
     {
-        SetFields();
+        Initialize();
         await FilterItemsAsync();
     }
 
-    private void SetFields()
+    private void Initialize()
     {
         _appSettings = AppSettingsOptions.Value;
         TableName = typeof(T).Name.Replace("Dto", string.Empty).SplitCamelCase();

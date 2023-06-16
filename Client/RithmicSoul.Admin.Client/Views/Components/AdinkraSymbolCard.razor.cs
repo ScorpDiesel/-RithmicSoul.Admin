@@ -16,6 +16,7 @@ public partial class AdinkraSymbolCard : ComponentBase
     [Parameter] public string Style { get; set; }
     [Parameter] public EventCallback<bool> OnSymbolClicked { get; set; }
     [Parameter] public bool IsSelected { get; set; }
+    [Parameter] public bool? UseBase64Data { get; set; }
     [Parameter] public AdinkraSurvey Parent { get; set; }
 
     private int _maxMeaningLength = 50;
@@ -29,19 +30,19 @@ public partial class AdinkraSymbolCard : ComponentBase
     protected override void OnInitialized()
     {
         _isLoaded = true;
-        Parent.NewPage += HideContent;
-        HideContent(null, null);
+        Parent.NewPageAsync += NewPagAsync;
+        HideContent();
     }
 
     protected override void OnAfterRender(bool firstRender)
     {
         if (_isLoaded) return;
-        HideContent(null, null);
+        HideContent();
     }
 
     public async Task SymbolClickedAsync()
     {
-        DisplayContent(null);
+        ShowContent();
         IsSelected = !IsSelected;
         await OnSymbolClicked.InvokeAsync(IsSelected);
     }
@@ -54,14 +55,24 @@ public partial class AdinkraSymbolCard : ComponentBase
 
     private void CardElevationDown() => _elevation = 1;
 
-    private void DisplayContent(EventArgs obj)
+    private void ImageLoad(EventArgs obj)
+    {
+        ShowContent();
+    }
+
+    private void ShowContent()
     {
         _contentStyle = "";
         _loadingStyle = "display: none;";
         _isLoaded = true;
     }
 
-    private void HideContent(object sender, EventArgs e)
+    private async Task NewPagAsync(object? sender, EventArgs e)
+    {
+        HideContent();
+    }
+
+    private void HideContent()
     {
         _contentStyle = "display: none;";
         _loadingStyle = "";
@@ -69,7 +80,7 @@ public partial class AdinkraSymbolCard : ComponentBase
 
     public void Dispose()
     {
-        Parent.NewPage -= HideContent;
+        Parent.NewPageAsync -= NewPagAsync;
     }
 
 }

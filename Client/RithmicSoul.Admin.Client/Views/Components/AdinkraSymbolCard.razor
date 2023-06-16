@@ -37,7 +37,7 @@
         </MudCardHeader>
         <div style="text-align: center;">
             <img src="@ImgSrcUrl" Width="300" Style="padding:40px;" alt="@SymbolName"
-                 @onload="@DisplayContent"/>
+                 @onload="@ImageLoad" />
         </div>
         <MudCardContent>
             @if (IsStringLengthTooLong(SymbolMeaning, _maxMeaningLength))

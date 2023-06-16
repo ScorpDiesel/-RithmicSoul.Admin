@@ -26,10 +26,10 @@ public partial class QuestionResponse : ComponentBase
 
     protected override void OnInitialized()
     {
-        SetFields();
+        Initialize();
     }
 
-    private void SetFields()
+    private void Initialize()
     {
         _appSettings = AppSettingsOptions.Value;
         //if (QuestionText is null) return;

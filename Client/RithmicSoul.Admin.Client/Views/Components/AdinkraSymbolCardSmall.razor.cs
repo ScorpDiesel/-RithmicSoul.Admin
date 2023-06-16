@@ -22,10 +22,10 @@ public partial class AdinkraSymbolCardSmall : ComponentBase
 
     protected override void OnInitialized()
     {
-        SetFields();
+        Initialize();
     }
 
-    private void SetFields()
+    private void Initialize()
     {
         _isLoaded = true;
         HideContent(null, null);

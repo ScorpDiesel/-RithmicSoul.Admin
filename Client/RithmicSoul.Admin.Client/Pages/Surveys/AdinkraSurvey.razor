@@ -19,8 +19,8 @@
         <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
             <MudText Class="mr-8" Color="Color.Default" Style="font-size:.875rem;font-weight:500">PAGE @(_currentPage + 1) OF @_pageSize</MudText>
             <div>
-                <MudButton StartIcon="@Icons.Material.Filled.NavigateBefore" OnClick="@PreviousPage" Disabled="@(!HasPreviousPage)">Previous</MudButton>
-                <MudButton EndIcon="@Icons.Material.Filled.NavigateNext" OnClick="@NextPage" Disabled="@(!HasNextPage)">Next</MudButton>
+                <MudButton StartIcon="@Icons.Material.Filled.NavigateBefore" OnClick="@(async () => await PreviousPageAsync())" Disabled="@(!HasPreviousPage)">Previous</MudButton>
+                <MudButton EndIcon="@Icons.Material.Filled.NavigateNext" OnClick="@(async () => await NextPageAsync())" Disabled="@(!HasNextPage)">Next</MudButton>
             </div>
         </MudStack>
         <MudGrid Class="mt-8 mb-8">
@@ -28,7 +28,7 @@
             {
                 <MudItem xs="12" sm="6" md="3" lg="2" xl="2" Style="min-width:414.66px !important">
                     <AdinkraSymbolCard Style="max-height: 560px; height: 560px"
-                       SymbolId="@symbol.SymbolId"
+                        SymbolId="@symbol.SymbolId"
                        SymbolName="@symbol.SymbolName" SymbolMeaning="@symbol.SymbolMeaning"
                        ImgSrcUrl=@($"{_baseAddress}v2/AdinkraSymbols/{symbol.SymbolId}/300")
                        AudioSrcUrl=@($"{_baseAddress}v3/AdinkraSymbols/{symbol.SymbolId}")
@@ -42,8 +42,8 @@
         <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
             <MudText Class="mr-8" Color="Color.Default" Style="font-size:.875rem;font-weight:500">PAGE @(_currentPage + 1) OF @_pageSize</MudText>
             <div>
-                <MudButton StartIcon="@Icons.Material.Filled.NavigateBefore" OnClick="@PreviousPage" Disabled="@(!HasPreviousPage)">Previous</MudButton>
-                <MudButton EndIcon="@Icons.Material.Filled.NavigateNext" OnClick="@NextPage" Disabled="@(!HasNextPage)">Next</MudButton>
+                <MudButton StartIcon="@Icons.Material.Filled.NavigateBefore" OnClick="@(async () => await PreviousPageAsync())" Disabled="@(!HasPreviousPage)">Previous</MudButton>
+                <MudButton EndIcon="@Icons.Material.Filled.NavigateNext" OnClick="@(async () => await NextPageAsync())" Disabled="@(!HasNextPage)">Next</MudButton>
             </div>
         </MudStack>
     }

@@ -32,11 +32,11 @@ public partial class EditQuestionChoiceDialog : ComponentBase
     protected override async Task OnInitializedAsync()
     {
         ToggleLoadingScreen(true);
-        await SetFieldsAsync();
+        await InitializeAsync();
         ToggleLoadingScreen(false);
     }
 
-    private async Task SetFieldsAsync()
+    private async Task InitializeAsync()
     {
         _appSettings = AppSettingsOptions.Value;
         _chooseableList.Add(_appSettings.QuestionChoicesMultipleChoice);

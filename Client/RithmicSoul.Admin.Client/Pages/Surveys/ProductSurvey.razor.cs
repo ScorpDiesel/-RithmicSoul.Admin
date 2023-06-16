@@ -25,10 +25,10 @@ public partial class ProductSurvey : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await SetFieldsAsync();
+        await InitializeAsync();
     }
 
-    private async Task SetFieldsAsync()
+    private async Task InitializeAsync()
     {
         await HideMenus.InvokeAsync();
         _authoredSurveys = await AuthoredSurveyService.GetAllAsync();
