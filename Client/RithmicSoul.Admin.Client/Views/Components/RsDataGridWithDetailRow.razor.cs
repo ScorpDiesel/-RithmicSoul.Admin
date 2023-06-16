@@ -18,6 +18,8 @@ public partial class RsDataGridWithDetailRow<T> : RsDataGridBase<T> where T : cl
     [Inject] private HttpClient _httpClient { get; set; }
     [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
     [Parameter] public int[]? DetailRowColumns { get; set; }
+    [Parameter] public RenderFragment? DetailRowContent { get; set; }
+
     private string? _baseAddress;
     private AppSettings _appSettings;
 
