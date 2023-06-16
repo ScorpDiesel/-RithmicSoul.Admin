@@ -59,12 +59,12 @@
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 650px; overflow-y: auto">
                                         <RsDataGridWithDetailRow T="AdinkraSymbolDto" DetailRowColumns="new[] { 5, 6 }"
-                                                                 Items="@_adinkraSymbols"
-                                                                 TEditDialog="typeof(EditQuestionChoiceDialog)" TDialog="typeof(NewQuestionChoiceDialog)"
-                                                                 CanCreate="true" CanDelete="true" CanEdit="true" ColumnsToHide="new[] { 1, 5, 6 }"
-                                                                 ApiService="@AdinkraSymbolService">
+                                             Items="@_adinkraSymbols"
+                                             TEditDialog="typeof(EditQuestionChoiceDialog)" TDialog="typeof(NewQuestionChoiceDialog)"
+                                             CanCreate="true" CanDelete="true" CanEdit="true" ColumnsToHide="new[] { 1, 5, 6 }"
+                                             ApiService="@AdinkraSymbolService">
                                             <DetailRowContent>
-
+                                                <AdinkraSymbolCardSmall Style="width: 400px; height: 410px" SymbolId="@context.SymbolId"/>
                                             </DetailRowContent>
                                         </RsDataGridWithDetailRow>
                                     </MudPaper>

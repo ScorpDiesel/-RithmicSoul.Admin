@@ -1,74 +1,81 @@
 ﻿@inherits RsDataGridBase<T>
 @typeparam T
 
-<MudDataGrid Items="@Items" T="T" Hover="true" FixedHeader="true" Style="height: 560px;"
-     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
-     RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
-     Groupable="@CanGroup" GroupExpanded="@GroupExpanded" MultiSelection="@MultiSelection"
-     Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="thisDataGrid">
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Table: @TableName</MudText>
-        <MudSpacer />
-        @if (CanGroup)
-        {
-            @if (!_isExpanded)
+@if (Items is null || !Items.Any())
+{
+    <MudText Typo="Typo.h2" style="vertical-align: middle;text-align: center">
+        No data
+    </MudText>
+}
+else
+{
+    <MudDataGrid Items="@Items" T="T" Hover="true" FixedHeader="true" Style="height: 560px;"
+                 EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
+                 RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
+                 Groupable="@CanGroup" GroupExpanded="@GroupExpanded" MultiSelection="@MultiSelection"
+                 Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="thisDataGrid">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Table: @TableName</MudText>
+            <MudSpacer/>
+            @if (CanGroup)
             {
-                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldMore" Class="mt-0" OnClick="@ExpandGroups" />
-            }
-            else
-            {
-                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldLess" Class="mt-0" OnClick="@CollapseGroups" />
-            }
-        }
-        @if (CanCreate)
-        {
-            <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await ShowNewItemDialogAsync(); })" />
-        }
-        <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await UpdateItemsAsync(); })" />
-    </ToolBarContent>
-    <Columns>
-        <HierarchyColumn T="T" />
-        @if (MultiSelection)
-        {
-            <SelectColumn T="T" ShowInFooter="false" />
-        }
-        @if (Items is null)
-        {
-            return;
-        }
-        @foreach (var property in _properties.Select((value, index) => new { index, value }))
-        {
-            var value = property.value;
-            var thisIndex = property.index + 1;
-            if (ColumnsToHide is not null && ColumnsToHide.Contains(thisIndex))
-            {
-                continue;
-            }
-            @CreateColumn(value)
-        }
-        <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
-            <CellTemplate>
-                @if (CanEdit)
+                @if (!_isExpanded)
                 {
-                    <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await ShowEditItemDialogAsync(context.Item); })" />
+                    <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldMore" Class="mt-0" OnClick="@ExpandGroups"/>
                 }
-                @if (CanDelete)
+                else
                 {
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(async () => { await DeleteAsync(context.Item); })" />
+                    <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldLess" Class="mt-0" OnClick="@CollapseGroups"/>
                 }
-            </CellTemplate>
-        </TemplateColumn>
-    </Columns>
-    <ChildRowContent>
-        @{
-            var value = GetColumnValueByColumnName(context.Item, "SymbolId");
-            var symbolId = Convert.ToInt32(value);
-            <AdinkraSymbolCardSmall Style="width: 400px; height: 410px" SymbolId="@symbolId"
-                ImgSrcUrl=@($"{_baseAddress}v2/AdinkraSymbols/{@symbolId}/200")
-                AudioSrcUrl=@($"{_baseAddress}v3/AdinkraSymbols/{@symbolId}") />
+            }
+            @if (CanCreate)
+            {
+                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await ShowNewItemDialogAsync(); })"/>
+            }
+            <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await UpdateItemsAsync(); })"/>
+        </ToolBarContent>
+        <Columns>
+            <HierarchyColumn T="T"/>
+            @if (MultiSelection)
+            {
+                <SelectColumn T="T" ShowInFooter="false"/>
+            }
+            @if (Items is null)
+            {
+                return;
+            }
+            @foreach (var property in _properties.Select((value, index) => new { index, value }))
+            {
+                var value = property.value;
+                var thisIndex = property.index + 1;
+                if (ColumnsToHide is not null && ColumnsToHide.Contains(thisIndex))
+                {
+                    continue;
+                }
+                @CreateColumn(value)
+            }
+            <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
+                <CellTemplate>
+                    @if (CanEdit)
+                    {
+                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await ShowEditItemDialogAsync(context.Item); })"/>
+                    }
+                    @if (CanDelete)
+                    {
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(async () => { await DeleteAsync(context.Item); })"/>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <ChildRowContent>
+            @if (DetailRowContent is not null)
+            {
+                @DetailRowContent(context.Item)
+            }
         }
-    </ChildRowContent>
-    <PagerContent>
-        <MudDataGridPager T="T" DisableRowsPerPage="true" />
-    </PagerContent>
-</MudDataGrid>
+        </ChildRowContent>
+        <PagerContent>
+            <MudDataGridPager T="T" DisableRowsPerPage="true"/>
+        </PagerContent>
+    </MudDataGrid>
+}

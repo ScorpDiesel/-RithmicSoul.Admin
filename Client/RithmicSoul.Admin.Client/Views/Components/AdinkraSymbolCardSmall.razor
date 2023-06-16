@@ -6,13 +6,13 @@
     </div>
     <div style="@_contentStyle">
         <div style="text-align: center;">
-            <img src="@ImgSrcUrl" Width="300" Style="padding:40px 40px 20px;" alt="@SymbolId"
+            <img src="@_imgSrcUrl" Width="300" Style="padding:40px 40px 20px;" alt="@SymbolId"
                  @onload="@DisplayContent"/>
         </div>
         <MudCardContent>
             <hr style="margin-bottom: 20px"/>
             <div style="text-align: center;">
-                <audio controls="controls" src="@AudioSrcUrl"></audio>
+                <audio controls="controls" src="@_audioSrcUrl"></audio>
             </div>
         </MudCardContent>
     </div>

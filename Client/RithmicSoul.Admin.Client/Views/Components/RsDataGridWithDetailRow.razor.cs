@@ -15,12 +15,10 @@ namespace RithmicSoul.Admin.Client.Views.Components;
 
 public partial class RsDataGridWithDetailRow<T> : RsDataGridBase<T> where T : class
 {
-    [Inject] private HttpClient _httpClient { get; set; }
     [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
     [Parameter] public int[]? DetailRowColumns { get; set; }
-    [Parameter] public RenderFragment? DetailRowContent { get; set; }
+    [Parameter] public RenderFragment<T>? DetailRowContent { get; set; }
 
-    private string? _baseAddress;
     private AppSettings _appSettings;
 
     protected override async Task OnInitializedAsync()
@@ -32,7 +30,6 @@ public partial class RsDataGridWithDetailRow<T> : RsDataGridBase<T> where T : cl
     private void SetFields()
     {
         _appSettings = AppSettingsOptions.Value;
-        _baseAddress = _httpClient.BaseAddress?.ToString();
         TableName = typeof(T).Name.Replace("Dto", string.Empty).SplitCamelCase();
         _properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
     }
@@ -145,18 +142,18 @@ public partial class RsDataGridWithDetailRow<T> : RsDataGridBase<T> where T : cl
         return fragments;
     }
 
-    private List<RenderFragment> CreateDetailRowContentFromColumn(string elementType, string columnName, object rowItem, string? contentUrlTemplate = null)
-    {
-        List<RenderFragment> fragments = new();
-        var columnValue = GetColumnValueByColumnName(rowItem, columnName) ?? string.Empty;
-        if (!string.IsNullOrEmpty(contentUrlTemplate)) columnValue = string.Format($"{_baseAddress}{contentUrlTemplate}", columnValue);
+    //private List<RenderFragment> CreateDetailRowContentFromColumn(string elementType, string columnName, object rowItem, string? contentUrlTemplate = null)
+    //{
+    //    List<RenderFragment> fragments = new();
+    //    var columnValue = GetColumnValueByColumnName(rowItem, columnName) ?? string.Empty;
+    //    if (!string.IsNullOrEmpty(contentUrlTemplate)) columnValue = string.Format($"{_baseAddress}{contentUrlTemplate}", columnValue);
 
-        var (attributeDictionary, htmlElement) = GetHtmlElementFromMimeType(elementType, columnValue);
-        var fragment = CreateRenderFragment(attributeDictionary, htmlElement);
-        fragments.Add(fragment);
+    //    var (attributeDictionary, htmlElement) = GetHtmlElementFromMimeType(elementType, columnValue);
+    //    var fragment = CreateRenderFragment(attributeDictionary, htmlElement);
+    //    fragments.Add(fragment);
 
-        return fragments;
-    }
+    //    return fragments;
+    //}
 
     private object? GetColumnValueByColumnName(object rowItem, string columnName)
     {
