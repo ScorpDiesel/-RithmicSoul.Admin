@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoulDatabaseLibrary.Interfaces;
 
@@ -6,6 +7,7 @@ namespace RithmicSoul.Admin.Client.Pages.Surveys;
 
 public partial class AdinkraSurvey : ComponentBase
 {
+    [Inject] IJSRuntime JSRuntime { get; set; }
     [Inject] private HttpClient _httpClient { get; set; }
     [Inject] private IService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
 
@@ -24,6 +26,12 @@ public partial class AdinkraSurvey : ComponentBase
     {
         await SetFieldsAsync();
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeVoidAsync("setPlaybackRate", 0.75);
+    }
+
 
     private async Task SetFieldsAsync()
     {
