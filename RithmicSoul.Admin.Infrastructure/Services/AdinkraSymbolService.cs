@@ -102,14 +102,4 @@ public class AdinkraSymbolService : IService<AdinkraSymbolDto>
         var response = await _httpClient.DeleteAsJsonAsync("v2/AdinkraSymbols", content);
         return response.IsSuccessStatusCode;
     }
-
-    public async Task<IEnumerable<AdinkraSymbolDto>> GetAllFromViewAsync()
-    {
-        throw new NotImplementedException();
-    }
-   
-    public async Task<IEnumerable<AdinkraSymbolDto>> GetFromViewAsync(Expression<Func<AdinkraSymbolDto, bool>> expression)
-    {
-        throw new NotImplementedException();
-    }
 }

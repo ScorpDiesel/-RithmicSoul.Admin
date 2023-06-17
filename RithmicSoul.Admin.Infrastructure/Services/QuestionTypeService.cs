@@ -99,14 +99,4 @@ public class QuestionTypeService : IService<QuestionTypeDto>
         var response = await _httpClient.DeleteAsJsonAsync("v2/QuestionTypes", content);
         return response.IsSuccessStatusCode;
     }
-
-    public async Task<IEnumerable<QuestionTypeDto>> GetAllFromViewAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<IEnumerable<QuestionTypeDto>> GetFromViewAsync(Expression<Func<QuestionTypeDto, bool>> expression)
-    {
-        throw new NotImplementedException();
-    }
 }

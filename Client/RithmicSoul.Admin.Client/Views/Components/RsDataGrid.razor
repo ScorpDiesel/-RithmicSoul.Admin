@@ -5,7 +5,7 @@
 @typeparam T
 
 <MudDataGrid Items="@Items" T="T" Hover="true" FixedHeader="true" Style="height: 560px;"
-     EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
+     EditMode="DataGridEditMode.Form" CommittedItemChanges="@(async item => { await UpdateItemAsync(item); })" CanceledEditingItem="@ResetRowHighlight"
      RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
      Groupable="@CanGroup" GroupExpanded="@GroupExpanded" MultiSelection="@MultiSelection"
      Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="thisDataGrid">

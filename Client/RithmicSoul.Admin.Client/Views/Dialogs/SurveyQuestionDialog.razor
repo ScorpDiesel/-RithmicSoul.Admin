@@ -27,33 +27,24 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="SaveAsync">Save</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Save">Save</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
-    [Inject] private IService<SurveyQuestionDto>? SurveyQuestionService { get; set; }
-    [Inject] private ISnackbar? Snackbar { get; set; }
-    [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
     [Inject] IService<QuestionTypeDto> QuestionTypeService { get; set; }
 
     [CascadingParameter] 
     MudDialogInstance MudDialog { get; set; }
 
-    [Parameter]
-    public SurveyQuestionDto? Model { get; set; }
+    [Parameter] public SurveyQuestionDto? Model { get; set; }
     [Parameter] public EventCallback OnOperationCompleted { get; set; }
-
-    private string SurveyQuestionTableName = EntityUtility.GetTableName<SurveyQuestion>();
+    
     private static IEnumerable<QuestionTypeDto> _questionTypes;
-    private bool _isNewQuestion;
-    private AppSettings _appSettings;
 
     protected override async Task OnInitializedAsync()
     {
-        _isNewQuestion = Model is null;
         Model ??= new SurveyQuestionDto();
-        _appSettings = AppSettingsOptions.Value;
         _questionTypes = await QuestionTypeService.GetAllAsync();
     }
 
@@ -64,42 +55,7 @@
     };
 
 
-    async Task SaveAsync()
-    {
-        bool isSaveSuccessful;
-        if (_isNewQuestion)
-        {
-            isSaveSuccessful = await SurveyQuestionService?.InsertAsync(Model);
-        }
-        else
-        {
-            isSaveSuccessful = await SurveyQuestionService?.UpdateAsync(Model);
-        }
-
-        ShowSnackBar(isSaveSuccessful);
-        await OnOperationCompleted.InvokeAsync(null);
-        MudDialog.Close(DialogResult.Ok(true));
-    }
+    void Save() => MudDialog.Close(DialogResult.Ok(Model));
 
     void Cancel() => MudDialog.Cancel();
-
-    private void ShowSnackBar(bool isSuccessful)
-    {
-        Snackbar?.Clear();
-        string message;
-        if (isSuccessful)
-        {
-            message = _isNewQuestion ? string.Format(_appSettings.ItemCreatedSuccessMessageTemplate, SurveyQuestionTableName)
-                : string.Format(_appSettings.ItemUpdatedSuccessMessageTemplate, SurveyQuestionTableName);
-
-            Snackbar?.Add(message, Severity.Success);
-        }
-        else
-        {
-            message = _isNewQuestion ? string.Format(_appSettings.ItemCreatedFailureMessageTemplate, SurveyQuestionTableName)
-                : string.Format(_appSettings.ItemUpdatedFailureMessageTemplate, SurveyQuestionTableName);
-
-            Snackbar?.Add(message, Severity.Error);
-        }
-    }
 }

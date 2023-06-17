@@ -101,14 +101,4 @@ public class SurveyQuestionnaireService : IService<SurveyQuestionnaireDto>
         var response = await _httpClient.DeleteAsJsonAsync("v2/SurveyQuestionnaires", content);
         return response.IsSuccessStatusCode;
     }
-
-    public async Task<IEnumerable<SurveyQuestionnaireDto>> GetAllFromViewAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<IEnumerable<SurveyQuestionnaireDto>> GetFromViewAsync(Expression<Func<SurveyQuestionnaireDto, bool>> expression)
-    {
-        throw new NotImplementedException();
-    }
 }

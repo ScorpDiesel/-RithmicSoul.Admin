@@ -16,7 +16,7 @@ public partial class Surveys : ComponentBase
 {
     [Inject] IDialogService? DialogService { get; set; }
     [Inject] IService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
-    [Inject] IService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
+    [Inject] IDatabaseService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
     [Inject] NavigationManager Navigation { get; set; }
 
     private IEnumerable<AdinkraSymbolDto> _adinkraSymbols;
@@ -24,7 +24,7 @@ public partial class Surveys : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        _authoredSurveys = await AuthoredSurveyService.GetAllAsync();
+        _authoredSurveys = await AuthoredSurveyService.GetAllFromViewAsync();
     }
 
     private void NewSurvey() => Navigation.NavigateTo("/surveys/new");

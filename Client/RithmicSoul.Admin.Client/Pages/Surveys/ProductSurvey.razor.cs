@@ -10,7 +10,7 @@ namespace RithmicSoul.Admin.Client.Pages.Surveys;
 
 public partial class ProductSurvey : ComponentBase
 {
-    [Inject] IService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
+    [Inject] IDatabaseService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
     [CascadingParameter] public EventCallback HideMenus { get; set; }
     
     private string _surveyDescription;
@@ -31,7 +31,7 @@ public partial class ProductSurvey : ComponentBase
     private async Task InitializeAsync()
     {
         await HideMenus.InvokeAsync();
-        _authoredSurveys = await AuthoredSurveyService.GetAllAsync();
+        _authoredSurveys = await AuthoredSurveyService.ExecuteQueryStoredProcedureAsync(null);
         _surveyDescription = _authoredSurveys.First().SurveyDescription;
         _questions = _authoredSurveys.Select(q => q.QuestionText).Distinct();
     }
@@ -52,7 +52,7 @@ public partial class ProductSurvey : ComponentBase
     }
     private void QuestionValueChanged(QuestionResponseObject response)
     {
-        if (response.QuestionType == "Checkbox")
+        if (response.QuestionType == "Multiple Choice")
         {
             if (response.isSelected)
             {

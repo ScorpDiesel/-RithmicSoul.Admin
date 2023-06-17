@@ -16,6 +16,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
     [Inject] IDialogService? DialogService { get; set; }
     [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
     [Parameter] public IService<T>? ApiService { get; set; }
+    [Parameter] public IDatabaseService<T>? ApiDbService { get; set; }
     [Parameter] public bool CanGroup { get; set; }
     [Parameter] public bool GroupExpanded { get; set; }
     [Parameter] public string? GroupBy { get; set; }
@@ -249,8 +250,12 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         }
 
         var result = await dialog.Result;
-        ResetRowHighlight(dto);
-        StateHasChanged();
+        if (!result.Canceled)
+        {
+            dynamic resultData = (T)result.Data;
+            await UpdateItemAsync(resultData);
+
+        }
     }
 
     protected void SetRowHighlight(object dto)

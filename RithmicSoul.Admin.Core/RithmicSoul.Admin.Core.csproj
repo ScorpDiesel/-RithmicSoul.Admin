@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="RithmicSoul.Models" Version="2023.6.11.1" />
-    <PackageReference Include="RithmicSoulSharedLibrary" Version="2023.6.11.1" />
+    <PackageReference Include="RithmicSoulSharedLibrary" Version="2023.6.16.1" />
   </ItemGroup>
 
   <ItemGroup>

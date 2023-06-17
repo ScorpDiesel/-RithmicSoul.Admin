@@ -13,21 +13,15 @@
 </MudDialog>
 
 @code {
-    [CascadingParameter] 
-    MudDialogInstance MudDialog { get; set; }
-
-    [Parameter]
-    public QuestionTypeDto? Model { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public QuestionTypeDto? Model { get; set; }
 
     protected override void OnInitialized()
     {
         Model ??= new QuestionTypeDto();
     }
 
-    void Save()
-    {
-        MudDialog.Close(DialogResult.Ok(Model));
-    }
+    void Save() => MudDialog.Close(DialogResult.Ok(Model));
 
     void Cancel() => MudDialog.Cancel();
 }

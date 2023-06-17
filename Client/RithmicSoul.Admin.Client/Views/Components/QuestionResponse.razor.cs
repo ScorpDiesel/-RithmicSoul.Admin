@@ -79,11 +79,11 @@ public partial class QuestionResponse : ComponentBase
                     var likertList = _appSettings.LikerScaleChoices.Split(',').ToList();
                     CreateRadioGroupFragment(choices.QuestionType, builder, likertList, false);
                     break;
-                case "Multiple Choice":
+                case "Single Choice":
                 case "Demographic":
                     CreateRadioGroupFragment(choices.QuestionType, builder, choices.QuestionChoices, false);
                     break;
-                case "Checkbox":
+                case "Multiple Choice":
                     CreateCheckboxesFragment(choices.QuestionType, builder, choices.QuestionChoices, false);
                     break;
             }
@@ -104,7 +104,7 @@ public partial class QuestionResponse : ComponentBase
     private void CreateRatingFragment(string questionType, RenderTreeBuilder builder)
     {
         builder.OpenComponent(0, typeof(MudRating));
-        builder.AddAttribute(1, "MaxValue", 10);
+        builder.AddAttribute(1, "MaxValue", 5);
         builder.AddAttribute(2, "Size", Size.Large);
         builder.AddAttribute(3, "Class", "ml-n2");
         builder.AddAttribute(5, "SelectedValueChanged",
