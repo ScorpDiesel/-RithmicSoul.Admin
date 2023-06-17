@@ -31,7 +31,7 @@ public partial class ProductSurvey : ComponentBase
     private async Task InitializeAsync()
     {
         await HideMenus.InvokeAsync();
-        _authoredSurveys = await AuthoredSurveyService.ExecuteQueryStoredProcedureAsync(null);
+        _authoredSurveys = await AuthoredSurveyService.GetFromViewAsync(v => v.SurveyTypeName == "Product");
         _surveyDescription = _authoredSurveys.First().SurveyDescription;
         _questions = _authoredSurveys.Select(q => q.QuestionText).Distinct();
     }

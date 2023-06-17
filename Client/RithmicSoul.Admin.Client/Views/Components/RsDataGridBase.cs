@@ -281,7 +281,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
 
     public async Task UpdateItemsAsync()
     {
-        var items = await ApiService?.GetAllAsync();
+        var items = ApiService is null ? await ApiDbService.GetAllFromViewAsync() : await ApiService.GetAllAsync();
         Items = items;
     }
 

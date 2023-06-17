@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using RithmicSoul.Models.Survey.Dtos
+@using RithmicSoulDatabaseLibrary.Interfaces
 
 <PageTitle>Surveys</PageTitle>
 @*<AuthorizeView>
@@ -15,10 +16,11 @@
         <MudItem xs="3">
             <MudGrid>
                 <MudItem xs="10">
-                    <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;">
+                    <MudPaper Elevation="2" Class="pa-4" Style="height: 250px;">
                         <MudList Clickable="true">
                             <MudListItem Text="Credit Survey" Icon="@Icons.Material.Filled.Add" OnClick="@NewSurvey" />
-                            <MudListItem Text="Edit Survey" Icon="@Icons.Material.Filled.Edit" OnClick="@SelectSurveyDialogAsync" />
+                            <MudListItem Text="Edit Survey" Icon="@Icons.Material.Filled.Edit" OnClick="@SelectEditSurveyDialogAsync" />
+                            <MudListItem Text="Show Survey" Icon="@Icons.Material.Outlined.Poll" OnClick="@SelectShowSurveyDialogAsync" />
                             <MudListItem Text="Delete Survey" Icon="@Icons.Material.Filled.Delete" />
                         </MudList>
                     </MudPaper>
@@ -45,21 +47,9 @@
                         <MudItem xs="12">
                             <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; overflow-y: auto">
                                 <RsDataGrid T="AuthoredSurveyDto"
+                                            ApiDbService="@AuthoredSurveyService"
                                     Items="@_authoredSurveys"></RsDataGrid>
                             </MudPaper>
-                        </MudItem>
-                    </MudGrid>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudGrid>
-                        <MudItem xs="12">
-                            <MudGrid>
-                                <MudItem xs="12">
-                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
-                                        <!-- Adinkra Symbol Survey -->
-                                    </MudPaper>
-                                </MudItem>
-                            </MudGrid>
                         </MudItem>
                     </MudGrid>
                 </MudItem>
