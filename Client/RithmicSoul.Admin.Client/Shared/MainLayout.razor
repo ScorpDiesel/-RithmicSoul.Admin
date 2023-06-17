@@ -29,16 +29,24 @@
     private MudTheme _theme = new();
     private bool _isDarkMode;
     private string _visibility = "";
-    EventCallback HideMenus => EventCallback.Factory.Create(this, HideDrawerAndAppBar);
+    EventCallback<bool> HideMenus => EventCallback.Factory.Create<bool>(this, HideDrawerAndAppBar);
 
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
     }
 
-    void HideDrawerAndAppBar()
+    void HideDrawerAndAppBar(bool isHidden)
     {
-        _visibility = "invisible";
-        _drawerOpen = false;
+        if (isHidden)
+        {
+            _visibility = "invisible";
+            _drawerOpen = false;
+        }
+        else
+        {
+            _visibility = "visible";
+            _drawerOpen = true;
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace RithmicSoul.Admin.Client.Pages.Surveys;
 public partial class ProductSurvey : ComponentBase
 {
     [Inject] IDatabaseService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
-    [CascadingParameter] public EventCallback HideMenus { get; set; }
+    [CascadingParameter] public EventCallback<bool> HideMenus { get; set; }
     
     private string _surveyDescription;
     private IEnumerable<AuthoredSurveyDto> _authoredSurveys;
@@ -30,7 +30,7 @@ public partial class ProductSurvey : ComponentBase
 
     private async Task InitializeAsync()
     {
-        await HideMenus.InvokeAsync();
+        await HideMenus.InvokeAsync(true);
         _authoredSurveys = await AuthoredSurveyService.GetFromViewAsync(v => v.SurveyTypeName == "Product");
         _surveyDescription = _authoredSurveys.First().SurveyDescription;
         _questions = _authoredSurveys.Select(q => q.QuestionText).Distinct();

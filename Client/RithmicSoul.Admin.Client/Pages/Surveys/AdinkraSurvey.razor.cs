@@ -14,7 +14,7 @@ public partial class AdinkraSurvey : ComponentBase
 
     private IEnumerable<AdinkraSymbolDto>? _allSymbols;
     private IEnumerable<AdinkraSymbolDto>? CurrentSymbols => _allSymbols?.Skip(_currentPage * _pageSize).Take(_pageSize);
-    [CascadingParameter] public EventCallback HideMenus { get; set; }
+    [CascadingParameter] public EventCallback<bool> HideMenus { get; set; }
 
     public event AsyncEventHandler NewPageAsync;
 
@@ -36,7 +36,7 @@ public partial class AdinkraSurvey : ComponentBase
 
     private async Task InitializeAsync()
     {
-        await HideMenus.InvokeAsync();
+        await HideMenus.InvokeAsync(true);
         _baseAddress = _httpClient.BaseAddress?.ToString();
         _allSymbols = await AdinkraSymbolService.GetAllAsync();
     }

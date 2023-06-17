@@ -17,11 +17,18 @@ public partial class Surveys : ComponentBase
     [Inject] IDialogService? DialogService { get; set; }
     [Inject] IDatabaseService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
     [Inject] NavigationManager Navigation { get; set; }
+    [CascadingParameter] public EventCallback<bool> HideMenus { get; set; }
 
     private IEnumerable<AuthoredSurveyDto> _authoredSurveys;
 
     protected override async Task OnInitializedAsync()
     {
+        await InitializeAsync();
+    }
+
+    private async Task InitializeAsync()
+    {
+        await HideMenus.InvokeAsync(false);
         _authoredSurveys = await AuthoredSurveyService.GetAllFromViewAsync();
     }
 
