@@ -40,7 +40,7 @@ public partial class EditQuestionChoiceDialog : ComponentBase
     {
         _appSettings = AppSettingsOptions.Value;
         _chooseableList.Add(_appSettings.QuestionChoicesMultipleChoice);
-        _chooseableList.Add(_appSettings.QuestionChoicesCheckbox);
+        _chooseableList.Add(_appSettings.QuestionChoicesSingleChoice);
         var dtos = await QuestionChoiceService?.GetAsync(q => q.QuestionId == Model.QuestionId);
         DtoList.AddRange(dtos.ToList());
         _oldDtoList.AddRange(dtos.ToList());
@@ -89,7 +89,7 @@ public partial class EditQuestionChoiceDialog : ComponentBase
 
         var isBulkInsertSuccessful = await QuestionChoiceService.BulkInsertAsync(DtoList);
         ShowSnackBar(isBulkInsertSuccessful);
-        MudDialog?.Close(DialogResult.Ok(true));
+        MudDialog?.Close(DialogResult.Ok(Model));
     }
 
     private void Cancel() => MudDialog?.Cancel();

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using MudBlazor;
 using RithmicSoul.Admin.Client.Configuration;
+using RithmicSoul.Admin.Client.Views.Dialogs;
 using RithmicSoul.Admin.Core.Dtos;
 using RithmicSoul.Admin.Core.Interfaces;
 using RithmicSoul.Models.Survey.Dtos;
@@ -11,6 +12,7 @@ namespace RithmicSoul.Admin.Client.Pages.Surveys.Forms;
 
 public partial class SurveyForm : ComponentBase
 {
+    [Inject] IDialogService DialogService { get; set; }
     [Inject] NavigationManager Navigation { get; set; }
     [Inject] IService<SurveyTypeDto> SurveyTypeService { get; set; }
     [Inject] IService<SurveyQuestionDto> SurveyQuestionService { get; set; }
@@ -24,14 +26,25 @@ public partial class SurveyForm : ComponentBase
     private DraftSurveyDto? Model = new();
     private AppSettings _appSettings;
     private string _scrollToBottom;
+    private bool _surveyTypeDisabled;
 
     protected override async Task OnInitializedAsync()
+    {
+        await InitializeAsync();
+    }
+
+    private async Task InitializeAsync()
     {
         _appSettings = AppSettingsOptions.Value;
         _surveyTypes = await SurveyTypeService.GetAllAsync();
         _surveyQuestions = await SurveyQuestionService.GetAllAsync();
 
-        if (Id is not null) Model = await DraftSurveyService.GetByIdAsync((int)Id);
+        if (Id is not null)
+        {
+            _surveyTypeDisabled = true;
+            Model = await DraftSurveyService.GetByIdAsync((int)Id) ?? new();
+            Model.SetDirty(false);
+        }
     }
 
 
@@ -71,12 +84,35 @@ public partial class SurveyForm : ComponentBase
     }
 
 
-    private void Cancel() => Navigation.NavigateTo("/surveys");
-
-    private async Task Save()
+    private async Task CancelAsync()
     {
-        var response = await DraftSurveyService.SaveAsync(Model);
-        var message = response ? _appSettings.AuthoredSurveyCreationSuccessMessage : _appSettings.AuthoredSurveyCreationFailureMessage;
-        ShowSnackBar(response, message);
+        await SaveAsync();
+        Navigation.NavigateTo("/surveys");
+    }
+
+    private async Task SaveAsync()
+    {
+        if (Model.IsDirty)
+        {
+            var parameters = new DialogParameters
+            {
+                { "ContentText", "Save this record?" },
+                { "CloseButtonText", "Yes" },
+                { "CancelButtonText", "No" },
+                { "Style", "min-width:300px" },
+                { "Color", Color.Success }
+            };
+            var dialog = await DialogService?.ShowAsync<ActionDialog>("Confirm", parameters)!;
+            var result = await dialog.Result;
+            if (!result.Canceled)
+            {
+                var isSaveSuccess = await DraftSurveyService.SaveAsync(Model);
+                if (isSaveSuccess) Model.SetDirty(false);
+                var message = isSaveSuccess
+                    ? _appSettings.AuthoredSurveyCreationSuccessMessage
+                    : _appSettings.AuthoredSurveyCreationFailureMessage;
+                ShowSnackBar(isSaveSuccess, message);
+            }
+        }
     }
 }

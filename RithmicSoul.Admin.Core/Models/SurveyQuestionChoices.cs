@@ -10,4 +10,6 @@ public class SurveyQuestionChoices
 
     public List<string> QuestionChoices { get; set; } = new();
 
+    public List<string> QuestionExamples { get; set; } = new();
+
 }

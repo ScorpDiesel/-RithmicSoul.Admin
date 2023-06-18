@@ -64,7 +64,6 @@ public class SurveyQuestionnaireService : IService<SurveyQuestionnaireDto>
     {
         var response = await _httpClient.DeleteAsJsonAsync("v2/SurveyQuestionnaires", dtos);
         return response.IsSuccessStatusCode;
-        return false;
     }
 
     public async Task<SurveyQuestionnaireDto> GetByIdAsync(int id)

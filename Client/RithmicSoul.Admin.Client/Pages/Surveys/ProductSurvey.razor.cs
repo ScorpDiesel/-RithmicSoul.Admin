@@ -37,7 +37,7 @@ public partial class ProductSurvey : ComponentBase
     }
 
     private bool HasPreviousPage => _currentPage > 0;
-    private bool HasNextPage => _questions is null ? false : (_currentPage + 1) * _pageSize < _questions.Count();
+    private bool HasNextPage => _questions is not null && (_currentPage + 1) * _pageSize < _questions.Count();
 
     private void PreviousPage()
     {

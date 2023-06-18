@@ -25,6 +25,11 @@ public partial class Tables : ComponentBase
     
     protected override async Task OnInitializedAsync()
     {
+        await InitializeAsync();
+    }
+
+    private async Task InitializeAsync()
+    {
         _questionTypes = await QuestionTypeService.GetAllAsync();
         _surveyTypes = await SurveyTypeService.GetAllAsync();
         _surveys = await SurveyService.GetAllAsync();

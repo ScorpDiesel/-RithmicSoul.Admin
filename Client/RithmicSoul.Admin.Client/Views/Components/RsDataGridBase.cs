@@ -7,7 +7,6 @@ using RithmicSoul.Admin.Client.Configuration;
 using RithmicSoul.Admin.Client.Views.Dialogs;
 using RithmicSoulDatabaseLibrary.Interfaces;
 using RithmicSoulSharedLibrary.Extensions;
-
 namespace RithmicSoul.Admin.Client.Views.Components;
 
 public class RsDataGridBase<T> : ComponentBase where T : class
@@ -165,7 +164,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         if (isSuccessful)
         {
             message = string.Format(_appSettings.ItemCreatedSuccessMessageTemplate, TableName);
-            await UpdateItemsAsync();
+            await GetAllItemsAsync();
         }
         else
         {
@@ -206,30 +205,37 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         ResetRowHighlight(dto);
         StateHasChanged();
         ShowSnackBar(response, string.Format(_appSettings.ItemUpdatedSuccessMessageTemplate, TableName));
+        await GetAllItemsAsync();
     }
 
-    public async Task DeleteAsync<T>(T dto)
+    public async Task DeleteSelectedItemsAsync()
     {
-        SetRowHighlight(dto);
-        var dialog = await DialogService?.ShowAsync<DeleteItemDialog>(null)!;
+        var parameters = new DialogParameters
+        {
+            { "ContentText", "Delete these/this record(s)?" },
+            { "CloseButtonText", "Delete" },
+            { "CancelButtonText", "No" },
+            { "Style", "min-width:300px" },
+            { "Color", Color.Error }
+        };
+        var dialog = await DialogService?.ShowAsync<ActionDialog>("Delete", parameters)!;
         var result = await dialog.Result;
-
         if (!result.Canceled)
         {
-            dynamic dtoList = new List<T> { dto }; //TODO: Implement checkbox selection in each row to add to collection to be sent to BulkDelete
-            var response = await ApiService?.BulkDeleteAsync(dtoList)!;
+            var items = thisDataGrid.SelectedItems;
+            var response = await ApiService?.BulkDeleteAsync(items.ToList())!;
             string message;
 
             if (response)
             {
                 message = string.Format(_appSettings.ItemDeletedSuccessMessageTemplate, TableName);
+                await GetAllItemsAsync();
             }
             else
             {
                 message = string.Format(_appSettings.ItemDeletedFailureMessageTemplate, TableName);
             }
 
-            await UpdateItemsAsync();
             ShowSnackBar(response, message);
         }
     }
@@ -252,8 +258,20 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         var result = await dialog.Result;
         if (!result.Canceled)
         {
-            dynamic resultData = (T)result.Data;
-            await UpdateItemAsync(resultData);
+            dynamic resultData;
+            bool isSuccessful;
+            var data = result.Data;
+
+            if (data.IsGenericList())
+            {
+                resultData = (List<T>)data;
+                isSuccessful = await ApiService?.BulkInsertAsync(resultData);
+            }
+            else
+            {
+                resultData = (T)result.Data;
+                await UpdateItemAsync(resultData);
+            }
 
         }
     }
@@ -279,7 +297,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         Snackbar?.Add(message, isSuccess ? Severity.Success : Severity.Error);
     }
 
-    public async Task UpdateItemsAsync()
+    public async Task GetAllItemsAsync()
     {
         var items = ApiService is null ? await ApiDbService.GetAllFromViewAsync() : await ApiService.GetAllAsync();
         Items = items;

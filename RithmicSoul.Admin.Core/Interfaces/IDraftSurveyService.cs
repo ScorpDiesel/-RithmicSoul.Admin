@@ -5,8 +5,7 @@ namespace RithmicSoul.Admin.Core.Interfaces;
 
 public interface IDraftSurveyService
 {
-    Task<bool> SaveAsync(DraftSurvey survey);
-    Task<bool> SaveAsync(DraftSurveyDto dto);
+    Task<bool> SaveAsync(DraftSurveyDto draftSurveyDto);
     Task<List<DraftSurveyDto>> GetAllAsync();
     Task<DraftSurveyDto?> GetByIdAsync(int id);
 }

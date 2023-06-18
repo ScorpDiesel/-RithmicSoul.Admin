@@ -25,7 +25,7 @@ public class AppSettings
     public string EditTableDialogMessageTemplate { get; set; }
     public string QuestionChoicesDeleteFailureMessage { get; set; }
     public string QuestionChoicesMultipleChoice { get; set; }
-    public string QuestionChoicesCheckbox { get; set; }
+    public string QuestionChoicesSingleChoice { get; set; }
     public string QuestionTypeNameCssVisibilityVisible { get; set; }
     public string QuestionTypeNameCssVisibilityHidden { get; set; }
     public string YesNoChoices { get; set; }

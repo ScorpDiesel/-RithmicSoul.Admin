@@ -27,7 +27,11 @@
         {
             <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await ShowNewItemDialogAsync(); })" />
         }
-        <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await UpdateItemsAsync(); })" />
+        @if (CanDelete && thisDataGrid.MultiSelection && thisDataGrid.SelectedItems.Any())
+        {
+            <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await DeleteSelectedItemsAsync(); })" />
+        }
+        <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await GetAllItemsAsync(); })" />
     </ToolBarContent>
     <Columns>
         @if (MultiSelection)
@@ -56,7 +60,7 @@
                 }
                 @if (CanDelete)
                 {
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(async () => { await DeleteAsync(context.Item); })" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(async () => { await DeleteSelectedItemsAsync(); })" />
                 }
             </CellTemplate>
         </TemplateColumn>

@@ -32,31 +32,9 @@ public partial class QuestionResponse : ComponentBase
     private void Initialize()
     {
         _appSettings = AppSettingsOptions.Value;
-        //if (QuestionText is null) return;
-        _choices = Items //.Where(c => c.QuestionText == QuestionText)
-            .GroupBy(q => q.QuestionText)
+        _choices = Items.GroupBy(q => q.QuestionText)
             .Select(g => (QuestionType: g.Select(x => x.QuestionTypeName).First(),
                 QuestionChoices: g.Select(x => x.ChoiceText).ToList()));
-
-        //foreach (var item in _choices.Select((value, index) => new { index, value }))
-        //{
-        //    var choice = item.value;
-        //    var index = item.index;
-        //    var questionType = choice.QuestionType;
-        //    var identifier = $"{questionType}{item}";
-        //    identifiers.Add(identifier, questionType);
-        //}
-        
-        //if (QuestionNumber is null)
-        //{
-        //    _questionNumberText = "";
-        //    _questionClass = "";
-        //}
-        //else
-        //{
-        //    _questionNumberText = $"Question #{QuestionNumber}";
-        //    _questionClass = "mr-5";
-        //}
     }
 
     private RenderFragment CreateRenderFragment((string QuestionType, List<string> QuestionChoices) choices)
@@ -86,9 +64,18 @@ public partial class QuestionResponse : ComponentBase
                 case "Multiple Choice":
                     CreateCheckboxesFragment(choices.QuestionType, builder, choices.QuestionChoices, false);
                     break;
+                case "Rank":
+                    break;
+                case "Image":
+                    break;
             }
         };
     }
+
+    //private void CreateRankFragment(string questionType, RenderTreeBuilder builder)
+    //{
+    //    builder.OpenComponent(0, typeof());
+    //}
 
     private void CreateTextFieldFragment(string questionType, RenderTreeBuilder builder)
     {

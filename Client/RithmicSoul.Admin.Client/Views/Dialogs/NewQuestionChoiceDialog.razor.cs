@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Google.Protobuf;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using MudBlazor;
 using RithmicSoul.Admin.Client.Configuration;
@@ -30,6 +31,9 @@ public partial class NewQuestionChoiceDialog : ComponentBase
 
     protected SurveyQuestionChoices Model = new();
     protected IEnumerable<SurveyQuestionDto> _surveyQuestions;
+    private IEnumerable<QuestionChoiceDto> _questionChoices;
+    private string _message;
+    private Color _messageColor;
 
     protected override async Task OnInitializedAsync()
     {
@@ -38,24 +42,45 @@ public partial class NewQuestionChoiceDialog : ComponentBase
 
     private async Task Initialize()
     {
+        _message = "Only questions that allow user-defined choices are displayed";
+        _messageColor = Color.Info;
         _appSettings = AppSettingsOptions.Value;
         _questionTypeNameVisibility = _appSettings.QuestionTypeNameCssVisibilityHidden;
         _choiceControlsVisibility = _appSettings.QuestionTypeNameCssVisibilityHidden;
         _chooseableList.Add(_appSettings.QuestionChoicesMultipleChoice);
-        _chooseableList.Add(_appSettings.QuestionChoicesCheckbox);
+        _chooseableList.Add(_appSettings.QuestionChoicesSingleChoice);
         _surveyQuestions = await SurveyQuestionService.GetAllAsync();
-        _surveyQuestions = _surveyQuestions.Where(s => _chooseableList.Contains(s.QuestionTypeName));
+        _questionChoices = await QuestionChoiceService.GetAllAsync();
+        _surveyQuestions = _surveyQuestions
+            .Where(item1 => _chooseableList.Contains(item1.QuestionTypeName) 
+                && _questionChoices.Any(item2 => item2.QuestionId == item1.QuestionId 
+                && item2.ChoiceText is null)
+            ).ToList();
+        if (!_surveyQuestions.Any())
+        {
+            _message = "Create a question in the SurveyQuestion table first";
+            _messageColor = Color.Error;
+        }
+
     }
 
     private void AddQuestionChoice()
     {
-        if (Model.QuestionChoices.Count <= _appSettings.SurveyQuestionsMaxCount) Model.QuestionChoices.Add(string.Empty);
+        if (Model.QuestionChoices.Count <= _appSettings.SurveyQuestionsMaxCount)
+        {
+            Model.QuestionChoices.Add(string.Empty);
+            Model.QuestionExamples.Add(string.Empty);
+        }
     }
 
 
     private void RemoveQuestionChoice(int index)
     {
-        if (Model.QuestionChoices.Count > _appSettings.SurveyQuestionsMinCount) Model.QuestionChoices.RemoveAt(index);
+        if (Model.QuestionChoices.Count > _appSettings.SurveyQuestionsMinCount)
+        {
+            Model.QuestionChoices.RemoveAt(index);
+            Model.QuestionExamples.RemoveAt(index);
+        }
     }
 
     protected void QuestionTypeChangeEvent(string value)

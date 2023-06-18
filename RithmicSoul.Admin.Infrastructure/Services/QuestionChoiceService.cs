@@ -33,7 +33,7 @@ public class QuestionChoiceService : IService<QuestionChoiceDto>
 
     public async Task<bool> BulkInsertAsync(List<QuestionChoiceDto> dtos)
     {
-        var response = await _httpClient.PutAsJsonAsync("v2/QuestionChoices", dtos);
+        var response = await _httpClient.PostAsJsonAsync("v2/QuestionChoices", dtos);
         return response.IsSuccessStatusCode;
     }
 
@@ -51,7 +51,8 @@ public class QuestionChoiceService : IService<QuestionChoiceDto>
 
     public async Task<bool> DeleteAsync(QuestionChoiceDto dto)
     {
-        return await DeleteAsync(dto.ChoiceId);
+        var response = await _httpClient.DeleteAsJsonAsync($"v1/QuestionChoices", dto);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> DeleteAsync(int id)

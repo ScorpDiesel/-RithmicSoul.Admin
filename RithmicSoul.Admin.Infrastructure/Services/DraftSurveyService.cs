@@ -1,4 +1,5 @@
-﻿using RithmicSoul.Admin.Core.Dtos;
+﻿using System.Collections.ObjectModel;
+using RithmicSoul.Admin.Core.Dtos;
 using RithmicSoul.Admin.Core.Interfaces;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
@@ -19,74 +20,66 @@ public class DraftSurveyService : IDraftSurveyService
         _surveyQuestionnaireService = surveyQuestionnaireService;
     }
 
-    public async Task<bool> SaveAsync(DraftSurvey survey)
+    public async Task<bool> SaveAsync(DraftSurveyDto draftSurveyDto)
     {
+        if (draftSurveyDto is null) throw new ArgumentNullException(nameof(draftSurveyDto));
+
         bool isSurveySaved;
 
-        if (survey.SurveyId == 0)
+        if (draftSurveyDto.SurveyId == 0)
         {
-            isSurveySaved = await InsertSurvey(survey);
+            isSurveySaved = await InsertSurvey(draftSurveyDto);
         }
         else
         {
-            isSurveySaved = await UpdateSurvey(survey);
+            isSurveySaved = await UpdateSurvey(draftSurveyDto);
         }
 
         return isSurveySaved;
     }
 
-    private async Task<bool> UpdateSurvey(DraftSurvey survey)
+    private async Task<bool> UpdateSurvey(DraftSurveyDto draftSurveyDto)
     {
-        var result = await _surveyQuestionnaireService.GetAsync(q => q.SurveyId == survey.SurveyId);
+        var result = await _surveyQuestionnaireService.GetAsync(q => q.SurveyId == draftSurveyDto.SurveyId);
 
         var dto = new SurveyDto
         {
-            SurveyId = survey.SurveyId,
-            SurveyName = survey.SurveyName,
-            SurveyTypeId = survey.SurveyTypeId,
-            SurveyDescription = survey.SurveyDescription
+            SurveyId = draftSurveyDto.SurveyId,
+            SurveyName = draftSurveyDto.SurveyName,
+            SurveyTypeId = draftSurveyDto.SurveyTypeId,
+            SurveyDescription = draftSurveyDto.SurveyDescription
         };
 
-        var surveyId = survey.SurveyId;
+        var surveyId = draftSurveyDto.SurveyId;
         var isSurveyUpdated = await _surveyService.UpdateAsync(dto);
-        var questionnaires = survey.SurveyQuestions.Select(questionId => new SurveyQuestionnaireDto { SurveyId = surveyId, SurveyQuestionId = questionId }).ToList();
-        var isQuestionnairesUpdated = result.Any() 
-            ? await _surveyQuestionnaireService.BulkUpdateAsync(questionnaires) 
-            : await _surveyQuestionnaireService.BulkInsertAsync(questionnaires);
-        return isSurveyUpdated && isQuestionnairesUpdated;
+        if (!isSurveyUpdated) return false;
+
+        if (result is not null && result.Any())
+        {
+            var isDeleted = await _surveyQuestionnaireService.BulkDeleteAsync(result.ToList());
+            if (!isDeleted) return false;
+        }
+
+        var questionnaires = draftSurveyDto.SurveyQuestionIds.Select(questionId => new SurveyQuestionnaireDto { SurveyId = surveyId, QuestionId = questionId }).ToList();
+        var isQuestionnairesSaved = await _surveyQuestionnaireService.BulkInsertAsync(questionnaires);
+
+        return isQuestionnairesSaved;
     }
 
-    private async Task<bool> InsertSurvey(DraftSurvey survey)
+    private async Task<bool> InsertSurvey(DraftSurveyDto draftSurveyDto)
     {
         var dto = new SurveyDto
         {
-            SurveyName = survey.SurveyName,
-            SurveyTypeId = survey.SurveyTypeId,
-            SurveyDescription = survey.SurveyDescription
+            SurveyName = draftSurveyDto.SurveyName,
+            SurveyTypeId = draftSurveyDto.SurveyTypeId,
+            SurveyDescription = draftSurveyDto.SurveyDescription
         };
 
-        var response = await _surveyService.InsertForIdAsync(dto) ??
+        var responseId = await _surveyService.InsertForIdAsync(dto) ??
                        throw new Exception($"The id for the new {nameof(DraftSurvey)} was null");
-        var surveyId = Convert.ToInt32(response);
-        var questionnaires = survey.SurveyQuestions.Select(questionId => new SurveyQuestionnaireDto { SurveyId = surveyId, SurveyQuestionId = questionId }).ToList();
+        var surveyId = Convert.ToInt32(responseId);
+        var questionnaires = draftSurveyDto.SurveyQuestionIds.Select(questionId => new SurveyQuestionnaireDto { SurveyId = surveyId, QuestionId = questionId }).ToList();
         return await _surveyQuestionnaireService.BulkInsertAsync(questionnaires);
-    }
-
-    public async Task<bool> SaveAsync(DraftSurveyDto? dto)
-    {
-        if (dto is null) throw new ArgumentNullException(nameof(dto));
-
-        var survey = new DraftSurvey
-        {
-            SurveyId = dto.SurveyId,
-            SurveyName = dto.SurveyName,
-            SurveyDescription = dto.SurveyDescription,
-            SurveyTypeId = dto.SurveyTypeId,
-            SurveyTypeName = dto.SurveyTypeName,
-            SurveyQuestions = dto.SurveyQuestionIds
-        };
-
-        return await SaveAsync(survey);
     }
 
     public async Task<List<DraftSurveyDto>> GetAllAsync()
@@ -102,13 +95,13 @@ public class DraftSurveyService : IDraftSurveyService
 
             var dto = new DraftSurveyDto
             {
-                DateCreated = (DateTime)survey.DateCreated,
+                DateCreated = survey.DateCreated,
                 SurveyDescription = survey.SurveyDescription,
                 SurveyName = survey.SurveyName,
                 SurveyTypeId = (int)survey.SurveyTypeId,
                 SurveyTypeName = survey.SurveyTypeName,
-                SurveyQuestionId = questionnaire.SurveyQuestionId,
-                SurveyQuestionText = questionnaire.SurveyQuestionText
+                SurveyQuestionId = questionnaire.QuestionId,
+                SurveyQuestionText = questionnaire.QuestionText
             };
 
             dtos.Add(dto);
@@ -120,19 +113,35 @@ public class DraftSurveyService : IDraftSurveyService
     public async Task<DraftSurveyDto?> GetByIdAsync(int id)
     {
         var survey = await _surveyService.GetByIdAsync(id);
-        var questionnaires = await _surveyQuestionnaireService.GetAsync(q => q.SurveyId == id);
+        var items = await _surveyQuestionnaireService.GetAsync(q => q.SurveyId == id);
+        IEnumerable<DraftSurveyQuestionnaireDto> questionnaires = null;
+
+        if (items is not null)
+        {
+            questionnaires = items.Select(q => new DraftSurveyQuestionnaireDto
+            {
+                DateCreated = q.DateCreated,
+                QuestionnaireId = q.QuestionnaireId,
+                SurveyQuestionId = q.QuestionId,
+                SurveyId = q.SurveyId,
+                SurveyQuestionText = q.QuestionText,
+                SurveyName = q.SurveyName
+            });
+        }
+
         if (survey is null) return null;
 
+        var collection = questionnaires is null ? null : new ObservableCollection<DraftSurveyQuestionnaireDto>(questionnaires);
         return new DraftSurveyDto
         {
-            DateCreated = (DateTime)survey.DateCreated,
+            DateCreated = survey.DateCreated,
             SurveyDescription = survey.SurveyDescription,
             SurveyName = survey.SurveyName,
             SurveyTypeId = (int)survey.SurveyTypeId,
             SurveyTypeName = survey.SurveyTypeName,
-            SurveyQuestions = questionnaires,
+            SurveyQuestions = collection,
             SurveyId = id,
-            SurveyQuestionIds = questionnaires.Select(q => q.SurveyQuestionId).ToList()
+            SurveyQuestionIds = questionnaires is null ? new List<int>() : questionnaires.Select(q => q.SurveyQuestionId).ToList()
         };
     }
 }
