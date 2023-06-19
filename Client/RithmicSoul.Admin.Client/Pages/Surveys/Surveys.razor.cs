@@ -1,22 +1,15 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Options;
 using MudBlazor;
-using RithmicSoul.Admin.Client.Configuration;
+using RithmicSoul.Admin.Application.Interfaces;
 using RithmicSoul.Admin.Client.Views.Dialogs;
-using RithmicSoul.Admin.Core.Dtos;
-using RithmicSoul.Admin.Core.Enums;
-using RithmicSoul.Admin.Core.Interfaces;
 using RithmicSoul.Models.Survey.Dtos;
-using RithmicSoul.Models.Survey.Models;
-using RithmicSoulDatabaseLibrary.Interfaces;
-using System.Threading.Channels;
 
 namespace RithmicSoul.Admin.Client.Pages.Surveys;
 
 public partial class Surveys : ComponentBase
 {
     [Inject] IDialogService? DialogService { get; set; }
-    [Inject] IDatabaseService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
+    [Inject] ISurveyService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
     [Inject] NavigationManager Navigation { get; set; }
     [CascadingParameter] public EventCallback<bool> HideMenus { get; set; }
 

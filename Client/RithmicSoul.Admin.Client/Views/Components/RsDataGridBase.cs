@@ -3,9 +3,9 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using MudBlazor;
+using RithmicSoul.Admin.Application.Interfaces;
 using RithmicSoul.Admin.Client.Configuration;
 using RithmicSoul.Admin.Client.Views.Dialogs;
-using RithmicSoulDatabaseLibrary.Interfaces;
 using RithmicSoulSharedLibrary.Extensions;
 namespace RithmicSoul.Admin.Client.Views.Components;
 
@@ -14,8 +14,8 @@ public class RsDataGridBase<T> : ComponentBase where T : class
     [Inject] ISnackbar? Snackbar { get; set; }
     [Inject] IDialogService? DialogService { get; set; }
     [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
-    [Parameter] public IService<T>? ApiService { get; set; }
-    [Parameter] public IDatabaseService<T>? ApiDbService { get; set; }
+    [Parameter] public IAdminService<T>? ApiAdminService { get; set; }
+    [Parameter] public ISurveyService<T>? ApiSurveyService { get; set; }
     [Parameter] public bool CanGroup { get; set; }
     [Parameter] public bool GroupExpanded { get; set; }
     [Parameter] public string? GroupBy { get; set; }
@@ -57,7 +57,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
     {
         if (FilterIds is null) return;
 
-        var allResults = await ApiService?.GetAllAsync();
+        var allResults = await ApiAdminService?.GetAllAsync();
         IList<T> filteredResults = new List<T>();
         foreach (var item in allResults)
         {
@@ -143,19 +143,19 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         if (data.IsGenericList())
         {
             resultData = (List<T>)data;
-            isSuccessful = await ApiService?.BulkInsertAsync(resultData);
+            isSuccessful = await ApiAdminService?.BulkInsertAsync(resultData);
         }
         else
         {
             resultData = (T)data;
             if (ReturnIdOnInsert)
             {
-                var id = await ApiService?.InsertForIdAsync(resultData);
+                var id = await ApiAdminService?.InsertForIdAsync(resultData);
                 isSuccessful = id is int; //TODO: Figure out what to do with the id
             }
             else
             {
-                isSuccessful = await ApiService?.InsertAsync(resultData);
+                isSuccessful = await ApiAdminService?.InsertAsync(resultData);
             }
         }
 
@@ -201,14 +201,14 @@ public class RsDataGridBase<T> : ComponentBase where T : class
     protected async Task UpdateItemAsync(T dto)
     {
         SetRowHighlight(dto);
-        var response = await ApiService?.UpdateAsync(dto)!;
+        var response = await ApiAdminService?.UpdateAsync(dto)!;
         ResetRowHighlight(dto);
         StateHasChanged();
         ShowSnackBar(response, string.Format(_appSettings.ItemUpdatedSuccessMessageTemplate, TableName));
         await GetAllItemsAsync();
     }
 
-    public async Task DeleteSelectedItemsAsync()
+    public async Task DeleteSelectedItemsAsync(T? item = null)
     {
         var parameters = new DialogParameters
         {
@@ -222,11 +222,26 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         var result = await dialog.Result;
         if (!result.Canceled)
         {
-            var items = thisDataGrid.SelectedItems;
-            var response = await ApiService?.BulkDeleteAsync(items.ToList())!;
+            var isSuccess = false;
+            if (item is not null)
+            {
+                isSuccess = await ApiAdminService?.DeleteAsync(item)!;
+            }
+            else
+            {
+                var items = thisDataGrid.SelectedItems;
+                if (!items.Any())
+                {
+                    ShowSnackBar(isSuccess, "No items are selected to delete");
+                    return;
+                }
+
+                isSuccess = await ApiAdminService?.BulkDeleteAsync(items.ToList())!;
+            }
+            
             string message;
 
-            if (response)
+            if (isSuccess)
             {
                 message = string.Format(_appSettings.ItemDeletedSuccessMessageTemplate, TableName);
                 await GetAllItemsAsync();
@@ -236,7 +251,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
                 message = string.Format(_appSettings.ItemDeletedFailureMessageTemplate, TableName);
             }
 
-            ShowSnackBar(response, message);
+            ShowSnackBar(isSuccess, message);
         }
     }
 
@@ -265,7 +280,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
             if (data.IsGenericList())
             {
                 resultData = (List<T>)data;
-                isSuccessful = await ApiService?.BulkInsertAsync(resultData);
+                isSuccessful = await ApiAdminService?.BulkInsertAsync(resultData);
             }
             else
             {
@@ -299,7 +314,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
 
     public async Task GetAllItemsAsync()
     {
-        var items = ApiService is null ? await ApiDbService.GetAllFromViewAsync() : await ApiService.GetAllAsync();
+        var items = ApiAdminService is null ? await ApiSurveyService.GetAllFromViewAsync() : await ApiAdminService.GetAllAsync();
         Items = items;
     }
 

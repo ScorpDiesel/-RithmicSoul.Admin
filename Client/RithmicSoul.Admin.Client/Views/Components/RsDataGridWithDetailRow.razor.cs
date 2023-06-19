@@ -7,7 +7,6 @@ using MudBlazor;
 using RithmicSoul.Admin.Client.Configuration;
 using RithmicSoul.Admin.Client.Views.Dialogs;
 using RithmicSoul.Admin.Core.Utilities;
-using RithmicSoulDatabaseLibrary.Interfaces;
 using RithmicSoulSharedLibrary.Extensions;
 using Winista.Mime;
 
@@ -38,11 +37,11 @@ public partial class RsDataGridWithDetailRow<T> : RsDataGridBase<T> where T : cl
     {
         if (FilterIds is null)
         {
-            //_items = await ApiService?.GetAllAsync();
+            //_items = await ApIAdminService?.GetAllAsync();
         }
         else
         {
-            var allResults = await ApiService?.GetAllAsync();
+            var allResults = await ApiAdminService?.GetAllAsync();
             IList<T> filteredResults = new List<T>();
             foreach (var item in allResults)
             {
@@ -53,7 +52,7 @@ public partial class RsDataGridWithDetailRow<T> : RsDataGridBase<T> where T : cl
                 if (FilterIds.Contains((int)value)) filteredResults?.Add(item);
             }
 
-            //_items = await ApiService.GetAllAsync();
+            //_items = await ApIAdminService.GetAllAsync();
         }
     }
 

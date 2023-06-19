@@ -1,9 +1,5 @@
 ﻿@page "/surveys"
-
-@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using RithmicSoul.Models.Survey.Dtos
-@using RithmicSoulDatabaseLibrary.Interfaces
 
 <PageTitle>Surveys</PageTitle>
 @*<AuthorizeView>
@@ -47,7 +43,7 @@
                         <MudItem xs="12">
                             <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; overflow-y: auto">
                                 <RsDataGrid T="AuthoredSurveyDto"
-                                            ApiDbService="@AuthoredSurveyService"
+                                            ApiSurveyService="@AuthoredSurveyService"
                                     Items="@_authoredSurveys"></RsDataGrid>
                             </MudPaper>
                         </MudItem>

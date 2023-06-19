@@ -1,9 +1,5 @@
 ﻿@using RithmicSoul.Models.Survey.Dtos;
-@using RithmicSoulDatabaseLibrary.Interfaces
-@using Microsoft.Extensions.Options
-@using RithmicSoul.Admin.Client.Configuration
-@using RithmicSoul.Models.Survey.Models
-@using RithmicSoulDatabaseLibrary.Utilities
+@using RithmicSoul.Admin.Application.Interfaces
 
 <MudDialog Style="Width: 400px;">
     <DialogContent>
@@ -34,7 +30,7 @@
 </MudDialog>
 
 @code {
-    [Inject] IService<QuestionTypeDto> QuestionTypeService { get; set; }
+    [Inject] IAdminService<QuestionTypeDto> QuestionTypeService { get; set; }
 
     [CascadingParameter] 
     MudDialogInstance MudDialog { get; set; }

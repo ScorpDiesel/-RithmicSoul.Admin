@@ -1,16 +1,13 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Components;
-using RithmicSoul.Admin.Core.Dtos;
+﻿using Microsoft.AspNetCore.Components;
+using RithmicSoul.Admin.Application.Interfaces;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
-using RithmicSoul.Models.Survey.Models;
-using RithmicSoulDatabaseLibrary.Interfaces;
 
 namespace RithmicSoul.Admin.Client.Pages.Surveys;
 
 public partial class ProductSurvey : ComponentBase
 {
-    [Inject] IDatabaseService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
+    [Inject] ISurveyService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
     [CascadingParameter] public EventCallback<bool> HideMenus { get; set; }
     
     private string _surveyDescription;

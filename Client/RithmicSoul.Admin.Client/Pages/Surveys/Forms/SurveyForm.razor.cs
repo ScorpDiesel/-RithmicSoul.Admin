@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using MudBlazor;
+using RithmicSoul.Admin.Application.Dtos;
+using RithmicSoul.Admin.Application.Interfaces;
 using RithmicSoul.Admin.Client.Configuration;
 using RithmicSoul.Admin.Client.Views.Dialogs;
-using RithmicSoul.Admin.Core.Dtos;
-using RithmicSoul.Admin.Core.Interfaces;
 using RithmicSoul.Models.Survey.Dtos;
-using RithmicSoulDatabaseLibrary.Interfaces;
 
 namespace RithmicSoul.Admin.Client.Pages.Surveys.Forms;
 
@@ -14,8 +13,8 @@ public partial class SurveyForm : ComponentBase
 {
     [Inject] IDialogService DialogService { get; set; }
     [Inject] NavigationManager Navigation { get; set; }
-    [Inject] IService<SurveyTypeDto> SurveyTypeService { get; set; }
-    [Inject] IService<SurveyQuestionDto> SurveyQuestionService { get; set; }
+    [Inject] IAdminService<SurveyTypeDto> SurveyTypeService { get; set; }
+    [Inject] IAdminService<SurveyQuestionDto> SurveyQuestionService { get; set; }
     [Inject] IDraftSurveyService DraftSurveyService { get; set; }
     [Inject] ISnackbar Snackbar { get; set; }
     [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }

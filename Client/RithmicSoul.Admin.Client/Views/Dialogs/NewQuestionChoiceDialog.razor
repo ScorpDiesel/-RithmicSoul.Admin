@@ -1,7 +1,7 @@
 ﻿<MudDialog>
     <DialogContent>
         <MudForm>
-            <MudText Color="@_messageColor" Class="mb-5" Typo="Typo.body2">@_message</MudText>
+            <MudText Color="@_statusMessageColor" Class="mb-5" Typo="Typo.body2">@_statusMessage</MudText>
             <MudSelect T="int?" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="@nameof(Model.QuestionText)" AnchorOrigin="Origin.BottomCenter"
                        @bind-Value="@Model.QuestionId" Style="Width: 1000px" TextChanged="@QuestionTypeChangeEvent">
                 <MudSelectItem T="int?" Value="0" Disabled="true">Select...</MudSelectItem>
@@ -42,6 +42,6 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="SaveAsync">Save</MudButton>
+        <MudButton Color="Color.Primary" OnClick="SaveNewAsync">Save</MudButton>
     </DialogActions>
 </MudDialog>

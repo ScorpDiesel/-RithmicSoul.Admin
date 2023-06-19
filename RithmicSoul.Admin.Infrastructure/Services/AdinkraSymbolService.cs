@@ -1,105 +1,94 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq.Expressions;
-using System.Net.Http.Json;
+﻿using System.Linq.Expressions;
 using RithmicSoul.Models.Survey.Dtos;
-using RithmicSoulDatabaseLibrary.Interfaces;
 using Serialize.Linq.Serializers;
-using System.Globalization;
-using RithmicSoulSharedLibrary.Extensions;
+using RithmicSoul.Admin.Application.Interfaces;
+using Refit;
 
 namespace RithmicSoul.Admin.Infrastructure.Services;
 
-public class AdinkraSymbolService : IService<AdinkraSymbolDto>
+public class AdinkraSymbolService : IAdinkraSymbolService<AdinkraSymbolDto>
 {
-    private readonly HttpClient _httpClient;
-
-    public AdinkraSymbolService(HttpClient httpClient)
+    public async Task<IEnumerable<AdinkraSymbolDto>> GetImageDataByIdAsync(int id, int? w = null, int? h = null)
     {
-        _httpClient = httpClient;
+        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v2/AdinkraSymbols");
+        return await api.GetImageDataByIdAsync(id, w, h);
+    }
+
+    public async Task<IEnumerable<AdinkraSymbolDto>> GetAudioDataByIdAsync(int id)
+    {
+        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v3/AdinkraSymbols");
+        return await api.GetAudioDataByIdAsync(id);
     }
 
     public async Task<bool> InsertAsync(AdinkraSymbolDto dto)
     {
-        var response = await _httpClient.PostAsJsonAsync("v1/AdinkraSymbols", dto);
-        return response.IsSuccessStatusCode;
+        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v1/AdinkraSymbols");
+        return await api.InsertAsync(dto);
     }
 
     public async Task<object> InsertForIdAsync(AdinkraSymbolDto dto)
     {
-        var response = await _httpClient.PostAsJsonAsync("v1/AdinkraSymbols", dto);
-        response = response.EnsureSuccessStatusCode();
-        var responseObj = response.Content.ReadAsStringAsync();
-        return responseObj.Result;
+        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v1/AdinkraSymbols");
+        return await api.InsertForIdAsync(dto);
     }
 
     public async Task<bool> BulkInsertAsync(List<AdinkraSymbolDto> dtos)
     {
-        var response = await _httpClient.PostAsJsonAsync("v2/AdinkraSymbols", dtos);
-        return response.IsSuccessStatusCode;
+        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v2/AdinkraSymbols");
+        return await api.BulkInsertAsync(dtos);
     }
 
     public async Task<bool> UpdateAsync(AdinkraSymbolDto dto)
     {
-        var response = await _httpClient.PutAsJsonAsync("v1/AdinkraSymbols", dto);
-        return response.IsSuccessStatusCode;
+        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v1/AdinkraSymbols");
+        return await api.UpdateAsync(dto);
     }
 
     public async Task<bool> BulkUpdateAsync(List<AdinkraSymbolDto> dtos)
     {
-        var response = await _httpClient.PutAsJsonAsync("v2/AdinkraSymbols", dtos);
-        return response.IsSuccessStatusCode;
+        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v2/AdinkraSymbols");
+        return await api.BulkUpdateAsync(dtos);
     }
 
     public async Task<bool> DeleteAsync(AdinkraSymbolDto dto)
     {
-        return await DeleteAsync(dto.SymbolId);
-    }
-
-    public async Task<bool> DeleteAsync(int id)
-    {
-        var response = await _httpClient.DeleteAsync($"v1/AdinkraSymbols/{id}");
-        return response.IsSuccessStatusCode;
+        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v1/AdinkraSymbols");
+        return await api.DeleteAsync(dto);
     }
 
     public async Task<bool> BulkDeleteAsync(List<AdinkraSymbolDto> dtos)
     {
-        var response = await _httpClient.DeleteAsJsonAsync("v2/AdinkraSymbols", dtos);
-        return response.IsSuccessStatusCode;
+        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v2/AdinkraSymbols");
+        return await api.BulkDeleteAsync(dtos);
     }
 
     public async Task<AdinkraSymbolDto> GetByIdAsync(int id)
     {
-        return await _httpClient.GetFromJsonAsync<AdinkraSymbolDto>($"v1/AdinkraSymbols/{id}");
+        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v1/AdinkraSymbols");
+        return await api.GetByIdAsync(id);
     }
 
     public async Task<IEnumerable<AdinkraSymbolDto>> GetAllAsync()
     {
-        var textInfo = new CultureInfo("en-US", false).TextInfo;
-        return await _httpClient.GetFromJsonAsync<IEnumerable<AdinkraSymbolDto>>("v1/AdinkraSymbols");
+        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v1/AdinkraSymbols");
+        return await api.GetAllAsync();
     }
 
     public async Task<IEnumerable<AdinkraSymbolDto>> GetAsync(Expression<Func<AdinkraSymbolDto, bool>> expression)
     {
-        // Serialize the expression
         var serializer = new ExpressionSerializer(new JsonSerializer());
         var serializedExpression = serializer.SerializeText(expression);
-
-        // Send the serialized expression as an HTTP request
         var content = new StringContent(serializedExpression);
-        var response = await _httpClient.PostAsJsonAsync("v3/AdinkraSymbols", content);
-        if (!response.IsSuccessStatusCode) return null;
-
-        return await response.Content.ReadFromJsonAsync<IEnumerable<AdinkraSymbolDto>>();
+        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v3/AdinkraSymbols");
+        return await api.GetAsync(content);
     }
 
     public async Task<bool> DeleteAsync(Expression<Func<AdinkraSymbolDto, bool>> expression)
     {
-        // Serialize the expression
         var serializer = new ExpressionSerializer(new JsonSerializer());
         var serializedExpression = serializer.SerializeText(expression);
-        // Send the serialized expression as an HTTP request
         var content = new StringContent(serializedExpression);
-        var response = await _httpClient.DeleteAsJsonAsync("v2/AdinkraSymbols", content);
-        return response.IsSuccessStatusCode;
+        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v2/AdinkraSymbols");
+        return await api.DeleteAsync(content);
     }
 }

@@ -1,18 +1,17 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using MudBlazor;
+using RithmicSoul.Admin.Application.Interfaces;
 using RithmicSoul.Admin.Client.Configuration;
 using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoul.Models.Survey.Models;
-using RithmicSoulDatabaseLibrary.Interfaces;
-using RithmicSoulDatabaseLibrary.Utilities;
 
 namespace RithmicSoul.Admin.Client.Views.Dialogs;
 
 public partial class EditQuestionChoiceDialog : ComponentBase
 {
-    [Inject] private IService<QuestionChoiceDto>? QuestionChoiceService { get; set; }
-    [Inject] private IService<SurveyQuestionDto>? SurveyQuestionService { get; set; }
+    [Inject] private IAdminService<QuestionChoiceDto>? QuestionChoiceService { get; set; }
+    [Inject] private IAdminService<SurveyQuestionDto>? SurveyQuestionService { get; set; }
     [Inject] private ISnackbar? Snackbar { get; set; }
     [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
     [CascadingParameter] private MudDialogInstance? MudDialog { get; set; }
@@ -20,7 +19,7 @@ public partial class EditQuestionChoiceDialog : ComponentBase
     
     private string? _questionTypeName;
     private readonly List<string> _chooseableList = new();
-    private string QuestionChoiceTableName = EntityUtility.GetTableName<QuestionChoice>();
+    private string QuestionChoiceTableName = nameof(QuestionChoiceDto).Replace("Dto", "");
     protected readonly List<QuestionChoiceDto> DtoList = new();
     private readonly List<QuestionChoiceDto> _oldDtoList = new();
     private IEnumerable<SurveyQuestionDto>? _surveyQuestions;
@@ -77,9 +76,9 @@ public partial class EditQuestionChoiceDialog : ComponentBase
         if (DtoList.Count > 1) DtoList.RemoveAt(index);
     }
 
-    private async Task SaveAsync()
+    private async Task SaveEditAsync()
     {
-        var isDeleteSuccessful = await QuestionChoiceService?.BulkDeleteAsync(_oldDtoList);
+        var isDeleteSuccessful = await QuestionChoiceService.BulkDeleteAsync(_oldDtoList);
         if (!isDeleteSuccessful) ShowSnackBar(isDeleteSuccessful);
 
         foreach (var choice in DtoList)

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Threading" Version="17.6.40" />
     <PackageReference Include="MudBlazor" Version="6.3.1" />
     <PackageReference Include="NetCore.AutoRegisterDi" Version="2.1.0" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
     <PackageReference Include="Toolbelt.Blazor.LoadingBar" Version="13.2.0" />
     <PackageReference Include="Blazored.FluentValidation" Version="2.1.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
@@ -28,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\RithmicSoul.Admin.Core\RithmicSoul.Admin.Core.csproj" />
     <ProjectReference Include="..\..\RithmicSoul.Admin.Infrastructure\RithmicSoul.Admin.Infrastructure.csproj" />
   </ItemGroup>
 

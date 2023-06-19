@@ -1,104 +1,87 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Net.Http.Json;
+using Refit;
+using RithmicSoul.Admin.Application.Interfaces;
 using RithmicSoul.Models.Survey.Dtos;
-using RithmicSoulDatabaseLibrary.Interfaces;
 using RithmicSoulSharedLibrary.Extensions;
 using Serialize.Linq.Serializers;
 
 namespace RithmicSoul.Admin.Infrastructure.Services;
 
-public class QuestionChoiceService : IService<QuestionChoiceDto>
+public class QuestionChoiceService : IAdminService<QuestionChoiceDto>
 {
-    private readonly HttpClient _httpClient;
-
-    public QuestionChoiceService(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
-
     public async Task<bool> InsertAsync(QuestionChoiceDto dto)
     {
-        var response = await _httpClient.PostAsJsonAsync("v1/QuestionChoices", dto);
-        return response.IsSuccessStatusCode;
+        var api = RestService.For<IAdminRepository<QuestionChoiceDto>>("v1/QuestionChoices");
+        return await api.InsertAsync(dto);
     }
 
     public async Task<object> InsertForIdAsync(QuestionChoiceDto dto)
     {
-        var response = await _httpClient.PostAsJsonAsync("v1/QuestionChoices", dto);
-        response = response.EnsureSuccessStatusCode();
-        var responseObj = response.Content.ReadAsStringAsync();
-        return responseObj.Result;
+
+        var api = RestService.For<IAdminRepository<QuestionChoiceDto>>("v1/QuestionChoices");
+        return await api.InsertForIdAsync(dto);
     }
 
     public async Task<bool> BulkInsertAsync(List<QuestionChoiceDto> dtos)
     {
-        var response = await _httpClient.PostAsJsonAsync("v2/QuestionChoices", dtos);
-        return response.IsSuccessStatusCode;
+        var api = RestService.For<IAdminRepository<QuestionChoiceDto>>("v2/QuestionChoices");
+        return await api.BulkInsertAsync(dtos);
     }
 
     public async Task<bool> UpdateAsync(QuestionChoiceDto dto)
     {
-        var response = await _httpClient.PutAsJsonAsync("v1/QuestionChoices", dto);
-        return response.IsSuccessStatusCode;
+
+        var api = RestService.For<IAdminRepository<QuestionChoiceDto>>("v1/QuestionChoices");
+        return await api.UpdateAsync(dto);
     }
 
     public async Task<bool> BulkUpdateAsync(List<QuestionChoiceDto> dtos)
     {
-        var response = await _httpClient.PutAsJsonAsync("v2/QuestionChoices", dtos);
-        return response.IsSuccessStatusCode;
+        var api = RestService.For<IAdminRepository<QuestionChoiceDto>>("v2/QuestionChoices");
+        return await api.BulkUpdateAsync(dtos);
     }
 
     public async Task<bool> DeleteAsync(QuestionChoiceDto dto)
     {
-        var response = await _httpClient.DeleteAsJsonAsync($"v1/QuestionChoices", dto);
-        return response.IsSuccessStatusCode;
-    }
-
-    public async Task<bool> DeleteAsync(int id)
-    {
-        var response = await _httpClient.DeleteAsync($"v1/QuestionChoices/{id}");
-        return response.IsSuccessStatusCode;
+        var api = RestService.For<IAdminRepository<QuestionChoiceDto>>("v1/QuestionChoices");
+        return await api.DeleteAsync(dto);
     }
 
     public async Task<bool> BulkDeleteAsync(List<QuestionChoiceDto> dtos)
     {
-        var response = await _httpClient.DeleteAsJsonAsync("v2/QuestionChoices", dtos);
-        return response.IsSuccessStatusCode;
+        var api = RestService.For<IAdminRepository<QuestionChoiceDto>>("v2/QuestionChoices");
+        return await api.BulkDeleteAsync(dtos);
     }
 
     public async Task<QuestionChoiceDto> GetByIdAsync(int id)
     {
-        return await _httpClient.GetFromJsonAsync<QuestionChoiceDto>($"v1/QuestionChoices/{id}");
+        var api = RestService.For<IAdminRepository<QuestionChoiceDto>>("v1/QuestionChoices");
+        return await api.GetByIdAsync(id);
     }
 
     public async Task<IEnumerable<QuestionChoiceDto>> GetAllAsync()
     {
-        return await _httpClient.GetFromJsonAsync<IEnumerable<QuestionChoiceDto>>("v1/QuestionChoices");
+        var api = RestService.For<IAdminRepository<QuestionChoiceDto>>("v1/QuestionChoices");
+        return await api.GetAllAsync();
     }
 
     public async Task<IEnumerable<QuestionChoiceDto>> GetAsync(Expression<Func<QuestionChoiceDto, bool>> expression)
     {
-        // Serialize the expression
         var serializer = new ExpressionSerializer(new JsonSerializer());
         var serializedExpression = serializer.SerializeText(expression);
-
-        // Send the serialized expression as an HTTP request
         var content = new StringContent(serializedExpression);
-        var response = await _httpClient.PostAsync("v3/QuestionChoices", content);
-        if (!response.IsSuccessStatusCode) return null;
-
-        return await response.Content.ReadFromJsonAsync<IEnumerable<QuestionChoiceDto>>();
+        var api = RestService.For<IAdminRepository<QuestionChoiceDto>>("v3/QuestionChoices");
+        return await api.GetAsync(content);
     }
 
     public async Task<bool> DeleteAsync(Expression<Func<QuestionChoiceDto, bool>> expression)
     {
-        // Serialize the expression
-        var serializer = new ExpressionSerializer(new JsonSerializer());
-        var serializedExpression = serializer.SerializeText(expression);
-        // Send the serialized expression as an HTTP request
-        var content = new StringContent(serializedExpression);
-        var response = await _httpClient.DeleteAsJsonAsync("v2/QuestionChoices", content);
-        return response.IsSuccessStatusCode;
+        throw new NotImplementedException();
+        //var serializer = new ExpressionSerializer(new JsonSerializer());
+        //var serializedExpression = serializer.SerializeText(expression);
+        //var content = new StringContent(serializedExpression);
+        //var api = RestService.For<IAdminRepository<QuestionChoiceDto>>("v1/QuestionChoices");
+        //return await api.DeleteAsync(content);
     }
 }

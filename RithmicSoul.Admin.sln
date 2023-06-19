@@ -11,6 +11,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RithmicSoul.Admin.Core", "R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RithmicSoul.Admin.Infrastructure", "RithmicSoul.Admin.Infrastructure\RithmicSoul.Admin.Infrastructure.csproj", "{DD5FD52F-4AB2-482E-AAE8-E2B9033A5620}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{35909E94-ECBF-4F28-9ABB-E80C6BEB6F78}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{3088D70D-0658-42C4-B0DA-6DBB1E8F29E9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{805DF201-9B7A-487A-B3F4-6395850E93C6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RithmicSoul.Admin.Application", "RithmicSoul.Admin.Application\RithmicSoul.Admin.Application.csproj", "{D1D58957-2BE4-4328-B9B5-2835D8BFA0B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,12 +37,19 @@ Global
 		{DD5FD52F-4AB2-482E-AAE8-E2B9033A5620}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD5FD52F-4AB2-482E-AAE8-E2B9033A5620}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD5FD52F-4AB2-482E-AAE8-E2B9033A5620}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1D58957-2BE4-4328-B9B5-2835D8BFA0B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1D58957-2BE4-4328-B9B5-2835D8BFA0B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1D58957-2BE4-4328-B9B5-2835D8BFA0B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1D58957-2BE4-4328-B9B5-2835D8BFA0B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{875C51AF-D755-41FC-B6AB-EA2EAAF877C9} = {53CA61A0-E02F-468E-B0EB-74DCA0DE1CD5}
+		{76A4B9DB-4E6B-4AC3-A52C-6645A067B297} = {3088D70D-0658-42C4-B0DA-6DBB1E8F29E9}
+		{DD5FD52F-4AB2-482E-AAE8-E2B9033A5620} = {805DF201-9B7A-487A-B3F4-6395850E93C6}
+		{D1D58957-2BE4-4328-B9B5-2835D8BFA0B5} = {35909E94-ECBF-4F28-9ABB-E80C6BEB6F78}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4BF75273-14BC-4F4C-B2E1-E383003A59D3}

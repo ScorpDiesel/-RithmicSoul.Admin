@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using RithmicSoul.Admin.Core.Interfaces;
+using RithmicSoul.Admin.Application.Interfaces;
 
 namespace RithmicSoul.Admin.Infrastructure.Logging;
 

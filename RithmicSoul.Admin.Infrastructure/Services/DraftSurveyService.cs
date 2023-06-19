@@ -1,20 +1,17 @@
 ﻿using System.Collections.ObjectModel;
-using RithmicSoul.Admin.Core.Dtos;
-using RithmicSoul.Admin.Core.Interfaces;
+using RithmicSoul.Admin.Application.Dtos;
+using RithmicSoul.Admin.Application.Interfaces;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
-using RithmicSoul.Models.Survey.Models;
-using RithmicSoulDatabaseLibrary.Interfaces;
-using RithmicSoulDatabaseLibrary.Services;
 
 namespace RithmicSoul.Admin.Infrastructure.Services;
 
 public class DraftSurveyService : IDraftSurveyService
 {
-    private readonly IService<SurveyDto> _surveyService;
-    private readonly IService<SurveyQuestionnaireDto> _surveyQuestionnaireService;
+    private readonly IAdminService<SurveyDto> _surveyService;
+    private readonly IAdminService<SurveyQuestionnaireDto> _surveyQuestionnaireService;
 
-    public DraftSurveyService(IService<SurveyDto> surveyService, IService<SurveyQuestionnaireDto> surveyQuestionnaireService)
+    public DraftSurveyService(IAdminService<SurveyDto> surveyService, IAdminService<SurveyQuestionnaireDto> surveyQuestionnaireService)
     {
         _surveyService = surveyService;
         _surveyQuestionnaireService = surveyQuestionnaireService;

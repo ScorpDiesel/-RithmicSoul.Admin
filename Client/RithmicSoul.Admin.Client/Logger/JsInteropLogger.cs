@@ -1,5 +1,5 @@
-﻿using RithmicSoul.Admin.Core.Interfaces;
-using System.Runtime.InteropServices.JavaScript;
+﻿using System.Runtime.InteropServices.JavaScript;
+using RithmicSoul.Admin.Application.Interfaces;
 
 namespace RithmicSoul.Admin.Client.Logger;
 

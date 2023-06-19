@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Microsoft.VisualStudio.Threading;
+using RithmicSoul.Admin.Application.Interfaces;
 using RithmicSoul.Models.Survey.Dtos;
-using RithmicSoulDatabaseLibrary.Interfaces;
 
 namespace RithmicSoul.Admin.Client.Pages.Surveys;
 
@@ -10,7 +10,7 @@ public partial class AdinkraSurvey : ComponentBase
 {
     [Inject] IJSRuntime JSRuntime { get; set; }
     [Inject] private HttpClient _httpClient { get; set; }
-    [Inject] private IService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
+    [Inject] private IAdminService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
 
     private IEnumerable<AdinkraSymbolDto>? _allSymbols;
     private IEnumerable<AdinkraSymbolDto>? CurrentSymbols => _allSymbols?.Skip(_currentPage * _pageSize).Take(_pageSize);
