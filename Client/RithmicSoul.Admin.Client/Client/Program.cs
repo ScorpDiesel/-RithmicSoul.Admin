@@ -30,7 +30,8 @@ namespace RithmicSoul.Admin.Client.Client
             builder.Services.AddScoped(typeof(ConsoleRedirectLogger<>));
             //builder.Services.AddSingleton(_ => new PeriodicTimerService());
 
-            var registered = builder.Services.RegisterAssemblyPublicNonGenericClasses(typeof(Program).Assembly, typeof(Infrastructure.Services.QuestionTypeService).Assembly, typeof(Application.Dtos.DraftSurveyDto).Assembly)
+            builder.Services.AddHttpClientInterceptor();
+            builder.Services.RegisterAssemblyPublicNonGenericClasses(typeof(Program).Assembly, typeof(Infrastructure.Services.QuestionTypeService).Assembly, typeof(Application.Dtos.DraftSurveyDto).Assembly)
                 .Where(c => c.Name.EndsWith("Service") || c.Name.EndsWith("Repository"))
                 .AsPublicImplementedInterfaces();
 
