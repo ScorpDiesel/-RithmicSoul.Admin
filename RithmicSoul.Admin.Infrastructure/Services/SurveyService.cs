@@ -13,14 +13,14 @@ namespace RithmicSoul.Admin.Infrastructure.Services;
 
 public class SurveyService : IAdminService<SurveyDto>
 {
-    private readonly AppSettings _appSettings;
+    private readonly AppSetting _appSetting;
     private readonly IAdminRepository<SurveyDto> _adminRepository;
     private const string RouteSuffix = "Surveys";
 
-    public SurveyService(IOptions<AppSettings> appSettings)
+    public SurveyService(AppSetting appSetting)
     {
-        _appSettings = appSettings.Value;
-        _adminRepository = RestService.For<IAdminRepository<SurveyDto>>(_appSettings.BaseAddress);
+        _appSetting = appSetting;
+        _adminRepository = RestService.For<IAdminRepository<SurveyDto>>(_appSetting.BaseAddress);
     }
 
     public async Task<bool> InsertAsync(SurveyDto dto)

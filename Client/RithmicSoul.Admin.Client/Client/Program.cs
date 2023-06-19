@@ -36,13 +36,13 @@ namespace RithmicSoul.Admin.Client.Client
 
             if (builder.HostEnvironment.IsDevelopment())
             {
-                builder.Services.AddSingleton(_ => new AppSetting { BaseAddress = "http://localhost:7129/api/" });
+                builder.Services.AddSingleton(_ => new AppSetting { BaseAddress = "http://localhost:7129/api" });
                 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:7129/api/") }
                     .EnableIntercept(sp));
             }
             else
             {
-                builder.Services.AddSingleton(_ => new AppSetting { BaseAddress = $"{builder.HostEnvironment.BaseAddress}api/" });
+                builder.Services.AddSingleton(_ => new AppSetting { BaseAddress = $"{builder.HostEnvironment.BaseAddress}api" });
                 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/") }
                     .EnableIntercept(sp));
             }
