@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using RithmicSoul.Admin.Application.Dtos;
-using RithmicSoul.Admin.Application.Interfaces;
+using RithmicSoul.Admin.Application.Interfaces.Services;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
 

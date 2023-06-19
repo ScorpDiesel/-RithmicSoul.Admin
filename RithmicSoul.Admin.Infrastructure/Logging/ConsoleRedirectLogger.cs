@@ -8,10 +8,10 @@ namespace RithmicSoul.Admin.Infrastructure.Logging;
 public class ConsoleRedirectLogger<T> : ILogger<T>, ILogger
 {
     private readonly IJsInteropLogger _jsLogger;
-    private const string _loglevelPadding = ": ";
-    private static readonly string _messagePadding = new(' ', GetLogLevelString(LogLevel.Information).Length + _loglevelPadding.Length);
-    private static readonly string _newLineWithMessagePadding = Environment.NewLine + _messagePadding;
-    private static readonly StringBuilder _logBuilder = new StringBuilder();
+    private const string LoglevelPadding = ": ";
+    private static readonly string MessagePadding = new(' ', GetLogLevelString(LogLevel.Information).Length + LoglevelPadding.Length);
+    private static readonly string NewLineWithMessagePadding = Environment.NewLine + MessagePadding;
+    private static readonly StringBuilder LogBuilder = new StringBuilder();
 
     private readonly string _name;
     private string _logMessage;
@@ -60,12 +60,12 @@ public class ConsoleRedirectLogger<T> : ILogger<T>, ILogger
 
     private void WriteMessage(LogLevel logLevel, string logName, int eventId, string message, Exception? exception)
     {
-        lock (_logBuilder)
+        lock (LogBuilder)
         {
             try
             {
-                CreateDefaultLogMessage(_logBuilder, logLevel, logName, eventId, message, exception);
-                var formattedMessage = _logBuilder.ToString();
+                CreateDefaultLogMessage(LogBuilder, logLevel, logName, eventId, message, exception);
+                var formattedMessage = LogBuilder.ToString();
                 _logMessage = formattedMessage;
 
                 switch (logLevel)
@@ -101,7 +101,7 @@ public class ConsoleRedirectLogger<T> : ILogger<T>, ILogger
             }
             finally
             {
-                _logBuilder.Clear();
+                LogBuilder.Clear();
             }
         }
     }
@@ -109,7 +109,7 @@ public class ConsoleRedirectLogger<T> : ILogger<T>, ILogger
     private static void CreateDefaultLogMessage(StringBuilder logBuilder, LogLevel logLevel, string logName, int eventId, string message, Exception? exception)
     {
         logBuilder.Append(GetLogLevelString(logLevel));
-        logBuilder.Append(_loglevelPadding);
+        logBuilder.Append(LoglevelPadding);
         logBuilder.Append(logName);
         logBuilder.Append('[');
         logBuilder.Append(eventId);
@@ -119,11 +119,11 @@ public class ConsoleRedirectLogger<T> : ILogger<T>, ILogger
         {
             // message
             logBuilder.AppendLine();
-            logBuilder.Append(_messagePadding);
+            logBuilder.Append(MessagePadding);
 
             var len = logBuilder.Length;
             logBuilder.Append(message);
-            logBuilder.Replace(Environment.NewLine, _newLineWithMessagePadding, len, message.Length);
+            logBuilder.Replace(Environment.NewLine, NewLineWithMessagePadding, len, message.Length);
         }
 
         // Example:

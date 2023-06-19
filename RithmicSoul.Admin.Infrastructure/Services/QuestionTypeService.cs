@@ -1,7 +1,10 @@
 ﻿using System.Linq.Expressions;
 using System.Net.Http.Json;
+using Microsoft.Extensions.Options;
 using Refit;
 using RithmicSoul.Admin.Application.Interfaces;
+using RithmicSoul.Admin.Application.Interfaces.Services;
+using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoulSharedLibrary.Extensions;
 using Serialize.Linq.Serializers;
@@ -10,58 +13,59 @@ namespace RithmicSoul.Admin.Infrastructure.Services;
 
 public class QuestionTypeService : IAdminService<QuestionTypeDto>
 {
+    private readonly AppSetting _appSetting;
+    private readonly IAdminRepository<QuestionTypeDto> _adminRepository;
+    private const string RouteSuffix = "QuestionTypes";
+
+    public QuestionTypeService(AppSetting appSetting)
+    {
+        _appSetting = appSetting;
+        _adminRepository = RestService.For<IAdminRepository<QuestionTypeDto>>(_appSetting.BaseAddress);
+    }
+
     public async Task<bool> InsertAsync(QuestionTypeDto dto)
     {
-        var api = RestService.For<IAdminRepository<QuestionTypeDto>>("v1/QuestionTypes");
-        return await api.InsertAsync(dto);
+        return await _adminRepository.InsertAsync(dto, RouteSuffix);
     }
 
     public async Task<object> InsertForIdAsync(QuestionTypeDto dto)
     {
-        var api = RestService.For<IAdminRepository<QuestionTypeDto>>("v1/QuestionTypes");
-        return await api.InsertForIdAsync(dto);
+        return await _adminRepository.InsertForIdAsync(dto, RouteSuffix);
     }
 
     public async Task<bool> BulkInsertAsync(List<QuestionTypeDto> dtos)
     {
-        var api = RestService.For<IAdminRepository<QuestionTypeDto>>("v2/QuestionTypes");
-        return await api.BulkInsertAsync(dtos);
+        return await _adminRepository.BulkInsertAsync(dtos, RouteSuffix);
     }
 
     public async Task<bool> UpdateAsync(QuestionTypeDto dto)
     {
-        var api = RestService.For<IAdminRepository<QuestionTypeDto>>("v1/QuestionTypes");
-        return await api.UpdateAsync(dto);
+        return await _adminRepository.UpdateAsync(dto, RouteSuffix);
     }
 
     public async Task<bool> BulkUpdateAsync(List<QuestionTypeDto> dtos)
     {
-        var api = RestService.For<IAdminRepository<QuestionTypeDto>>("v2/QuestionTypes");
-        return await api.BulkUpdateAsync(dtos);
+        return await _adminRepository.BulkUpdateAsync(dtos, RouteSuffix);
     }
 
     public async Task<bool> DeleteAsync(QuestionTypeDto dto)
     {
-        var api = RestService.For<IAdminRepository<QuestionTypeDto>>("v1/QuestionTypes");
-        return await api.DeleteAsync(dto);
+        return await _adminRepository.DeleteAsync(dto, RouteSuffix);
     }
 
     public async Task<bool> BulkDeleteAsync(List<QuestionTypeDto> dtos)
     {
-        var api = RestService.For<IAdminRepository<QuestionTypeDto>>("v2/QuestionTypes");
-        return await api.BulkDeleteAsync(dtos);
+        return await _adminRepository.BulkDeleteAsync(dtos, RouteSuffix);
     }
 
     public async Task<QuestionTypeDto> GetByIdAsync(int id)
     {
-        var api = RestService.For<IAdminRepository<QuestionTypeDto>>("v1/QuestionTypes");
-        return await api.GetByIdAsync(id);
+        return await _adminRepository.GetByIdAsync(id, RouteSuffix);
     }
 
     public async Task<IEnumerable<QuestionTypeDto>> GetAllAsync()
     {
-        var api = RestService.For<IAdminRepository<QuestionTypeDto>>("http://localhost:7129/api/");
-        return await api.GetAllAsync();
+        return await _adminRepository.GetAllAsync(RouteSuffix);
     }
 
     public async Task<IEnumerable<QuestionTypeDto>> GetAsync(Expression<Func<QuestionTypeDto, bool>> expression)
@@ -69,8 +73,7 @@ public class QuestionTypeService : IAdminService<QuestionTypeDto>
         var serializer = new ExpressionSerializer(new JsonSerializer());
         var serializedExpression = serializer.SerializeText(expression);
         var content = new StringContent(serializedExpression);
-        var api = RestService.For<IAdminRepository<QuestionTypeDto>>("v3/QuestionTypes");
-        return await api.GetAsync(content);
+        return await _adminRepository.GetAsync(content, RouteSuffix);
     }
 
     public async Task<bool> DeleteAsync(Expression<Func<QuestionTypeDto, bool>> expression)

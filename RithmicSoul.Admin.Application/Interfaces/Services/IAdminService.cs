@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using RithmicSoul.Models.Survey.Dtos;
 
-namespace RithmicSoul.Admin.Application.Interfaces;
+namespace RithmicSoul.Admin.Application.Interfaces.Services;
 
 public interface IAdminService<T> where T : class
 {

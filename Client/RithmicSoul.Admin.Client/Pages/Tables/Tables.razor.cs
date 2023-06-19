@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using RithmicSoul.Admin.Application.Interfaces;
+using RithmicSoul.Admin.Application.Interfaces.Services;
 using RithmicSoul.Models.Survey.Dtos;
 
 namespace RithmicSoul.Admin.Client.Pages.Tables;

@@ -9,8 +9,8 @@ public class JobExecutedEventArgs : EventArgs { }
 public class PeriodicTimerService : IDisposable
 {
     public event EventHandler<JobExecutedEventArgs> JobExecuted;
-    private Timer _Timer;
-    bool _Running;
+    private Timer _timer;
+    bool _running;
     
     void OnJobExecuted()
     {
@@ -20,13 +20,13 @@ public class PeriodicTimerService : IDisposable
 
     public async Task StartExecutingAsync()
     {
-        if (_Running) return;
-        _Timer = new Timer();
-        _Timer.Interval = 1000;  
-        _Timer.Elapsed += HandleTimer;
-        _Timer.AutoReset = true;
-        _Timer.Enabled = true;
-        _Running = true;
+        if (_running) return;
+        _timer = new Timer();
+        _timer.Interval = 1000;  
+        _timer.Elapsed += HandleTimer;
+        _timer.AutoReset = true;
+        _timer.Enabled = true;
+        _running = true;
     }
     void HandleTimer(object source, ElapsedEventArgs e)
     {
@@ -35,9 +35,9 @@ public class PeriodicTimerService : IDisposable
 
     public void Dispose()
     {
-        if (_Running)
+        if (_running)
         {
-            _Timer = null;
+            _timer = null;
         }
     }
 }

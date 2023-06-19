@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Microsoft.VisualStudio.Threading;
-using RithmicSoul.Admin.Application.Interfaces;
+using RithmicSoul.Admin.Application.Interfaces.Services;
 using RithmicSoul.Models.Survey.Dtos;
 
 namespace RithmicSoul.Admin.Client.Pages.Surveys;

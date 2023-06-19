@@ -4,29 +4,38 @@ using Refit;
 using RithmicSoul.Admin.Application.Interfaces;
 using RithmicSoul.Models.Survey.Models;
 using Serialize.Linq.Serializers;
+using RithmicSoul.Admin.Core.Models;
+using Microsoft.Extensions.Options;
+using RithmicSoul.Admin.Application.Interfaces.Services;
 
 namespace RithmicSoul.Admin.Infrastructure.Services;
 
 public class AuthoredSurveyService : ISurveyService<AuthoredSurveyDto>
 {
+    private readonly AppSetting _appSetting;
+    private readonly ISurveyRepository<AuthoredSurveyDto> _adminRepository;
+
+    public AuthoredSurveyService(AppSetting appSetting)
+    {
+        _appSetting = appSetting;
+        _adminRepository = RestService.For<ISurveyRepository<AuthoredSurveyDto>>(_appSetting.BaseAddress);
+    }
+
     public async Task<IEnumerable<AuthoredSurveyDto>> GetAllFromViewAsync()
     {
-        var api = RestService.For<ISurveyRepository<AuthoredSurveyDto>>("v1/AuthoredSurveys");
-        return await api.GetAllFromViewAsync();
+        return await _adminRepository.GetAllFromViewAsync();
     }
 
     public async Task<IEnumerable<AuthoredSurveyDto>> GetFromViewAsync(Expression<Func<AuthoredSurveyDto, bool>> expression)
     {
-        var api = RestService.For<ISurveyRepository<AuthoredSurveyDto>>("v1/AuthoredSurveys");
         var serializer = new ExpressionSerializer(new JsonSerializer());
         var serializedExpression = serializer.SerializeText(expression);
         var content = new StringContent(serializedExpression);
-        return await api.GetFromViewAsync(content);
+        return await _adminRepository.GetFromViewAsync(content);
     }
 
     public async Task<dynamic> ExecuteQueryStoredProcedureAsync(StoredProcedureRequest spRequest)
     {
-        var api = RestService.For<ISurveyRepository<AuthoredSurveyDto>>("v2/AuthoredSurveys");
-        return await api.ExecuteQueryStoredProcedureAsync(spRequest);
+        return await _adminRepository.ExecuteQueryStoredProcedureAsync(spRequest);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace RithmicSoul.Admin.Client.Configuration;
+﻿namespace RithmicSoul.Admin.Core.Models;
 
 public class AppSettings
 {
@@ -33,4 +33,5 @@ public class AppSettings
     public string TrueFalseChoices { get; set; }
     public string TrueFalseIndeterminateChoices { get; set; }
     public string LikerScaleChoices { get; set; }
+    public string BaseAddress { get; set; }
 }

@@ -4,12 +4,10 @@ using MudBlazor;
 using MudBlazor.Services;
 using NetCore.AutoRegisterDi;
 using RithmicSoul.Admin.Application.Interfaces;
-using RithmicSoul.Admin.Client.Configuration;
 using RithmicSoul.Admin.Client.Logger;
 using RithmicSoul.Admin.Infrastructure.Logging;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
-using Refit;
-using RithmicSoul.Models.Survey.Dtos;
+using RithmicSoul.Admin.Core.Models;
 
 namespace RithmicSoul.Admin.Client.Client
 {
@@ -26,6 +24,7 @@ namespace RithmicSoul.Admin.Client.Client
                 options.ProviderOptions.DefaultAccessTokenScopes.Add("https://graph.microsoft.com/User.Read");
                 builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
             });
+
             builder.Services.Configure<AppSettings>(builder.Configuration.GetSection(nameof(AppSettings)));
             builder.Services.AddScoped<IJsInteropLogger, JsInteropLogger>();
             builder.Services.AddScoped(typeof(ConsoleRedirectLogger<>));
@@ -37,35 +36,17 @@ namespace RithmicSoul.Admin.Client.Client
 
             if (builder.HostEnvironment.IsDevelopment())
             {
+                builder.Services.AddSingleton(_ => new AppSetting { BaseAddress = "http://localhost:7129/api/" });
                 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:7129/api/") }
                     .EnableIntercept(sp));
-                builder.Services.AddRefitClient(typeof(ISurveyRepository<AuthoredSurveyDto>))
-                    .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://localhost:7129/api/"));
-                builder.Services.AddRefitClient(typeof(IAdminRepository<QuestionChoiceDto>))
-                    .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://localhost:7129/api/"));
-                builder.Services.AddRefitClient(typeof(IAdminRepository<QuestionTypeDto>))
-                    .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://localhost:7129/api/"));
-                builder.Services.AddRefitClient(typeof(IAdminRepository<SurveyQuestionnaireDto>))
-                    .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://localhost:7129/api/"));
-                builder.Services.AddRefitClient(typeof(IAdminRepository<SurveyQuestionDto>))
-                    .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://localhost:7129/api/"));
-                builder.Services.AddRefitClient(typeof(IAdminRepository<SurveyDto>))
-                    .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://localhost:7129/api/"));
-                builder.Services.AddRefitClient(typeof(IAdminRepository<SurveyTypeDto>))
-                    .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://localhost:7129/api/"));
-                builder.Services.AddRefitClient(typeof(IAdinkraSymbolRepository<AdinkraSymbolDto>))
-                    .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://localhost:7129/api/"));
             }
             else
             {
-                //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri($"{ builder.HostEnvironment.BaseAddress }api/") }
-                //    .EnableIntercept(sp));
-                //builder.Services.AddRefitClient(typeof(ISurveyService<>))
-                //    .ConfigureHttpClient(c => c.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/"));
-                //builder.Services.AddRefitClient(typeof(IAdminService<>))
-                //    .ConfigureHttpClient(c => c.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/"));
+                builder.Services.AddSingleton(_ => new AppSetting { BaseAddress = $"{builder.HostEnvironment.BaseAddress}api/" });
+                builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/") }
+                    .EnableIntercept(sp));
             }
-
+            
             builder.Services.AddHttpClientInterceptor();
             builder.Services.AddLoadingBar(config =>
             {

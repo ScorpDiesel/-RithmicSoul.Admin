@@ -3,9 +3,9 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using MudBlazor;
-using RithmicSoul.Admin.Application.Interfaces;
-using RithmicSoul.Admin.Client.Configuration;
+using RithmicSoul.Admin.Application.Interfaces.Services;
 using RithmicSoul.Admin.Client.Views.Dialogs;
+using RithmicSoul.Admin.Core.Models;
 using RithmicSoulSharedLibrary.Extensions;
 namespace RithmicSoul.Admin.Client.Views.Components;
 

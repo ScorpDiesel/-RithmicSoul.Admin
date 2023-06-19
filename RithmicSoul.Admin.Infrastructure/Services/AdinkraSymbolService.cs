@@ -3,75 +3,77 @@ using RithmicSoul.Models.Survey.Dtos;
 using Serialize.Linq.Serializers;
 using RithmicSoul.Admin.Application.Interfaces;
 using Refit;
+using Microsoft.Extensions.Options;
+using RithmicSoul.Admin.Core.Models;
+using RithmicSoul.Admin.Application.Interfaces.Services;
 
 namespace RithmicSoul.Admin.Infrastructure.Services;
 
 public class AdinkraSymbolService : IAdinkraSymbolService<AdinkraSymbolDto>
 {
+    private readonly AppSetting _appSetting;
+    private readonly IAdinkraSymbolRepository<AdinkraSymbolDto> _adminRepository;
+    private const string RouteSuffix = "AdinkraSymbols";
+
+    public AdinkraSymbolService(AppSetting appSetting)
+    {
+        _appSetting = appSetting;
+        _adminRepository = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>(_appSetting.BaseAddress);
+    }
+
     public async Task<IEnumerable<AdinkraSymbolDto>> GetImageDataByIdAsync(int id, int? w = null, int? h = null)
     {
-        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v2/AdinkraSymbols");
-        return await api.GetImageDataByIdAsync(id, w, h);
+        return await _adminRepository.GetImageDataByIdAsync(id, w, h);
     }
 
     public async Task<IEnumerable<AdinkraSymbolDto>> GetAudioDataByIdAsync(int id)
     {
-        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v3/AdinkraSymbols");
-        return await api.GetAudioDataByIdAsync(id);
+        return await _adminRepository.GetAudioDataByIdAsync(id);
     }
 
     public async Task<bool> InsertAsync(AdinkraSymbolDto dto)
     {
-        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v1/AdinkraSymbols");
-        return await api.InsertAsync(dto);
+        return await _adminRepository.InsertAsync(dto, RouteSuffix);
     }
 
     public async Task<object> InsertForIdAsync(AdinkraSymbolDto dto)
     {
-        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v1/AdinkraSymbols");
-        return await api.InsertForIdAsync(dto);
+        return await _adminRepository.InsertForIdAsync(dto, RouteSuffix);
     }
 
     public async Task<bool> BulkInsertAsync(List<AdinkraSymbolDto> dtos)
     {
-        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v2/AdinkraSymbols");
-        return await api.BulkInsertAsync(dtos);
+        return await _adminRepository.BulkInsertAsync(dtos, RouteSuffix);
     }
 
     public async Task<bool> UpdateAsync(AdinkraSymbolDto dto)
     {
-        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v1/AdinkraSymbols");
-        return await api.UpdateAsync(dto);
+        return await _adminRepository.UpdateAsync(dto, RouteSuffix);
     }
 
     public async Task<bool> BulkUpdateAsync(List<AdinkraSymbolDto> dtos)
     {
-        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v2/AdinkraSymbols");
-        return await api.BulkUpdateAsync(dtos);
+        return await _adminRepository.BulkUpdateAsync(dtos, RouteSuffix);
     }
 
     public async Task<bool> DeleteAsync(AdinkraSymbolDto dto)
     {
-        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v1/AdinkraSymbols");
-        return await api.DeleteAsync(dto);
+        return await _adminRepository.DeleteAsync(dto, RouteSuffix);
     }
 
     public async Task<bool> BulkDeleteAsync(List<AdinkraSymbolDto> dtos)
     {
-        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v2/AdinkraSymbols");
-        return await api.BulkDeleteAsync(dtos);
+        return await _adminRepository.BulkDeleteAsync(dtos, RouteSuffix);
     }
 
     public async Task<AdinkraSymbolDto> GetByIdAsync(int id)
     {
-        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v1/AdinkraSymbols");
-        return await api.GetByIdAsync(id);
+        return await _adminRepository.GetByIdAsync(id, RouteSuffix);
     }
 
     public async Task<IEnumerable<AdinkraSymbolDto>> GetAllAsync()
     {
-        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v1/AdinkraSymbols");
-        return await api.GetAllAsync();
+        return await _adminRepository.GetAllAsync(RouteSuffix);
     }
 
     public async Task<IEnumerable<AdinkraSymbolDto>> GetAsync(Expression<Func<AdinkraSymbolDto, bool>> expression)
@@ -79,8 +81,7 @@ public class AdinkraSymbolService : IAdinkraSymbolService<AdinkraSymbolDto>
         var serializer = new ExpressionSerializer(new JsonSerializer());
         var serializedExpression = serializer.SerializeText(expression);
         var content = new StringContent(serializedExpression);
-        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v3/AdinkraSymbols");
-        return await api.GetAsync(content);
+        return await _adminRepository.GetAsync(content, RouteSuffix);
     }
 
     public async Task<bool> DeleteAsync(Expression<Func<AdinkraSymbolDto, bool>> expression)
@@ -88,7 +89,6 @@ public class AdinkraSymbolService : IAdinkraSymbolService<AdinkraSymbolDto>
         var serializer = new ExpressionSerializer(new JsonSerializer());
         var serializedExpression = serializer.SerializeText(expression);
         var content = new StringContent(serializedExpression);
-        var api = RestService.For<IAdinkraSymbolRepository<AdinkraSymbolDto>>("v2/AdinkraSymbols");
-        return await api.DeleteAsync(content);
+        return await _adminRepository.DeleteAsync(content, RouteSuffix);
     }
 }

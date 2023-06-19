@@ -1,6 +1,6 @@
 ﻿using RithmicSoul.Admin.Application.Dtos;
 
-namespace RithmicSoul.Admin.Application.Interfaces;
+namespace RithmicSoul.Admin.Application.Interfaces.Services;
 
 public interface IDraftSurveyService
 {
