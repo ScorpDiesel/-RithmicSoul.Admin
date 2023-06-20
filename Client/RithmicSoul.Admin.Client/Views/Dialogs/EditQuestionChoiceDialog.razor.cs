@@ -13,7 +13,7 @@ public partial class EditQuestionChoiceDialog : ComponentBase
     [Inject] private IAdminService<SurveyQuestionDto>? SurveyQuestionService { get; set; }
     [Inject] private ISnackbar? Snackbar { get; set; }
     [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
-    [CascadingParameter] private MudDialogInstance? MudDialog { get; set; }
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; }
     [Parameter] public QuestionChoiceDto? Model { get; set; }
     
     private string? _questionTypeName;
@@ -23,20 +23,21 @@ public partial class EditQuestionChoiceDialog : ComponentBase
     private readonly List<QuestionChoiceDto> _oldDtoList = new();
     private IEnumerable<SurveyQuestionDto>? _surveyQuestions;
     private readonly DialogOptions _options = new();
-    private bool _isLoading;
-    private bool _isVisible;
     private AppSettings _appSettings;
+    protected bool _showContent;
+    protected string _contentStyle;
+    private string _dialogTitle;
 
     protected override async Task OnInitializedAsync()
     {
-        ToggleLoadingScreen(true);
         await InitializeAsync();
-        ToggleLoadingScreen(false);
+        ShowContent();
     }
 
     private async Task InitializeAsync()
     {
         _appSettings = AppSettingsOptions.Value;
+        _contentStyle = "display:none !important;";
         _chooseableList.Add(_appSettings.QuestionChoicesMultipleChoice);
         _chooseableList.Add(_appSettings.QuestionChoicesSingleChoice);
         var dtos = await QuestionChoiceService?.GetAsync(q => q.QuestionId == Model.QuestionId);
@@ -45,22 +46,7 @@ public partial class EditQuestionChoiceDialog : ComponentBase
         _surveyQuestions = await SurveyQuestionService?.GetAllAsync();
         _questionTypeName = _surveyQuestions.FirstOrDefault(q => q.QuestionText == Model.QuestionText)?.QuestionTypeName;
         _surveyQuestions = _surveyQuestions.Where(s => _chooseableList.Contains(s.QuestionTypeName));
-    }
-
-    private void ToggleLoadingScreen(bool hide)
-    {
-        if (hide)
-        {
-            _isLoading = true;
-            _isVisible = true;
-        }
-        else
-        {
-            _isLoading = false;
-            _isVisible = false;
-        }
-
-        _options.NoHeader = hide;
+        _options.NoHeader = _showContent;
         MudDialog?.SetOptions(_options);
     }
 
@@ -106,5 +92,12 @@ public partial class EditQuestionChoiceDialog : ComponentBase
             message = string.Format(_appSettings.ItemsCreatedFailureMessageTemplate, QuestionChoiceTableName);
             Snackbar?.Add(message, Severity.Error);
         }
+    }
+
+    private void ShowContent()
+    {
+        _contentStyle = "";
+        _showContent = true;
+        //StateHasChanged();
     }
 }

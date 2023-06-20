@@ -137,7 +137,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
             if (propertyInfo.Name == GroupBy) builder.AddAttribute(3, _appSettings.RsDataGridRenderFragmentGroupingAttribute, true);
             builder.CloseComponent();
 
-            DisplayContent();
+            ShowContent();
         };
     }
 
@@ -324,7 +324,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         Items = items;
     }
 
-    protected void DisplayContent()
+    protected void ShowContent()
     {
         if (_propertiesCount != _properties.Count()) return;
         _contentStyle = "";

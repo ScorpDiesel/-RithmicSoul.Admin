@@ -65,6 +65,17 @@
                         <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(async () => { await DeleteSelectedItemsAsync(context.Item); })" />
                     }
                 </CellTemplate>
+                @*<GroupTemplate>
+                    @if (CanEdit)
+                    {
+                        <span>adslfasdfasdf asdf adfd</span>
+                        @*<MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await ShowEditItemDialogAsync(context.Grouping.Key); })" />*@
+                    @*}
+                    @if (CanDelete)
+                    {
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(async () => { await DeleteSelectedItemsAsync(); })" />
+                    }
+                </GroupTemplate>*@
             </TemplateColumn>
         </Columns>
         <PagerContent>

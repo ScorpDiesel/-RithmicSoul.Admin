@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using RithmicSoul.Admin.Application.Interfaces.Services;
+using RithmicSoul.Admin.Client.Views.Dialogs;
 using RithmicSoul.Models.Survey.Dtos;
 
 namespace RithmicSoul.Admin.Client.Pages.Tables;
@@ -21,7 +23,19 @@ public partial class Tables : ComponentBase
     private IEnumerable<SurveyQuestionDto> _surveyQuestions;
     private IEnumerable<QuestionChoiceDto> _questionChoices;
     private IEnumerable<AdinkraSymbolDto> _adinkraSymbols;
-    
+    private int[] _surveyColumnsToHide;
+    private int[] _surveyQuestionnaireColumnsToHide;
+    private int[] _questionChoicesColumnsToHide;
+    private int[] _surveyQuestionColumnsToHide;
+    private int[] _adinkraSymbolColumnsToHide;
+    private Type _surveyQuestionDialogType;
+    private Type _questionChoiceDialogType;
+    private Type _questionChoiceEditDialogType;
+    private Type _surveyTypeDialogType;
+    private Type _questionTypeDialogType;
+    //private Type _adinkraSymbolEditDialogType;
+
+
     protected override async Task OnInitializedAsync()
     {
         await InitializeAsync();
@@ -36,5 +50,16 @@ public partial class Tables : ComponentBase
         _surveyQuestions = await SurveyQuestionService.GetAllAsync();
         _questionChoices = await QuestionChoiceService.GetAllAsync();
         _adinkraSymbols = await AdinkraSymbolService.GetAllAsync();
+        _surveyColumnsToHide = new[] { 1, 2 };
+        _surveyQuestionnaireColumnsToHide = new[] { 1, 2, 3 };
+        _surveyQuestionColumnsToHide = new[] { 1, 2 };
+        _questionChoicesColumnsToHide = new[] { 1, 2, };
+        _adinkraSymbolColumnsToHide = new[] { 1, 5, 6 };
+        _surveyQuestionDialogType = typeof(SurveyQuestionDialog);
+        _questionChoiceDialogType = typeof(NewQuestionChoiceDialog);
+        _questionChoiceEditDialogType = typeof(EditQuestionChoiceDialog);
+        _surveyTypeDialogType = typeof(SurveyTypeDialog);
+        _questionTypeDialogType = typeof(QuestionTypeDialog);
+        //_adinkraSymbolEditDialogType = typeof(EditQuestionChoiceDialog);
     }
 }
