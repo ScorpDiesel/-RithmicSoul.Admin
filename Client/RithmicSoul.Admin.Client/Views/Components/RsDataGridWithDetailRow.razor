@@ -1,14 +1,8 @@
 ﻿@inherits RsDataGridBase<T>
 @typeparam T
 
-@if (Items is null || !Items.Any())
-{
-    <MudText Typo="Typo.h2" style="vertical-align: middle;text-align: center">
-        No data
-    </MudText>
-}
-else
-{
+<RsLoadingSpinnerCard ShowContent="@_showContent" />
+<MudContainer Style="@_contentStyle">
     <MudDataGrid Items="@Items" T="T" Hover="true" FixedHeader="true" Style="height: 560px;"
                  EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
                  RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
@@ -16,33 +10,33 @@ else
                  Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="thisDataGrid">
         <ToolBarContent>
             <MudText Typo="Typo.h6">Table: @TableName</MudText>
-            <MudSpacer/>
+            <MudSpacer />
             @if (CanGroup)
             {
                 @if (!_isExpanded)
                 {
-                    <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldMore" Class="mt-0" OnClick="@ExpandGroups"/>
+                    <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldMore" Class="mt-0" OnClick="@ExpandGroups" />
                 }
                 else
                 {
-                    <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldLess" Class="mt-0" OnClick="@CollapseGroups"/>
+                    <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldLess" Class="mt-0" OnClick="@CollapseGroups" />
                 }
             }
             @if (CanCreate)
             {
-                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await ShowNewItemDialogAsync(); })"/>
+                <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Add" Class="mt-0" OnClick="@(async () => { await ShowNewItemDialogAsync(); })" />
             }
             @if (CanDelete && thisDataGrid.MultiSelection && thisDataGrid.SelectedItems.Any())
             {
                 <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await DeleteSelectedItemsAsync(); })" />
             }
-            <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await GetAllItemsAsync(); })"/>
+            <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.Refresh" Class="mt-0" OnClick="@(async () => { await GetAllItemsAsync(); })" />
         </ToolBarContent>
         <Columns>
-            <HierarchyColumn T="T"/>
+            <HierarchyColumn T="T" />
             @if (MultiSelection)
             {
-                <SelectColumn T="T" ShowInFooter="false"/>
+                <SelectColumn T="T" ShowInFooter="false" />
             }
             @if (Items is null)
             {
@@ -62,7 +56,7 @@ else
                 <CellTemplate>
                     @if (CanEdit)
                     {
-                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await ShowEditItemDialogAsync(context.Item); })"/>
+                        <MudIconButton Class="mr-3" Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(async () => { await ShowEditItemDialogAsync(context.Item); })" />
                     }
                     @if (CanDelete)
                     {
@@ -76,10 +70,9 @@ else
             {
                 @DetailRowContent(context.Item)
             }
-        }
         </ChildRowContent>
         <PagerContent>
-            <MudDataGridPager T="T" DisableRowsPerPage="true"/>
+            <MudDataGridPager T="T" DisableRowsPerPage="true" />
         </PagerContent>
     </MudDataGrid>
-}
+</MudContainer>

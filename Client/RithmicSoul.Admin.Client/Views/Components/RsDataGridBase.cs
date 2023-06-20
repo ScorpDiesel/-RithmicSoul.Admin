@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Options;
 using MudBlazor;
 using RithmicSoul.Admin.Application.Interfaces.Services;
@@ -37,8 +38,9 @@ public class RsDataGridBase<T> : ComponentBase where T : class
     private AppSettings _appSettings;
     protected bool _isExpanded;
     protected string TableName;
-    private string _contentStyle;
-    private string _loadingStyle;
+    protected bool _showContent;
+    protected string _contentStyle;
+    protected int _propertiesCount;
 
     protected override async Task OnInitializedAsync()
     {
@@ -46,9 +48,10 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         await FilterItemsAsync();
     }
 
-    private void Initialize()
+    protected void Initialize()
     {
         _appSettings = AppSettingsOptions.Value;
+        _contentStyle = "display: none;";
         TableName = typeof(T).Name.Replace("Dto", string.Empty).SplitCamelCase();
         _properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
     }
@@ -112,6 +115,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
 
     protected RenderFragment CreateColumn(PropertyInfo propertyInfo)
     {
+        ++_propertiesCount;
         return builder =>
         {
             // Create a parameter for the lambda expression
@@ -126,12 +130,14 @@ public class RsDataGridBase<T> : ComponentBase where T : class
 
             // Create a lambda expression for the property access expression
             var lambdaExp = Expression.Lambda<Func<T, object>>(convertExp, parameterExp);
-
+            
             builder.OpenComponent(0, typeof(PropertyColumn<T, object>));
-            builder.AddAttribute(1, _appSettings.RsDataGridRenderFragmentPropertyAttribute, lambdaExp);
-            builder.AddAttribute(2, _appSettings.RsDataGridRenderFragmentTitleAttribute, propertyInfo.Name.SplitCamelCase());
+            builder.AddAttribute(1, "Property", lambdaExp);
+            builder.AddAttribute(2, "Title", propertyInfo.Name.SplitCamelCase());
             if (propertyInfo.Name == GroupBy) builder.AddAttribute(3, _appSettings.RsDataGridRenderFragmentGroupingAttribute, true);
-            builder?.CloseComponent();
+            builder.CloseComponent();
+
+            DisplayContent();
         };
     }
 
@@ -318,15 +324,11 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         Items = items;
     }
 
-    private void DisplayContent(EventArgs obj)
+    protected void DisplayContent()
     {
+        if (_propertiesCount != _properties.Count()) return;
         _contentStyle = "";
-        _loadingStyle = "display: none;";
-    }
-
-    private void HideContent(object sender, EventArgs e)
-    {
-        _contentStyle = "display: none;";
-        _loadingStyle = "";
+        _showContent = true;
+        StateHasChanged();
     }
 }

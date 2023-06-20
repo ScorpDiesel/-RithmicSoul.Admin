@@ -15,7 +15,7 @@ public class SurveyTypeService : IAdminService<SurveyTypeDto>
 {
     private readonly AppSetting _appSetting;
     private readonly IAdminRepository<SurveyTypeDto> _adminRepository;
-    private const string RouteSuffix = "QuestionTypes";
+    private const string RouteSuffix = "SurveyTypes";
 
 
     public SurveyTypeService(AppSetting appSetting)

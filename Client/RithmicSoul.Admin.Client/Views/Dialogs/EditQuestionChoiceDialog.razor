@@ -2,8 +2,8 @@
     <DialogContent>
         @if (_isLoading)
         {
-            <MudCard Style="Width: 550px">
-                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
+            <div style="width: 600px; height: 731px">
+                @*<MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
                 <MudCardContent>
                     <MudSkeleton Width="30%" Height="42px;" />
                     <MudSkeleton Width="80%" />
@@ -12,11 +12,13 @@
                 <MudCardActions>
                     <MudSkeleton Width="64px" Height="40px" Class="ml-2" />
                     <MudSkeleton Width="105px" Height="40px" Class="ml-3" />
-                </MudCardActions>
-            </MudCard>
-            <MudOverlay Visible="_isVisible" DarkBackground="true" Absolute="true">
-                <MudProgressCircular Color="Color.Secondary" Indeterminate="true" Style="width:70px; height: 70px;" />
-            </MudOverlay>
+            </MudCardActions>*@
+                <div class="@(_isVisible ? "invisible" : "visible");centered-container">
+                    <svg class="spinner" viewBox="0 0 50 50">
+                        <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                    </svg>
+                </div>
+            </div>
         }
         else
         {
@@ -50,7 +52,9 @@
         }
     </DialogContent>
     <DialogActions>
+        <div class="@(_isVisible ? "invisible" : "visible")">
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary" OnClick="@SaveEditAsync">Save</MudButton>
+        </div>
     </DialogActions>
 </MudDialog>

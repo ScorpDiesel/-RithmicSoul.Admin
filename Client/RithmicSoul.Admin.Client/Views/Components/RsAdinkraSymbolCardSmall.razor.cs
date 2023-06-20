@@ -6,7 +6,7 @@ using RithmicSoul.Models.Survey.Dtos;
 
 namespace RithmicSoul.Admin.Client.Views.Components;
 
-public partial class AdinkraSymbolCardSmall : ComponentBase
+public partial class RsAdinkraSymbolCardSmall : ComponentBase
 {
     [Inject] private HttpClient _httpClient { get; set; }
     [Parameter] public int SymbolId { get; set; }
@@ -14,9 +14,8 @@ public partial class AdinkraSymbolCardSmall : ComponentBase
     [Parameter] public AdinkraSymbolDto AdinkraSymbol  { get; set; }
 
     private int _elevation = 1;
-    private bool _isLoaded;
+    private bool _showContent;
     private string _contentStyle;
-    private string _loadingStyle;
     private string _imgSrcUrl;
     private string _audioSrcUrl;
 
@@ -27,7 +26,6 @@ public partial class AdinkraSymbolCardSmall : ComponentBase
 
     private void Initialize()
     {
-        _isLoaded = true;
         HideContent(null, null);
         var baseAddress = _httpClient.BaseAddress?.ToString();
         _audioSrcUrl = $"{baseAddress}v3/AdinkraSymbols/{SymbolId}";
@@ -36,7 +34,7 @@ public partial class AdinkraSymbolCardSmall : ComponentBase
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (_isLoaded) return;
+        if (_showContent) return;
         HideContent(null, null);
     }
 
@@ -47,13 +45,12 @@ public partial class AdinkraSymbolCardSmall : ComponentBase
     private void DisplayContent(EventArgs obj)
     {
         _contentStyle = "";
-        _loadingStyle = "display: none;";
-        _isLoaded = true;
+        _showContent = true;
     }
 
     private void HideContent(object sender, EventArgs e)
     {
         _contentStyle = "display: none;";
-        _loadingStyle = "";
+        _showContent = false;
     }
 }

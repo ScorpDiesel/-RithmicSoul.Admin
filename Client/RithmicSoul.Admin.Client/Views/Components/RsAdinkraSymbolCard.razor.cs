@@ -5,7 +5,7 @@ using RithmicSoul.Admin.Client.Pages.Surveys;
 
 namespace RithmicSoul.Admin.Client.Views.Components;
 
-public partial class AdinkraSymbolCard : ComponentBase
+public partial class RsAdinkraSymbolCard : ComponentBase
 {
     [Parameter] public int SymbolId { get; set; }
     [Parameter] public string SymbolName { get; set; }
@@ -23,9 +23,9 @@ public partial class AdinkraSymbolCard : ComponentBase
     private int _maxTranslationLength = 35;
     private int _maxNameLength = 25;
     private int _elevation = 1;
+    private bool _showContent;
     private bool _isLoaded;
     private string _contentStyle;
-    private string _loadingStyle;
 
     protected override void OnInitialized()
     {
@@ -63,7 +63,7 @@ public partial class AdinkraSymbolCard : ComponentBase
     private void ShowContent()
     {
         _contentStyle = "";
-        _loadingStyle = "display: none;";
+        _showContent = true;
         _isLoaded = true;
     }
 
@@ -74,8 +74,8 @@ public partial class AdinkraSymbolCard : ComponentBase
 
     private void HideContent()
     {
-        _contentStyle = "display: none;";
-        _loadingStyle = "";
+        _contentStyle = "display: none";
+        _showContent = false;
     }
 
     public void Dispose()

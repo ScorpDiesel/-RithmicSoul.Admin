@@ -48,7 +48,6 @@ namespace RithmicSoul.Admin.Client.Client
                     .EnableIntercept(sp));
             }
             
-            builder.Services.AddHttpClientInterceptor();
             builder.Services.AddLoadingBar(config =>
             {
                 config.LoadingBarColor = "#fc8236";

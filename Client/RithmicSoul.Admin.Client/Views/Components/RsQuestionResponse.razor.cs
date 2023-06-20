@@ -8,7 +8,7 @@ using RithmicSoul.Admin.Core.Models;
 
 namespace RithmicSoul.Admin.Client.Views.Components;
 
-public partial class QuestionResponse : ComponentBase
+public partial class RsQuestionResponse : ComponentBase
 {
     [Inject] private IOptions<AppSettings> AppSettingsOptions { get; set; }
     [Parameter] public string QuestionText { get; set; }
