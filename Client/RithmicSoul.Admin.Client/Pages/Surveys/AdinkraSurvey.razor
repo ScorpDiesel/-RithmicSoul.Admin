@@ -1,4 +1,4 @@
-﻿@page "/surveys/adinkra"
+﻿@page "/surveys/adinkra/{id}"
 
 <PageTitle>Adinkra Survey</PageTitle>
 
@@ -11,13 +11,14 @@
     }
     else
     {
-        <MudItem style="margin: 40px 0; display: flex; flex-direction: row;">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexStart">
             <MudText Typo="Typo.h4">Please select the Adinkra symbols you like by clicking the</MudText>
-            <MudIcon Style="margin-left: 10px" Size="Size.Large" Icon="@Icons.Material.Filled.Favorite" />
+            <MudIcon Style="margin-left: 10px" Size="Size.Large" Icon="@Icons.Material.Filled.Favorite"/>
             <MudText>@(string.Join(", ", _symbolLikes))</MudText>
-            </MudItem>
+        </MudStack>
         <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
-            <MudText Class="mr-8" Color="Color.Default" Style="font-size:.875rem;font-weight:500">PAGE @(_currentPage + 1) OF @_pageSize</MudText>
+            <MudButton Class="mr-8" StartIcon="@Icons.Material.Filled.Save" Color="Color.Success" OnClick="@(async () => await SaveSurveyAsync())">Save</MudButton>
+            <MudText Class="mr-8" Color="Color.Info" Style="font-size:.875rem;font-weight:500">PAGE @(_currentPage + 1) OF @_pageSize</MudText>
             <div>
                 <MudButton StartIcon="@Icons.Material.Filled.NavigateBefore" OnClick="@(async () => await PreviousPageAsync())" Disabled="@(!HasPreviousPage)">Previous</MudButton>
                 <MudButton EndIcon="@Icons.Material.Filled.NavigateNext" OnClick="@(async () => await NextPageAsync())" Disabled="@(!HasNextPage)">Next</MudButton>
@@ -40,7 +41,8 @@
             }
         </MudGrid>
         <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
-            <MudText Class="mr-8" Color="Color.Default" Style="font-size:.875rem;font-weight:500">PAGE @(_currentPage + 1) OF @_pageSize</MudText>
+            <MudButton Class="mr-8" StartIcon="@Icons.Material.Filled.Save" Color="Color.Success" OnClick="@(async () => await SaveSurveyAsync())">Save</MudButton>
+            <MudText Class="mr-8" Color="Color.Info" Style="font-size:.875rem;font-weight:500">PAGE @(_currentPage + 1) OF @_pageSize</MudText>
             <div>
                 <MudButton StartIcon="@Icons.Material.Filled.NavigateBefore" OnClick="@(async () => await PreviousPageAsync())" Disabled="@(!HasPreviousPage)">Previous</MudButton>
                 <MudButton EndIcon="@Icons.Material.Filled.NavigateNext" OnClick="@(async () => await NextPageAsync())" Disabled="@(!HasNextPage)">Next</MudButton>

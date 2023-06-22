@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using RithmicSoul.Models.Survey.Models;
 
-namespace RithmicSoul.Admin.Application.Interfaces.Services;
+namespace RithmicSoul.Admin.Application.Interfaces.Services.Survey;
 
 public interface ISurveyService<T> where T : class
 {

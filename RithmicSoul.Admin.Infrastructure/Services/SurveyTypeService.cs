@@ -1,12 +1,9 @@
 ﻿using System.Linq.Expressions;
-using System.Net.Http.Json;
-using Microsoft.Extensions.Options;
 using Refit;
-using RithmicSoul.Admin.Application.Interfaces;
-using RithmicSoul.Admin.Application.Interfaces.Services;
+using RithmicSoul.Admin.Application.Interfaces.Repositories.Admin;
+using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
-using RithmicSoulSharedLibrary.Extensions;
 using Serialize.Linq.Serializers;
 
 namespace RithmicSoul.Admin.Infrastructure.Services;
@@ -26,7 +23,8 @@ public class SurveyTypeService : IAdminService<SurveyTypeDto>
 
     public async Task<bool> InsertAsync(SurveyTypeDto dto)
     {
-        return await _adminRepository.InsertAsync(dto, RouteSuffix);
+        var response = await _adminRepository.InsertAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<object> InsertForIdAsync(SurveyTypeDto dto)
@@ -36,27 +34,32 @@ public class SurveyTypeService : IAdminService<SurveyTypeDto>
 
     public async Task<bool> BulkInsertAsync(List<SurveyTypeDto> dtos)
     {
-        return await _adminRepository.BulkInsertAsync(dtos, RouteSuffix);
+        var response = await _adminRepository.BulkInsertAsync(dtos, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> UpdateAsync(SurveyTypeDto dto)
     {
-        return await _adminRepository.UpdateAsync(dto, RouteSuffix);
+        var response = await _adminRepository.UpdateAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> BulkUpdateAsync(List<SurveyTypeDto> dtos)
     {
-        return await _adminRepository.BulkUpdateAsync(dtos, RouteSuffix);
+        var response = await _adminRepository.BulkUpdateAsync(dtos, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> DeleteAsync(SurveyTypeDto dto)
     {
-        return await _adminRepository.DeleteAsync(dto, RouteSuffix);
+        var response = await _adminRepository.DeleteAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> BulkDeleteAsync(List<SurveyTypeDto> dtos)
     {
-        return await _adminRepository.BulkDeleteAsync(dtos, RouteSuffix);
+        var response = await _adminRepository.BulkDeleteAsync(dtos, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<SurveyTypeDto> GetByIdAsync(int id)

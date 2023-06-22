@@ -1,8 +1,5 @@
 ﻿@page "/tables"
 @using RithmicSoul.Models.Survey.Dtos
-@using RithmicSoul.Admin.Client.Views.Dialogs
-@using RithmicSoul.Models.Survey.Dtos;
-@using RithmicSoul.Admin.Client.Views.Dialogs
 
 <PageTitle>Surveys</PageTitle>
 @*<AuthorizeView>
@@ -59,7 +56,7 @@
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 650px; overflow-y: auto">
                                         <RsDataGridWithDetailRow T="AdinkraSymbolDto"
                                              Items="@_adinkraSymbols"
-                                             CanCreate="true" CanDelete="true" CanEdit="true" ColumnsToHide="@_adinkraSymbolColumnsToHide"
+                                             CanCreate="true" CanDelete="false" CanEdit="true" ColumnsToHide="@_adinkraSymbolColumnsToHide"
                                              ApiAdminService="@AdinkraSymbolService">
                                             <DetailRowContent>
                                                 <RsAdinkraSymbolCardSmall Style="width: 400px; height: 410px" SymbolId="@context.SymbolId"/>
@@ -74,17 +71,25 @@
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
                                         <RsDataGrid T="SurveyTypeDto"
-                                            Items="@_surveyTypes"
-                                            CanCreate="true" CanDelete="true" CanEdit="true" TDialog="@_surveyTypeDialogType"
-                                            ApiAdminService="@SurveyTypeService"></RsDataGrid>
+                                                    Items="@_surveyTypes" MultiSelection="true"
+                                                    CanCreate="true" CanDelete="true" CanEdit="true" TDialog="@_surveyTypeDialogType"
+                                                    ApiAdminService="@SurveyTypeService"/>
                                     </MudPaper>
                                 </MudItem>
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; ">
                                         <RsDataGrid T="QuestionTypeDto"
-                                            Items="@_questionTypes"
-                                            CanCreate="true" CanDelete="true" CanEdit="true" TDialog="@_questionTypeDialogType"
-                                            ApiAdminService="@QuestionTypeService"></RsDataGrid>
+                                                    Items="@_questionTypes"
+                                                    CanCreate="true" CanDelete="true" CanEdit="true" TDialog="@_questionTypeDialogType"
+                                                    ApiAdminService="@QuestionTypeService"/>
+                                    </MudPaper>
+                                </MudItem>
+                                <MudItem xs="12">
+                                    <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
+                                        @*<RsDataGrid T="QuestionTypeDto"
+                                                    Items="@_questionTypes"
+                                                    CanCreate="true" CanDelete="true" CanEdit="true" TDialog="@_questionTypeDialogType"
+                                                    ApiAdminService="@QuestionTypeService"/>*@
                                     </MudPaper>
                                 </MudItem>
                             </MudGrid>

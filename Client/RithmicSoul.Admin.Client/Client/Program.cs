@@ -4,10 +4,12 @@ using MudBlazor;
 using MudBlazor.Services;
 using NetCore.AutoRegisterDi;
 using RithmicSoul.Admin.Application.Interfaces;
+using RithmicSoul.Admin.Application.Interfaces.Services;
 using RithmicSoul.Admin.Client.Logger;
 using RithmicSoul.Admin.Infrastructure.Logging;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 using RithmicSoul.Admin.Core.Models;
+using RithmicSoul.Admin.Infrastructure.Services;
 
 namespace RithmicSoul.Admin.Client.Client
 {
@@ -31,15 +33,18 @@ namespace RithmicSoul.Admin.Client.Client
             //builder.Services.AddSingleton(_ => new PeriodicTimerService());
 
             builder.Services.AddHttpClientInterceptor();
-            builder.Services.RegisterAssemblyPublicNonGenericClasses(typeof(Program).Assembly, typeof(Infrastructure.Services.QuestionTypeService).Assembly, typeof(Application.Dtos.DraftSurveyDto).Assembly)
+            builder.Services.AddTransient(typeof(IBulkActionsService<>), typeof(BulkActionsService<>));
+            //builder.Services.RegisterAssemblyPublicNonGenericClasses(AppDomain.CurrentDomain.GetAssemblies())
+            builder.Services.RegisterAssemblyPublicNonGenericClasses(typeof(Program).Assembly, typeof(QuestionTypeService).Assembly, typeof(Application.Dtos.DraftSurveyDto).Assembly)
                 .Where(c => c.Name.EndsWith("Service") || c.Name.EndsWith("Repository"))
                 .AsPublicImplementedInterfaces();
 
             if (builder.HostEnvironment.IsDevelopment())
             {
                 builder.Services.AddSingleton(_ => new AppSetting { BaseAddress = "http://localhost:7129/api" });
-                builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:7129/api/") }
-                    .EnableIntercept(sp));
+                builder.Services.AddScoped(sp => new HttpClient
+                    { BaseAddress = new Uri("http://localhost:7129/api/") });
+                //.EnableIntercept(sp));
             }
             else
             {

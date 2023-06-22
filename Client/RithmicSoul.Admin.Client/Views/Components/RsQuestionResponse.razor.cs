@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using RithmicSoul.Models.Survey.Dtos;
-using System.Linq;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Options;
 using RithmicSoul.Admin.Core.Models;

@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using RithmicSoul.Admin.Application.Dtos;
 using RithmicSoul.Admin.Application.Interfaces.Services;
+using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
 
@@ -8,11 +9,13 @@ namespace RithmicSoul.Admin.Infrastructure.Services;
 
 public class DraftSurveyService : IDraftSurveyService
 {
+    private readonly IBulkActionsService<SurveyQuestionnaireDto> _bulkActionsService;
     private readonly IAdminService<SurveyDto> _surveyService;
     private readonly IAdminService<SurveyQuestionnaireDto> _surveyQuestionnaireService;
 
-    public DraftSurveyService(IAdminService<SurveyDto> surveyService, IAdminService<SurveyQuestionnaireDto> surveyQuestionnaireService)
+    public DraftSurveyService(IBulkActionsService<SurveyQuestionnaireDto> bulkActionsService, IAdminService<SurveyDto> surveyService, IAdminService<SurveyQuestionnaireDto> surveyQuestionnaireService)
     {
+        _bulkActionsService = bulkActionsService;
         _surveyService = surveyService;
         _surveyQuestionnaireService = surveyQuestionnaireService;
     }
@@ -44,7 +47,8 @@ public class DraftSurveyService : IDraftSurveyService
             SurveyId = draftSurveyDto.SurveyId,
             SurveyName = draftSurveyDto.SurveyName,
             SurveyTypeId = draftSurveyDto.SurveyTypeId,
-            SurveyDescription = draftSurveyDto.SurveyDescription
+            SurveyDescription = draftSurveyDto.SurveyDescription,
+            IsActive = draftSurveyDto.IsActive
         };
 
         var surveyId = draftSurveyDto.SurveyId;
@@ -53,12 +57,12 @@ public class DraftSurveyService : IDraftSurveyService
 
         if (result is not null && result.Any())
         {
-            var isDeleted = await _surveyQuestionnaireService.BulkDeleteAsync(result.ToList());
+            var isDeleted = await _bulkActionsService.BulkDeleteAsync(result.ToList());
             if (!isDeleted) return false;
         }
 
         var questionnaires = draftSurveyDto.SurveyQuestionIds.Select(questionId => new SurveyQuestionnaireDto { SurveyId = surveyId, QuestionId = questionId }).ToList();
-        var isQuestionnairesSaved = await _surveyQuestionnaireService.BulkInsertAsync(questionnaires);
+        var isQuestionnairesSaved = await _bulkActionsService.BulkInsertAsync(questionnaires);
 
         return isQuestionnairesSaved;
     }
@@ -69,14 +73,15 @@ public class DraftSurveyService : IDraftSurveyService
         {
             SurveyName = draftSurveyDto.SurveyName,
             SurveyTypeId = draftSurveyDto.SurveyTypeId,
-            SurveyDescription = draftSurveyDto.SurveyDescription
+            SurveyDescription = draftSurveyDto.SurveyDescription,
+            IsActive = draftSurveyDto.IsActive
         };
 
         var responseId = await _surveyService.InsertForIdAsync(dto) ??
                        throw new Exception($"The id for the new {nameof(DraftSurvey)} was null");
         var surveyId = Convert.ToInt32(responseId);
         var questionnaires = draftSurveyDto.SurveyQuestionIds.Select(questionId => new SurveyQuestionnaireDto { SurveyId = surveyId, QuestionId = questionId }).ToList();
-        return await _surveyQuestionnaireService.BulkInsertAsync(questionnaires);
+        return await _bulkActionsService.BulkInsertAsync(questionnaires);
     }
 
     public async Task<List<DraftSurveyDto>> GetAllAsync()
@@ -138,6 +143,7 @@ public class DraftSurveyService : IDraftSurveyService
             SurveyTypeName = survey.SurveyTypeName,
             SurveyQuestions = collection,
             SurveyId = id,
+            IsActive = survey.IsActive,
             SurveyQuestionIds = questionnaires is null ? new List<int>() : questionnaires.Select(q => q.SurveyQuestionId).ToList()
         };
     }

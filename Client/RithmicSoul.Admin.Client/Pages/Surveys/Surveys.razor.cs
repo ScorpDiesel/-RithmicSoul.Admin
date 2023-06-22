@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using RithmicSoul.Admin.Application.Interfaces.Services;
+using RithmicSoul.Admin.Application.Interfaces.Services.Survey;
 using RithmicSoul.Admin.Client.Views.Dialogs;
 using RithmicSoul.Models.Survey.Dtos;
 
@@ -10,7 +11,9 @@ public partial class Surveys : ComponentBase
 {
     [Inject] IDialogService? DialogService { get; set; }
     [Inject] ISurveyService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
+    [Inject] IDraftSurveyService DraftSurveyService { get; set; }
     [Inject] NavigationManager Navigation { get; set; }
+    [Inject] ISnackbar Snackbar { get; set; }
     [CascadingParameter] public EventCallback<bool> HideMenus { get; set; }
 
     private IEnumerable<AuthoredSurveyDto> _authoredSurveys;
@@ -46,15 +49,21 @@ public partial class Surveys : ComponentBase
         if (!result.Canceled)
         {
             var id = (int)result.Data;
-
-            var survey = id switch
+            var survey = await DraftSurveyService.GetByIdAsync(id);
+            if (survey is null)
             {
-                16 => "product",
-                21 => "adinkra",
-                _ => null
-            };
-            Navigation.NavigateTo($"/surveys/{survey}");
+                ShowSnackBar(false, "Survey not found.");
+                return;
+            }
+
+            Navigation.NavigateTo($"/surveys/{survey.SurveyTypeName}");
         }
+    }
+
+    private void ShowSnackBar(bool isSuccess, string message)
+    {
+        Snackbar.Clear();
+        Snackbar.Add(message, isSuccess ? Severity.Success : Severity.Error);
     }
 
     //private RenderFragment CreateChildContent<T>(IList<T> collection) where T : class

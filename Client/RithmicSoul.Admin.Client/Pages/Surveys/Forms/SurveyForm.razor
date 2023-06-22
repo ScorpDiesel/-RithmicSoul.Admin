@@ -16,7 +16,7 @@
                     <MudTextField T="string" Label="Survey Description" Required="true" RequiredError="Survey Description is required!" Class="mt-16" @bind-Value="Model.SurveyDescription" />
                     <MudGrid>
                         <MudItem xs="12">
-                            <MudStack Row="true" Class="mt-8" AlignItems="AlignItems.Center">
+                            <MudStack Row="true" Class="mt-8" AlignItems="AlignItems.Center" Justify="Justify.SpaceEvenly">
                                 <MudSelect T="int" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="Survey Type" AnchorOrigin="Origin.BottomCenter"
                                            Converter="@ConvertIdToName" Disabled="@_surveyTypeDisabled"
                                            Style="width: 100px" @bind-Value="@Model.SurveyTypeId">
@@ -30,7 +30,7 @@
                                         <MudSelectItem T="int" Value="@st.SurveyTypeId">@st.SurveyTypeName</MudSelectItem>
                                     }
                                 </MudSelect>
-                                <MudSpacer />
+                                <MudSwitch T="bool" Checked="@Model.IsActive" Label="@(nameof(Model.IsActive))" CheckedChanged="@(isChecked => ToggleActive(isChecked))" Color="Color.Success" Class="mr-10 ml-10" />
                                 <MudStack Row="true" Justify="Justify.FlexEnd" AlignItems="AlignItems.Center">
                                     <MudText>Add Questions</MudText>
                                     <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.AddCircle" OnClick="@AddQuestion" />
@@ -59,7 +59,7 @@
                                                 <MudItem xs="12">
                                                     <MudStack Row="true" Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
                                                         <MudSelect T="int" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="Survey Question" AnchorOrigin="Origin.BottomCenter"
-                                                                   @bind-Value="@Model.SurveyQuestionIds[thisIndex]">
+                                                                   Value="@Model.SurveyQuestionIds[thisIndex]" ValueChanged="@(id => QuestionIdChanged(id, thisIndex))">
                                                             <MudSelectItem T="int" Value="0" Disabled="true">Select...</MudSelectItem>
                                                             @if (_surveyQuestions == null)
                                                             {

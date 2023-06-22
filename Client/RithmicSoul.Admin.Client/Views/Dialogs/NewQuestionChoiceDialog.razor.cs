@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using MudBlazor;
 using RithmicSoul.Admin.Application.Interfaces.Services;
+using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Admin.Core.Utilities;
 using RithmicSoul.Models.Survey.Dtos;
@@ -10,6 +11,7 @@ namespace RithmicSoul.Admin.Client.Views.Dialogs;
 
 public partial class NewQuestionChoiceDialog : ComponentBase
 {
+    [Inject] IBulkActionsService<QuestionChoiceDto> BulkActionsService { get; set; }
     [Inject] IAdminService<QuestionChoiceDto> QuestionChoiceService { get; set; }
     [Inject] IAdminService<SurveyQuestionDto> SurveyQuestionService { get; set; }
     [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
@@ -101,7 +103,7 @@ public partial class NewQuestionChoiceDialog : ComponentBase
     private async Task SaveNewAsync()
     {
         var modelCollection = Utilities.MapToModelWithCollection<QuestionChoiceDto, SurveyQuestionChoices>(Model);
-        var isBulkInsertSuccessful = await QuestionChoiceService.BulkInsertAsync(modelCollection.ToList());
+        var isBulkInsertSuccessful = await BulkActionsService.BulkInsertAsync(modelCollection.ToList());
         ShowSnackBar(isBulkInsertSuccessful);
         MudDialog.Close(DialogResult.Ok(modelCollection));
     }

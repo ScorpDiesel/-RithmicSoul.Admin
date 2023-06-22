@@ -1,12 +1,9 @@
 ﻿using System.Linq.Expressions;
-using System.Net.Http.Json;
-using Microsoft.Extensions.Options;
 using Refit;
-using RithmicSoul.Admin.Application.Interfaces;
-using RithmicSoul.Admin.Application.Interfaces.Services;
+using RithmicSoul.Admin.Application.Interfaces.Repositories.Admin;
+using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
-using RithmicSoulSharedLibrary.Extensions;
 using Serialize.Linq.Serializers;
 
 namespace RithmicSoul.Admin.Infrastructure.Services;
@@ -25,37 +22,24 @@ public class QuestionChoiceService : IAdminService<QuestionChoiceDto>
 
     public async Task<bool> InsertAsync(QuestionChoiceDto dto)
     {
-        return await _adminRepository.InsertAsync(dto, RouteSuffix);
+        var response = await _adminRepository.InsertAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<object> InsertForIdAsync(QuestionChoiceDto dto)
     {
         return await _adminRepository.InsertForIdAsync(dto, RouteSuffix);
     }
-
-    public async Task<bool> BulkInsertAsync(List<QuestionChoiceDto> dtos)
-    {
-        return await _adminRepository.BulkInsertAsync(dtos, RouteSuffix);
-    }
-
     public async Task<bool> UpdateAsync(QuestionChoiceDto dto)
     {
-        return await _adminRepository.UpdateAsync(dto, RouteSuffix);
-    }
-
-    public async Task<bool> BulkUpdateAsync(List<QuestionChoiceDto> dtos)
-    {
-        return await _adminRepository.BulkUpdateAsync(dtos, RouteSuffix);
+        var response = await _adminRepository.UpdateAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> DeleteAsync(QuestionChoiceDto dto)
     {
-        return await _adminRepository.DeleteAsync(dto, RouteSuffix);
-    }
-
-    public async Task<bool> BulkDeleteAsync(List<QuestionChoiceDto> dtos)
-    {
-        return await _adminRepository.BulkDeleteAsync(dtos, RouteSuffix);
+        var response = await _adminRepository.DeleteAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<QuestionChoiceDto> GetByIdAsync(int id)
