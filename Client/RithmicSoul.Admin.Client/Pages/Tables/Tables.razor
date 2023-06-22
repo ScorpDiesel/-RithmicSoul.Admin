@@ -1,8 +1,6 @@
 ﻿@page "/tables"
 @using RithmicSoul.Models.Survey.Dtos
 @using RithmicSoul.Admin.Client.Views.Dialogs
-@using RithmicSoul.Models.Survey.Dtos;
-@using RithmicSoul.Admin.Client.Views.Dialogs
 
 <PageTitle>Surveys</PageTitle>
 @*<AuthorizeView>
@@ -16,7 +14,7 @@
             <MudGrid>
                 <MudItem xs="12">
                     <MudGrid>
-                        <MudItem xs="8">
+                        @*<MudItem xs="8">
                             <MudGrid>
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
@@ -68,25 +66,25 @@
                                     </MudPaper>
                                 </MudItem>
                             </MudGrid>
-                        </MudItem>
+                        </MudItem>*@
                         <MudItem xs="4">
                             <MudGrid>
                                 <MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
                                         <RsDataGrid T="SurveyTypeDto"
-                                            Items="@_surveyTypes"
-                                            CanCreate="true" CanDelete="true" CanEdit="true" TDialog="@_surveyTypeDialogType"
+                                            Items="@_surveyTypes" MultiSelection="true"
+                                                    CanCreate="true" CanDelete="true" CanEdit="true" TDialog="typeof(SurveyTypeDialog)"
                                             ApiAdminService="@SurveyTypeService"></RsDataGrid>
                                     </MudPaper>
                                 </MudItem>
-                                <MudItem xs="12">
+                                @*<MudItem xs="12">
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; ">
                                         <RsDataGrid T="QuestionTypeDto"
                                             Items="@_questionTypes"
                                             CanCreate="true" CanDelete="true" CanEdit="true" TDialog="@_questionTypeDialogType"
                                             ApiAdminService="@QuestionTypeService"></RsDataGrid>
                                     </MudPaper>
-                                </MudItem>
+                                </MudItem>*@
                             </MudGrid>
                         </MudItem>
                     </MudGrid>

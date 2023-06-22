@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using RithmicSoul.Admin.Application.Interfaces.Services;
+using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
 using RithmicSoul.Models.Survey.Dtos;
 
 namespace RithmicSoul.Admin.Client.Views.Dialogs;

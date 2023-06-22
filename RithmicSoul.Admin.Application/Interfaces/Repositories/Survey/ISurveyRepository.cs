@@ -1,8 +1,7 @@
 ﻿using Refit;
-using System.Linq.Expressions;
 using RithmicSoul.Models.Survey.Models;
 
-namespace RithmicSoul.Admin.Application.Interfaces;
+namespace RithmicSoul.Admin.Application.Interfaces.Repositories.Survey;
 
 public interface ISurveyRepository<T> where T : class
 {

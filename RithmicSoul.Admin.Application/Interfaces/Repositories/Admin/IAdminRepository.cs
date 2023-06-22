@@ -1,7 +1,6 @@
 ﻿using Refit;
-using System.Linq.Expressions;
 
-namespace RithmicSoul.Admin.Application.Interfaces;
+namespace RithmicSoul.Admin.Application.Interfaces.Repositories.Admin;
 
 public interface IAdminRepository<T> where T : class
 {

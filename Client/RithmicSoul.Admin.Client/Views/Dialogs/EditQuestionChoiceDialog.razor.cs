@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using MudBlazor;
 using RithmicSoul.Admin.Application.Interfaces.Services;
+using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
 
@@ -9,6 +10,7 @@ namespace RithmicSoul.Admin.Client.Views.Dialogs;
 
 public partial class EditQuestionChoiceDialog : ComponentBase
 {
+    [Inject] IBulkActionsService<QuestionChoiceDto> BulkActionsService { get; set; }
     [Inject] private IAdminService<QuestionChoiceDto>? QuestionChoiceService { get; set; }
     [Inject] private IAdminService<SurveyQuestionDto>? SurveyQuestionService { get; set; }
     [Inject] private ISnackbar? Snackbar { get; set; }
@@ -63,7 +65,7 @@ public partial class EditQuestionChoiceDialog : ComponentBase
 
     private async Task SaveEditAsync()
     {
-        var isDeleteSuccessful = await QuestionChoiceService.BulkDeleteAsync(_oldDtoList);
+        var isDeleteSuccessful = await BulkActionsService.BulkDeleteAsync(_oldDtoList);
         if (!isDeleteSuccessful) ShowSnackBar(isDeleteSuccessful);
 
         foreach (var choice in DtoList)
@@ -71,7 +73,7 @@ public partial class EditQuestionChoiceDialog : ComponentBase
             choice.QuestionId = Model.QuestionId;
         }
 
-        var isBulkInsertSuccessful = await QuestionChoiceService.BulkInsertAsync(DtoList);
+        var isBulkInsertSuccessful = await BulkActionsService.BulkInsertAsync(DtoList);
         ShowSnackBar(isBulkInsertSuccessful);
         MudDialog?.Close(DialogResult.Ok(Model));
     }

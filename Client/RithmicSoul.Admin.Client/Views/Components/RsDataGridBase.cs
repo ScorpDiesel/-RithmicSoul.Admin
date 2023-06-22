@@ -1,10 +1,11 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Options;
 using MudBlazor;
 using RithmicSoul.Admin.Application.Interfaces.Services;
+using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
+using RithmicSoul.Admin.Application.Interfaces.Services.Survey;
 using RithmicSoul.Admin.Client.Views.Dialogs;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoulSharedLibrary.Extensions;
@@ -12,11 +13,12 @@ namespace RithmicSoul.Admin.Client.Views.Components;
 
 public class RsDataGridBase<T> : ComponentBase where T : class
 {
+    //[Inject] IBulkActionsService<T> BulkActionsService { get; set; }
     [Inject] ISnackbar? Snackbar { get; set; }
-    [Inject] IDialogService? DialogService { get; set; }
+    [Inject] IDialogService DialogService { get; set; }
     [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
-    [Parameter] public IAdminService<T>? ApiAdminService { get; set; }
-    [Parameter] public ISurveyService<T>? ApiSurveyService { get; set; }
+    [Parameter] public IAdminService<T> ApiAdminService { get; set; }
+    //[Parameter] public ISurveyService<T>? ApiSurveyService { get; set; }
     [Parameter] public bool CanGroup { get; set; }
     [Parameter] public bool GroupExpanded { get; set; }
     [Parameter] public string? GroupBy { get; set; }
@@ -144,12 +146,12 @@ public class RsDataGridBase<T> : ComponentBase where T : class
     protected async Task CreateNewItemAsync<T>(object data)
     {
         dynamic resultData;
-        bool isSuccessful;
+        bool isSuccessful = false;
 
         if (data.IsGenericList())
         {
             resultData = (List<T>)data;
-            isSuccessful = await ApiAdminService?.BulkInsertAsync(resultData);
+            //isSuccessful = await BulkActionsService.BulkInsertAsync(resultData);
         }
         else
         {
@@ -216,6 +218,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
 
     public async Task DeleteSelectedItemsAsync(T? item = null)
     {
+        Console.WriteLine("1");
         var parameters = new DialogParameters
         {
             { "ContentText", "Delete these/this record(s)?" },
@@ -224,8 +227,11 @@ public class RsDataGridBase<T> : ComponentBase where T : class
             { "Style", "min-width:300px" },
             { "Color", Color.Error }
         };
-        var dialog = await DialogService?.ShowAsync<ActionDialog>("Delete", parameters)!;
+        Console.WriteLine("2");
+        var dialog = await DialogService.ShowAsync<ActionDialog>("Delete", parameters)!;
+        Console.WriteLine("3");
         var result = await dialog.Result;
+        Console.WriteLine("4");
         if (!result.Canceled)
         {
             var isSuccess = false;
@@ -242,7 +248,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
                     return;
                 }
 
-                isSuccess = await ApiAdminService?.BulkDeleteAsync(items.ToList())!;
+                //isSuccess = await BulkActionsService.BulkDeleteAsync(items.ToList())!;
             }
             
             string message;
@@ -280,13 +286,13 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         if (!result.Canceled)
         {
             dynamic resultData;
-            bool isSuccessful;
+            bool isSuccessful = false;
             var data = result.Data;
 
             if (data.IsGenericList())
             {
                 resultData = (List<T>)data;
-                isSuccessful = await ApiAdminService?.BulkInsertAsync(resultData);
+                //isSuccessful = await BulkActionsService.BulkInsertAsync(resultData);
             }
             else
             {
@@ -320,7 +326,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
 
     public async Task GetAllItemsAsync()
     {
-        var items = ApiAdminService is null ? await ApiSurveyService.GetAllFromViewAsync() : await ApiAdminService.GetAllAsync();
+        var items = await ApiAdminService.GetAllAsync();
         Items = items;
     }
 

@@ -1,12 +1,9 @@
 ﻿using System.Linq.Expressions;
-using System.Net.Http.Json;
-using Microsoft.Extensions.Options;
 using Refit;
-using RithmicSoul.Admin.Application.Interfaces;
-using RithmicSoul.Admin.Application.Interfaces.Services;
+using RithmicSoul.Admin.Application.Interfaces.Repositories.Admin;
+using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
-using RithmicSoulSharedLibrary.Extensions;
 using Serialize.Linq.Serializers;
 
 namespace RithmicSoul.Admin.Infrastructure.Services;
