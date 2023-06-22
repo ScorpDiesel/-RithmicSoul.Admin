@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Azure;
 using Refit;
 using RithmicSoul.Admin.Application.Interfaces.Repositories.Admin;
 using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
@@ -22,7 +23,8 @@ public class SurveyService : IAdminService<SurveyDto>
 
     public async Task<bool> InsertAsync(SurveyDto dto)
     {
-        return await _adminRepository.InsertAsync(dto, RouteSuffix);
+        var response = await _adminRepository.InsertAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<object> InsertForIdAsync(SurveyDto dto)
@@ -32,27 +34,32 @@ public class SurveyService : IAdminService<SurveyDto>
 
     public async Task<bool> BulkInsertAsync(List<SurveyDto> dtos)
     {
-        return await _adminRepository.BulkInsertAsync(dtos, RouteSuffix);
+        var response = await _adminRepository.BulkInsertAsync(dtos, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> UpdateAsync(SurveyDto dto)
     {
-        return await _adminRepository.UpdateAsync(dto, RouteSuffix);
+        var response = await _adminRepository.UpdateAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> BulkUpdateAsync(List<SurveyDto> dtos)
     {
-        return await _adminRepository.BulkUpdateAsync(dtos, RouteSuffix);
+        var response = await _adminRepository.BulkUpdateAsync(dtos, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> DeleteAsync(SurveyDto dto)
     {
-        return await _adminRepository.DeleteAsync(dto, RouteSuffix);
+        var response = await _adminRepository.DeleteAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> BulkDeleteAsync(List<SurveyDto> dtos)
     {
-        return await _adminRepository.BulkDeleteAsync(dtos, RouteSuffix);
+        var response = await _adminRepository.BulkDeleteAsync(dtos, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<SurveyDto> GetByIdAsync(int id)

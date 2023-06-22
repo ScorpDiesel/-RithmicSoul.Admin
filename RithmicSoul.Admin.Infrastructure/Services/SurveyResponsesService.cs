@@ -19,7 +19,7 @@ public class SurveyResponsesService
         return await _surveyResponsesRepository.GetAllResponsesAsync();
     }
 
-    public async Task<SurveyResponses> GetResponsesByIdAsync(object id)
+    public async Task<SurveyResponses> GetResponsesByIdAsync(Guid id)
     {
         return await _surveyResponsesRepository.GetResponsesByIdAsync(id);
     }
@@ -34,16 +34,19 @@ public class SurveyResponsesService
 
     public async Task<bool> InsertResponsesAsync(SurveyResponses dto)
     {
-        return await _surveyResponsesRepository.InsertResponsesAsync(dto);
+        var response = await _surveyResponsesRepository.InsertResponsesAsync(dto);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> UpdateResponsesAsync(SurveyResponses dto)
     {
-        return await _surveyResponsesRepository.UpdateResponsesAsync(dto);
+        var response = await _surveyResponsesRepository.UpdateResponsesAsync(dto);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> DeleteResponsesAsync(SurveyResponses dto)
     {
-        return await _surveyResponsesRepository.DeleteResponsesAsync(dto);
+        var response = await _surveyResponsesRepository.DeleteResponsesAsync(dto);
+        return response.IsSuccessStatusCode;
     }
 }

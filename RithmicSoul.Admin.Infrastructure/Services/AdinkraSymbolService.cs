@@ -34,7 +34,8 @@ public class AdinkraSymbolService : IAdminService<AdinkraSymbolDto>
 
     public async Task<bool> InsertAsync(AdinkraSymbolDto dto)
     {
-        return await _adminRepository.InsertAsync(dto, RouteSuffix);
+        var response = await _adminRepository.InsertAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<object> InsertForIdAsync(AdinkraSymbolDto dto)
@@ -43,12 +44,14 @@ public class AdinkraSymbolService : IAdminService<AdinkraSymbolDto>
     }
     public async Task<bool> UpdateAsync(AdinkraSymbolDto dto)
     {
-        return await _adminRepository.UpdateAsync(dto, RouteSuffix);
+        var response = await _adminRepository.UpdateAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> DeleteAsync(AdinkraSymbolDto dto)
     {
-        return await _adminRepository.DeleteAsync(dto, RouteSuffix);
+        var response = await _adminRepository.DeleteAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<AdinkraSymbolDto> GetByIdAsync(int id)

@@ -33,8 +33,9 @@ namespace RithmicSoul.Admin.Client.Client
             //builder.Services.AddSingleton(_ => new PeriodicTimerService());
 
             builder.Services.AddHttpClientInterceptor();
-            //builder.Services.AddTransient(typeof(IBulkActionsService<>), typeof(BulkActionsService<>));
-            builder.Services.RegisterAssemblyPublicNonGenericClasses(AppDomain.CurrentDomain.GetAssemblies())
+            builder.Services.AddTransient(typeof(IBulkActionsService<>), typeof(BulkActionsService<>));
+            //builder.Services.RegisterAssemblyPublicNonGenericClasses(AppDomain.CurrentDomain.GetAssemblies())
+            builder.Services.RegisterAssemblyPublicNonGenericClasses(typeof(Program).Assembly, typeof(QuestionTypeService).Assembly, typeof(Application.Dtos.DraftSurveyDto).Assembly)
                 .Where(c => c.Name.EndsWith("Service") || c.Name.EndsWith("Repository"))
                 .AsPublicImplementedInterfaces();
 

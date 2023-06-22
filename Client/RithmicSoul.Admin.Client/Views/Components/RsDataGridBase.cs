@@ -13,12 +13,12 @@ namespace RithmicSoul.Admin.Client.Views.Components;
 
 public class RsDataGridBase<T> : ComponentBase where T : class
 {
-    //[Inject] IBulkActionsService<T> BulkActionsService { get; set; }
+    [Inject] IBulkActionsService<T> BulkActionsService { get; set; }
     [Inject] ISnackbar? Snackbar { get; set; }
     [Inject] IDialogService DialogService { get; set; }
     [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
     [Parameter] public IAdminService<T> ApiAdminService { get; set; }
-    //[Parameter] public ISurveyService<T>? ApiSurveyService { get; set; }
+    [Parameter] public ISurveyService<T>? ApiSurveyService { get; set; }
     [Parameter] public bool CanGroup { get; set; }
     [Parameter] public bool GroupExpanded { get; set; }
     [Parameter] public string? GroupBy { get; set; }
@@ -151,7 +151,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         if (data.IsGenericList())
         {
             resultData = (List<T>)data;
-            //isSuccessful = await BulkActionsService.BulkInsertAsync(resultData);
+            isSuccessful = await BulkActionsService.BulkInsertAsync(resultData);
         }
         else
         {
@@ -218,7 +218,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
 
     public async Task DeleteSelectedItemsAsync(T? item = null)
     {
-        Console.WriteLine("1");
+        var options = new DialogOptions { CloseButton = true };
         var parameters = new DialogParameters
         {
             { "ContentText", "Delete these/this record(s)?" },
@@ -227,11 +227,10 @@ public class RsDataGridBase<T> : ComponentBase where T : class
             { "Style", "min-width:300px" },
             { "Color", Color.Error }
         };
-        Console.WriteLine("2");
-        var dialog = await DialogService.ShowAsync<ActionDialog>("Delete", parameters)!;
-        Console.WriteLine("3");
+        
+        var dialog = await DialogService.ShowAsync<ActionDialog>("Delete", parameters, options)!;
         var result = await dialog.Result;
-        Console.WriteLine("4");
+        
         if (!result.Canceled)
         {
             var isSuccess = false;
@@ -248,7 +247,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
                     return;
                 }
 
-                //isSuccess = await BulkActionsService.BulkDeleteAsync(items.ToList())!;
+                isSuccess = await BulkActionsService.BulkDeleteAsync(items.ToList())!;
             }
             
             string message;
@@ -270,16 +269,17 @@ public class RsDataGridBase<T> : ComponentBase where T : class
     public async Task ShowEditItemDialogAsync<T>(T dto)
     {
         SetRowHighlight(dto);
+        var options = new DialogOptions { CloseButton = true };
         var dialogParameters = new DialogParameters { { "Model", dto } };
         IDialogReference? dialog;
 
         if (TEditDialog is not null)
         {
-            dialog = await DialogService?.ShowAsync(TEditDialog, string.Format(_appSettings.EditTableDialogMessageTemplate, TableName), dialogParameters)!;
+            dialog = await DialogService?.ShowAsync(TEditDialog, string.Format(_appSettings.EditTableDialogMessageTemplate, TableName), dialogParameters, options)!;
         }
         else
         {
-            dialog = await DialogService?.ShowAsync(TDialog, string.Format(_appSettings.EditTableDialogMessageTemplate, TableName), dialogParameters)!;
+            dialog = await DialogService?.ShowAsync(TDialog, string.Format(_appSettings.EditTableDialogMessageTemplate, TableName), dialogParameters, options)!;
         }
 
         var result = await dialog.Result;
@@ -292,7 +292,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
             if (data.IsGenericList())
             {
                 resultData = (List<T>)data;
-                //isSuccessful = await BulkActionsService.BulkInsertAsync(resultData);
+                isSuccessful = await BulkActionsService.BulkInsertAsync(resultData);
             }
             else
             {

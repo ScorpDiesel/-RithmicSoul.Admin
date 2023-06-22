@@ -27,6 +27,7 @@ public partial class SurveyForm : ComponentBase
     private AppSettings _appSettings;
     private string _scrollToBottom;
     private bool _surveyTypeDisabled;
+    private bool _isActiveDefault;
 
     protected override async Task OnInitializedAsync()
     {
@@ -44,6 +45,7 @@ public partial class SurveyForm : ComponentBase
             _surveyTypeDisabled = true;
             Model = await DraftSurveyService.GetByIdAsync((int)Id) ?? new();
             Model.SetDirty(false);
+            _isActiveDefault = Model.IsActive;
         }
     }
 
@@ -79,6 +81,7 @@ public partial class SurveyForm : ComponentBase
         if (Model?.SurveyQuestionIds.Count > _appSettings.SurveyQuestionsMinCount)
         {
             Model.SurveyQuestionIds.RemoveAt(index);
+            Model.SetDirty(true);
             _scrollToBottom = Model?.SurveyQuestionIds.Count > 4 ? "display: flex;flex-direction: column-reverse;" : "";
         }
     }
@@ -94,6 +97,7 @@ public partial class SurveyForm : ComponentBase
     {
         if (Model.IsDirty)
         {
+            var options = new DialogOptions { CloseButton = true };
             var parameters = new DialogParameters
             {
                 { "ContentText", "Save this record?" },
@@ -102,7 +106,7 @@ public partial class SurveyForm : ComponentBase
                 { "Style", "min-width:300px" },
                 { "Color", Color.Success }
             };
-            var dialog = await DialogService?.ShowAsync<ActionDialog>("Confirm", parameters)!;
+            var dialog = await DialogService?.ShowAsync<ActionDialog>("Confirm", parameters, options)!;
             var result = await dialog.Result;
             if (!result.Canceled)
             {
@@ -114,5 +118,28 @@ public partial class SurveyForm : ComponentBase
                 ShowSnackBar(isSaveSuccess, message);
             }
         }
+    }
+
+    private void QuestionIdChanged(int id, int index)
+    {
+        var oldId = Model.SurveyQuestionIds[index];
+        Model.SetDirty(oldId != id);
+        Model.SurveyQuestionIds[index] = id;
+    }
+
+    private void ToggleActive(bool? isChecked)
+    {
+        if (!isChecked.HasValue) return;
+        var isActive = isChecked.Value;
+        if (!Model.IsDirty && isActive && _isActiveDefault != isActive)
+        {
+            Model.SetDirty(isActive);
+        }
+        else if (!Model.IsDirty && _isActiveDefault == isActive)
+        {
+            Model.SetDirty(_isActiveDefault);
+        }
+
+        Model.IsActive = isActive;
     }
 }

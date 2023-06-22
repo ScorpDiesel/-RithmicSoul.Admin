@@ -22,7 +22,8 @@ public class QuestionTypeService : IAdminService<QuestionTypeDto>
 
     public async Task<bool> InsertAsync(QuestionTypeDto dto)
     {
-        return await _adminRepository.InsertAsync(dto, RouteSuffix);
+        var response = await _adminRepository.InsertAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<object> InsertForIdAsync(QuestionTypeDto dto)
@@ -32,27 +33,32 @@ public class QuestionTypeService : IAdminService<QuestionTypeDto>
 
     public async Task<bool> BulkInsertAsync(List<QuestionTypeDto> dtos)
     {
-        return await _adminRepository.BulkInsertAsync(dtos, RouteSuffix);
+        var response = await _adminRepository.BulkInsertAsync(dtos, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> UpdateAsync(QuestionTypeDto dto)
     {
-        return await _adminRepository.UpdateAsync(dto, RouteSuffix);
+        var response = await _adminRepository.UpdateAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> BulkUpdateAsync(List<QuestionTypeDto> dtos)
     {
-        return await _adminRepository.BulkUpdateAsync(dtos, RouteSuffix);
+        var response = await _adminRepository.BulkUpdateAsync(dtos, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> DeleteAsync(QuestionTypeDto dto)
     {
-        return await _adminRepository.DeleteAsync(dto, RouteSuffix);
+        var response = await _adminRepository.DeleteAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> BulkDeleteAsync(List<QuestionTypeDto> dtos)
     {
-        return await _adminRepository.BulkDeleteAsync(dtos, RouteSuffix);
+        var response = await _adminRepository.BulkDeleteAsync(dtos, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<QuestionTypeDto> GetByIdAsync(int id)

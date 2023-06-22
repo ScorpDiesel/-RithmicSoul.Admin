@@ -16,7 +16,8 @@ public partial class SelectSurveyDialog : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        _surveys = await SurveyService.GetAllAsync();
+        var items = await SurveyService.GetAllAsync();
+        _surveys = items.Where(i => i.IsActive);
     }
 
     private void SelectSurvey()

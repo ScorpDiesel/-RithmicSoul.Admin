@@ -22,7 +22,8 @@ public class QuestionChoiceService : IAdminService<QuestionChoiceDto>
 
     public async Task<bool> InsertAsync(QuestionChoiceDto dto)
     {
-        return await _adminRepository.InsertAsync(dto, RouteSuffix);
+        var response = await _adminRepository.InsertAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<object> InsertForIdAsync(QuestionChoiceDto dto)
@@ -31,12 +32,14 @@ public class QuestionChoiceService : IAdminService<QuestionChoiceDto>
     }
     public async Task<bool> UpdateAsync(QuestionChoiceDto dto)
     {
-        return await _adminRepository.UpdateAsync(dto, RouteSuffix);
+        var response = await _adminRepository.UpdateAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> DeleteAsync(QuestionChoiceDto dto)
     {
-        return await _adminRepository.DeleteAsync(dto, RouteSuffix);
+        var response = await _adminRepository.DeleteAsync(dto, RouteSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<QuestionChoiceDto> GetByIdAsync(int id)

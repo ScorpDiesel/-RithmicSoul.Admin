@@ -58,6 +58,8 @@ public class DraftSurveyDto : IDirty
         }
     }
 
+    public bool IsActive { get; set; }
+
     public string SurveyQuestionText { get; set; }
 
     public int SurveyQuestionId { get; set; }

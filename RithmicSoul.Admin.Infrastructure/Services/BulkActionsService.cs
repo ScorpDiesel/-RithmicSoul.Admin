@@ -21,16 +21,19 @@ public class BulkActionsService<T> : IBulkActionsService<T> where T: class
 
     public async Task<bool> BulkInsertAsync(List<T> dtos)
     {
-        return await _bulkActionsRepository.BulkInsertAsync(dtos, _routeSuffix);
+        var response = await _bulkActionsRepository.BulkInsertAsync(dtos, _routeSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> BulkUpdateAsync(List<T> dtos)
     {
-        return await _bulkActionsRepository.BulkUpdateAsync(dtos, _routeSuffix);
+        var response = await _bulkActionsRepository.BulkUpdateAsync(dtos, _routeSuffix);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> BulkDeleteAsync(List<T> dtos)
     {
-        return await _bulkActionsRepository.BulkDeleteAsync(dtos, _routeSuffix);
+        var response =  await _bulkActionsRepository.BulkDeleteAsync(dtos, _routeSuffix);
+        return response.IsSuccessStatusCode;
     }
 }
