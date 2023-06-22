@@ -48,7 +48,8 @@ public class DraftSurveyService : IDraftSurveyService
             SurveyName = draftSurveyDto.SurveyName,
             SurveyTypeId = draftSurveyDto.SurveyTypeId,
             SurveyDescription = draftSurveyDto.SurveyDescription,
-            IsActive = draftSurveyDto.IsActive
+            IsActive = draftSurveyDto.IsActive,
+            ActiveSurveyName = draftSurveyDto.ActiveSurveyName
         };
 
         var surveyId = draftSurveyDto.SurveyId;
@@ -74,7 +75,8 @@ public class DraftSurveyService : IDraftSurveyService
             SurveyName = draftSurveyDto.SurveyName,
             SurveyTypeId = draftSurveyDto.SurveyTypeId,
             SurveyDescription = draftSurveyDto.SurveyDescription,
-            IsActive = draftSurveyDto.IsActive
+            IsActive = draftSurveyDto.IsActive,
+            ActiveSurveyName = draftSurveyDto.ActiveSurveyName
         };
 
         var responseId = await _surveyService.InsertForIdAsync(dto) ??
@@ -102,6 +104,8 @@ public class DraftSurveyService : IDraftSurveyService
                 SurveyName = survey.SurveyName,
                 SurveyTypeId = (int)survey.SurveyTypeId,
                 SurveyTypeName = survey.SurveyTypeName,
+                IsActive = survey.IsActive,
+                ActiveSurveyName = survey.ActiveSurveyName,
                 SurveyQuestionId = questionnaire.QuestionId,
                 SurveyQuestionText = questionnaire.QuestionText
             };
@@ -144,6 +148,7 @@ public class DraftSurveyService : IDraftSurveyService
             SurveyQuestions = collection,
             SurveyId = id,
             IsActive = survey.IsActive,
+            ActiveSurveyName = survey.ActiveSurveyName,
             SurveyQuestionIds = questionnaires is null ? new List<int>() : questionnaires.Select(q => q.SurveyQuestionId).ToList()
         };
     }
