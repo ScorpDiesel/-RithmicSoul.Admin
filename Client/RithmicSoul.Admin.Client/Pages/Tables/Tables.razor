@@ -19,7 +19,7 @@
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
                                         <RsDataGrid T="SurveyMetaDataDto" ReturnIdOnInsert="true"
                                                     Items="@_surveys"
-                                                    ApiAdminService="@SurveyService" ColumnsToHide="@_surveyColumnsToHide"/>
+                                                    ApiService="@SurveyService" ColumnsToHide="@_surveyColumnsToHide"/>
                                     </MudPaper>
                                 </MudItem>
 
@@ -28,7 +28,7 @@
                                         <RsDataGrid T="SurveyQuestionnaireDto"
                                                     Items="@_surveyQuestionnaires"
                                                     CanGroup="true" GroupExpanded="false" GroupBy="SurveyName"
-                                                    ApiAdminService="@SurveyQuestionnaireService" ColumnsToHide="@_surveyQuestionnaireColumnsToHide"/>
+                                                    ApiService="@SurveyQuestionnaireService" ColumnsToHide="@_surveyQuestionnaireColumnsToHide"/>
                                     </MudPaper>
                                 </MudItem>
 
@@ -38,7 +38,7 @@
                                                     Items="@_surveyQuestions"
                                                     CanCreate="true" CanDelete="true" CanEdit="true" TDialog="@_surveyQuestionDialogType"
                                                     CanGroup="true" GroupExpanded="false" GroupBy="QuestionTypeName"
-                                                    ApiAdminService="@SurveyQuestionService" ColumnsToHide="@_surveyQuestionColumnsToHide"/>
+                                                    ApiService="@SurveyQuestionService" ColumnsToHide="@_surveyQuestionColumnsToHide"/>
                                     </MudPaper>
                                 </MudItem>
                                 <MudItem xs="12">
@@ -48,7 +48,7 @@
                                                     TEditDialog="@_questionChoiceEditDialogType" TDialog="@_questionChoiceDialogType"
                                                     CanCreate="true" CanDelete="true" CanEdit="true"
                                                     ColumnsToHide="@_questionChoicesColumnsToHide"
-                                                    CanGroup="true" GroupExpanded="false" ApiAdminService="@QuestionChoiceService"
+                                                    CanGroup="true" GroupExpanded="false" ApiService="@QuestionChoiceService"
                                                     GroupBy="QuestionText" MultiSelection="true"/>
                                     </MudPaper>
                                 </MudItem>
@@ -57,7 +57,7 @@
                                         <RsDataGridWithDetailRow T="AdinkraSymbolDto"
                                              Items="@_adinkraSymbols"
                                              CanCreate="true" CanDelete="false" CanEdit="true" ColumnsToHide="@_adinkraSymbolColumnsToHide"
-                                             ApiAdminService="@AdinkraSymbolService">
+                                             ApiService="@AdinkraSymbolService">
                                             <DetailRowContent>
                                                 <RsAdinkraSymbolCardSmall Style="width: 400px; height: 410px" SymbolId="@context.SymbolId"/>
                                             </DetailRowContent>
@@ -73,7 +73,7 @@
                                         <RsDataGrid T="SurveyTypeDto"
                                                     Items="@_surveyTypes" MultiSelection="true"
                                                     CanCreate="true" CanDelete="true" CanEdit="true" TDialog="@_surveyTypeDialogType"
-                                                    ApiAdminService="@SurveyTypeService"/>
+                                                    ApiService="@SurveyTypeService"/>
                                     </MudPaper>
                                 </MudItem>
                                 <MudItem xs="12">
@@ -81,7 +81,7 @@
                                         <RsDataGrid T="QuestionTypeDto"
                                                     Items="@_questionTypes"
                                                     CanCreate="true" CanDelete="true" CanEdit="true" TDialog="@_questionTypeDialogType"
-                                                    ApiAdminService="@QuestionTypeService"/>
+                                                    ApiService="@QuestionTypeService"/>
                                     </MudPaper>
                                 </MudItem>
                                 <MudItem xs="12">

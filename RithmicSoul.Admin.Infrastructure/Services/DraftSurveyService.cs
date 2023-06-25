@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using RithmicSoul.Admin.Application.Dtos;
 using RithmicSoul.Admin.Application.Interfaces.Services;
-using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
 
@@ -10,10 +9,11 @@ namespace RithmicSoul.Admin.Infrastructure.Services;
 public class DraftSurveyService : IDraftSurveyService
 {
     private readonly IBulkActionsService<SurveyQuestionnaireDto> _bulkActionsService;
-    private readonly IAdminService<SurveyMetaDataDto> _surveyService;
-    private readonly IAdminService<SurveyQuestionnaireDto> _surveyQuestionnaireService;
+    private readonly IService<SurveyMetaDataDto> _surveyService;
+    private readonly IService<SurveyQuestionnaireDto> _surveyQuestionnaireService;
 
-    public DraftSurveyService(IBulkActionsService<SurveyQuestionnaireDto> bulkActionsService, IAdminService<SurveyMetaDataDto> surveyService, IAdminService<SurveyQuestionnaireDto> surveyQuestionnaireService)
+    public DraftSurveyService(IBulkActionsService<SurveyQuestionnaireDto> bulkActionsService, 
+        IService<SurveyMetaDataDto> surveyService, IService<SurveyQuestionnaireDto> surveyQuestionnaireService)
     {
         _bulkActionsService = bulkActionsService;
         _surveyService = surveyService;
@@ -119,13 +119,14 @@ public class DraftSurveyService : IDraftSurveyService
 
     public async Task<DraftSurveyDto?> GetByIdAsync(int id)
     {
-        var survey = await _surveyService.GetByIdAsync(id);
-        var items = await _surveyQuestionnaireService.GetAsync(q => q.SurveyId == id);
+        var surveyItems = await _surveyService.GetByIdAsync(id);
+        var survey = surveyItems.FirstOrDefault();
+        var draftItems = await _surveyQuestionnaireService.GetAsync(q => q.SurveyId == id);
         IEnumerable<DraftSurveyQuestionnaireDto> questionnaires = null;
 
-        if (items is not null)
+        if (draftItems is not null)
         {
-            questionnaires = items.Select(q => new DraftSurveyQuestionnaireDto
+            questionnaires = draftItems.Select(q => new DraftSurveyQuestionnaireDto
             {
                 DateCreated = q.DateCreated,
                 QuestionnaireId = q.QuestionnaireId,

@@ -2,7 +2,7 @@
 using Microsoft.JSInterop;
 using Microsoft.VisualStudio.Threading;
 using MudBlazor;
-using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
+using RithmicSoul.Admin.Application.Interfaces.Services;
 using RithmicSoul.Admin.Application.Interfaces.Services.Survey;
 using RithmicSoul.Admin.Client.Views.Dialogs;
 using RithmicSoul.Admin.Core.Models;
@@ -16,8 +16,8 @@ public partial class AdinkraSurvey : ComponentBase
     [Inject] private IDialogService DialogService { get; set; }
     [Inject] private IJSRuntime JSRuntime { get; set; }
     [Inject] private AppSetting AppSetting { get; set; }
-    [Inject] private IAdminService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
-    [Inject] private ISurveyResponseService SurveyResponseService { get; set; }
+    [Inject] private IService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
+    [Inject] private IService<SurveyResponseDto> SurveyResponseService { get; set; }
 
     private IEnumerable<AdinkraSymbolDto> _allSymbols;
     private IEnumerable<AdinkraSymbolDto> CurrentSymbols => _allSymbols?.Skip(_currentPage * _pageSize).Take(_pageSize);
@@ -50,7 +50,7 @@ public partial class AdinkraSurvey : ComponentBase
         await HideMenus.InvokeAsync(true);
         _baseAddress = AppSetting.BaseAddress;
         _allSymbols = await AdinkraSymbolService.GetAllAsync();
-        var items = await SurveyResponseService.GetResponsesByIdAsync(Id);
+        var items = await SurveyResponseService.GetByIdAsync(Id);
         _surveyResponse = items.First();
     }
 
@@ -98,7 +98,7 @@ public partial class AdinkraSurvey : ComponentBase
             { "CloseButtonText", "Yes" },
             { "CancelButtonText", "No" },
             { "Style", "min-width:300px" },
-            { "Color", Color.Info }
+            { "Color", Color.Success }
         };
         var dialog = await DialogService?.ShowAsync<ActionDialog>("Save", parameters)!;
         var result = await dialog.Result;
@@ -109,7 +109,7 @@ public partial class AdinkraSurvey : ComponentBase
                 .Select(r => new QuestionAnswers(QuestionId: _surveyResponse.QuestionId, Answers: new List<string> { r.SymbolName })).ToList();
             _surveyResponse.QuestionAnswers = symbolNames;
             _surveyResponse.DateCreated = DateTime.UtcNow;
-            var isSuccess = await SurveyResponseService.UpdateResponsesAsync(_surveyResponse);
+            var isSuccess = await SurveyResponseService.UpdateAsync(_surveyResponse);
         }
     }
 }

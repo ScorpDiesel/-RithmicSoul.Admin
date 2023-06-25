@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
+using RithmicSoul.Admin.Application.Interfaces.Services;
 using RithmicSoul.Models.Survey.Dtos;
 
 namespace RithmicSoul.Admin.Client.Views.Dialogs;
 
 public partial class SelectSurveyDialog : ComponentBase
 {
-    [Inject] private IAdminService<SurveyMetaDataDto> SurveyMetaDataService { get; set; }
+    [Inject] private IService<SurveyMetaDataDto> SurveyMetaDataService { get; set; }
     [CascadingParameter] private MudDialogInstance MudDialog { get; set; }
     [Parameter] public bool IsShowDialog { get; set; }
 

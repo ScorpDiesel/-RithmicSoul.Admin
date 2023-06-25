@@ -10,13 +10,15 @@ namespace RithmicSoul.Admin.Client.Pages.Surveys;
 public partial class Surveys : ComponentBase
 {
     [Inject] private IDialogService DialogService { get; set; }
-    [Inject] private ISurveyService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
+    [Inject] private IDatabaseService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
+    [Inject] private IService<SurveyResponseDto> SurveyResponseService { get; set; }
     [Inject] private IDraftSurveyService DraftSurveyService { get; set; }
     [Inject] private NavigationManager Navigation { get; set; }
     [Inject] private ISnackbar Snackbar { get; set; }
     [CascadingParameter] public EventCallback<bool> HideMenus { get; set; }
 
     private IEnumerable<AuthoredSurveyDto> _authoredSurveys;
+    private IEnumerable<SurveyResponseDto> _surveyResponses;
 
     protected override async Task OnInitializedAsync()
     {
@@ -27,6 +29,7 @@ public partial class Surveys : ComponentBase
     {
         await HideMenus.InvokeAsync(false);
         _authoredSurveys = await AuthoredSurveyService!.GetAllFromViewAsync();
+        _surveyResponses = await SurveyResponseService.GetAllAsync();
     }
 
     private void NewSurvey() => Navigation!.NavigateTo("/surveys/new");

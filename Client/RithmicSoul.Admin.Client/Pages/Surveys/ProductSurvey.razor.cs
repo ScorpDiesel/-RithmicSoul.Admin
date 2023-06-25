@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using RithmicSoul.Admin.Application.Interfaces.Services;
 using RithmicSoul.Admin.Application.Interfaces.Services.Survey;
 using RithmicSoul.Admin.Client.Views.Dialogs;
 using RithmicSoul.Admin.Core.Models;
@@ -11,8 +12,8 @@ namespace RithmicSoul.Admin.Client.Pages.Surveys;
 public partial class ProductSurvey : ComponentBase
 {
     [Inject] private IDialogService DialogService { get; set; }
-    [Inject] private ISurveyService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
-    [Inject] private ISurveyResponseService SurveyResponseService { get; set; }
+    [Inject] private IDatabaseService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
+    [Inject] private IService<SurveyResponseDto> SurveyResponseService { get; set; }
     [Inject] private NavigationManager Navigation { get; set; }
     [CascadingParameter] public EventCallback<bool> HideMenus { get; set; }
     [Parameter] public Guid Id { get; set; }
@@ -39,7 +40,7 @@ public partial class ProductSurvey : ComponentBase
         await HideMenus.InvokeAsync(true);
         var uriList = Navigation.Uri.Split("/");
         var surveyNameRoute = uriList[^2];
-        var items = await SurveyResponseService.GetResponsesByIdAsync(Id);
+        var items = await SurveyResponseService.GetByIdAsync(Id);
         _surveyResponse = items.First();
         _authoredSurveys = await AuthoredSurveyService.GetFromViewAsync(v => v.ActiveSurveyName == surveyNameRoute);
         _surveyDescription = _authoredSurveys.First().SurveyDescription;
@@ -126,7 +127,7 @@ public partial class ProductSurvey : ComponentBase
             var answers = _questionResponses.Select(q => new QuestionAnswers(QuestionId: q.Key, Answers: q.Value)).ToList();
             _surveyResponse.QuestionAnswers = answers;
             _surveyResponse.DateCreated = DateTime.UtcNow;
-            var isSuccess = await SurveyResponseService.UpdateResponsesAsync(_surveyResponse);
+            var isSuccess = await SurveyResponseService.UpdateAsync(_surveyResponse);
         }
     }
 }

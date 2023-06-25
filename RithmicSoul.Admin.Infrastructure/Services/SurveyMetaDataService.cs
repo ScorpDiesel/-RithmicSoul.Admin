@@ -1,14 +1,14 @@
 ﻿using System.Linq.Expressions;
 using Refit;
 using RithmicSoul.Admin.Application.Interfaces.Repositories.Admin;
-using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
+using RithmicSoul.Admin.Application.Interfaces.Services;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
 using Serialize.Linq.Serializers;
 
 namespace RithmicSoul.Admin.Infrastructure.Services;
 
-public class SurveyMetaDataService : IAdminService<SurveyMetaDataDto>
+public class SurveyMetaDataService : IService<SurveyMetaDataDto>
 {
     private readonly AppSetting _appSetting;
     private readonly IAdminRepository<SurveyMetaDataDto> _adminRepository;
@@ -61,9 +61,10 @@ public class SurveyMetaDataService : IAdminService<SurveyMetaDataDto>
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<SurveyMetaDataDto> GetByIdAsync(int id)
+    public async Task<IEnumerable<SurveyMetaDataDto>> GetByIdAsync(object id)
     {
-        return await _adminRepository.GetByIdAsync(id, RouteSuffix);
+        var item = await _adminRepository.GetByIdAsync((int)id, RouteSuffix);
+        return new List<SurveyMetaDataDto> { item };
     }
 
     public async Task<IEnumerable<SurveyMetaDataDto>> GetAllAsync()

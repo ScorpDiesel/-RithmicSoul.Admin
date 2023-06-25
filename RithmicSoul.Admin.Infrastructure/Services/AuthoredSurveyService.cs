@@ -9,7 +9,7 @@ using RithmicSoul.Admin.Application.Interfaces.Services.Survey;
 
 namespace RithmicSoul.Admin.Infrastructure.Services;
 
-public class AuthoredSurveyService : ISurveyService<AuthoredSurveyDto>
+public class AuthoredSurveyService : IDatabaseService<AuthoredSurveyDto>
 {
     private readonly AppSetting _appSetting;
     private readonly ISurveyRepository<AuthoredSurveyDto> _adminRepository;

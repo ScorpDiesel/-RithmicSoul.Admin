@@ -8,7 +8,9 @@ public interface ISurveyResponseService
     Task<IEnumerable<SurveyResponseDto>> GetAllResponsesAsync();
     Task<IEnumerable<SurveyResponseDto>> GetResponsesByIdAsync(Guid id);
     Task<IEnumerable<SurveyResponseDto>> GetResponsesAsync(Expression<Func<SurveyResponseDto, bool>> expression);
-    Task<bool> InsertResponsesAsync(SurveyResponseDto dto);
-    Task<bool> UpdateResponsesAsync(SurveyResponseDto dto);
-    Task<bool> DeleteResponsesAsync(SurveyResponseDto dto);
+    Task<bool> InsertResponseAsync(SurveyResponseDto dto);
+    Task<object> InsertResponseForIdAsync(SurveyResponseDto dto);
+    Task<bool> UpdateResponseAsync(SurveyResponseDto dto);
+    Task<bool> DeleteResponseAsync(SurveyResponseDto dto);
+    Task<bool> DeleteResponsesAsync(Expression<Func<SurveyResponseDto, bool>> expression);
 }

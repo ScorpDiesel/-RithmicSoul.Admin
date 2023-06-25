@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Interfaces\Services\Admin\IAdminService.cs" />
+    <Compile Remove="Interfaces\Services\Survey\ISurveyResponseService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Refit" Version="6.3.2" />
   </ItemGroup>
 

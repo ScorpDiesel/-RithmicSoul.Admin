@@ -4,7 +4,7 @@ using RithmicSoul.Models.Survey.Models;
 
 namespace RithmicSoul.Admin.Application.Interfaces.Services.Survey;
 
-public interface ISurveyService<T> where T : class
+public interface IDatabaseService<T> where T : class
 {
     Task<IEnumerable<T>> GetAllFromViewAsync();
     Task<IEnumerable<T>> GetFromViewAsync([Body] Expression<Func<T, bool>> expression);

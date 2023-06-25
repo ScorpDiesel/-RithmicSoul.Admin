@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
+using RithmicSoul.Admin.Application.Interfaces.Services;
 using RithmicSoul.Admin.Client.Views.Dialogs;
 using RithmicSoul.Models.Survey.Dtos;
 
@@ -7,13 +7,13 @@ namespace RithmicSoul.Admin.Client.Pages.Tables;
 
 public partial class Tables : ComponentBase
 {
-    [Inject] private IAdminService<QuestionTypeDto> QuestionTypeService { get; set; }
-    [Inject] private IAdminService<SurveyMetaDataDto> SurveyService { get; set; }
-    [Inject] private IAdminService<SurveyQuestionDto> SurveyQuestionService { get; set; }
-    [Inject] private IAdminService<SurveyQuestionnaireDto> SurveyQuestionnaireService { get; set; }
-    [Inject] private IAdminService<SurveyTypeDto> SurveyTypeService { get; set; }
-    [Inject] private IAdminService<QuestionChoiceDto> QuestionChoiceService { get; set; }
-    [Inject] private IAdminService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
+    [Inject] private IService<QuestionTypeDto> QuestionTypeService { get; set; }
+    [Inject] private IService<SurveyMetaDataDto> SurveyService { get; set; }
+    [Inject] private IService<SurveyQuestionDto> SurveyQuestionService { get; set; }
+    [Inject] private IService<SurveyQuestionnaireDto> SurveyQuestionnaireService { get; set; }
+    [Inject] private IService<SurveyTypeDto> SurveyTypeService { get; set; }
+    [Inject] private IService<QuestionChoiceDto> QuestionChoiceService { get; set; }
+    [Inject] private IService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
 
     private IEnumerable<QuestionTypeDto> _questionTypes;
     private IEnumerable<SurveyTypeDto> _surveyTypes;

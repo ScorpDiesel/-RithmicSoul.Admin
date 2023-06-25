@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Options;
 using MudBlazor;
 using RithmicSoul.Admin.Application.Interfaces.Services;
-using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Admin.Core.Utilities;
 using RithmicSoul.Models.Survey.Dtos;
@@ -12,8 +11,8 @@ namespace RithmicSoul.Admin.Client.Views.Dialogs;
 public partial class NewQuestionChoiceDialog : ComponentBase
 {
     [Inject] private IBulkActionsService<QuestionChoiceDto> BulkActionsService { get; set; }
-    [Inject] private IAdminService<QuestionChoiceDto> QuestionChoiceService { get; set; }
-    [Inject] private IAdminService<SurveyQuestionDto> SurveyQuestionService { get; set; }
+    [Inject] private IService<QuestionChoiceDto> QuestionChoiceService { get; set; }
+    [Inject] private IService<SurveyQuestionDto> SurveyQuestionService { get; set; }
     [Inject] private IOptions<AppSettings> AppSettingsOptions { get; set; }
     [Inject] private ISnackbar Snackbar { get; set; }
 

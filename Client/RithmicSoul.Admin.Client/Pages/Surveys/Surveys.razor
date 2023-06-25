@@ -43,8 +43,19 @@
                         <MudItem xs="12">
                             <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;overflow-y: auto">
                                 <RsDataGrid T="AuthoredSurveyDto"
-                                            ApiSurveyService="@AuthoredSurveyService"
+                                    ApiDatabaseService="@AuthoredSurveyService"
                                     Items="@_authoredSurveys"></RsDataGrid>
+                            </MudPaper>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;overflow-y: auto">
+                                <RsDataGrid T="SurveyResponseDto"
+                                    ApiService="@SurveyResponseService"
+                                    Items="@_surveyResponses"></RsDataGrid>
                             </MudPaper>
                         </MudItem>
                     </MudGrid>

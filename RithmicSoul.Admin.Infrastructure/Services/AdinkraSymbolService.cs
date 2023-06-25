@@ -2,13 +2,13 @@
 using RithmicSoul.Models.Survey.Dtos;
 using Refit;
 using RithmicSoul.Admin.Application.Interfaces.Repositories.Admin;
-using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
 using RithmicSoul.Admin.Core.Models;
 using Serialize.Linq.Serializers;
+using RithmicSoul.Admin.Application.Interfaces.Services;
 
 namespace RithmicSoul.Admin.Infrastructure.Services;
 
-public class AdinkraSymbolService : IAdminService<AdinkraSymbolDto>
+public class AdinkraSymbolService : IService<AdinkraSymbolDto>
 {
     private readonly IAdinkraSymbolRepository _adinkraSymbolRepository;
     private readonly AppSetting _appSetting;
@@ -54,9 +54,10 @@ public class AdinkraSymbolService : IAdminService<AdinkraSymbolDto>
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<AdinkraSymbolDto> GetByIdAsync(int id)
+    public async Task<IEnumerable<AdinkraSymbolDto>> GetByIdAsync(object id)
     {
-        return await _adminRepository.GetByIdAsync(id, RouteSuffix);
+        var item = await _adminRepository.GetByIdAsync((int)id, RouteSuffix);
+        return new List<AdinkraSymbolDto> { item };
     }
 
     public async Task<IEnumerable<AdinkraSymbolDto>> GetAllAsync()

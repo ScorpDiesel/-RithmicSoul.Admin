@@ -21,4 +21,6 @@
 /RithmicSoul.Admin.Core/obj
 /RithmicSoul.Admin.Infrastructure/bin/Debug/net7.0
 /RithmicSoul.Admin.Infrastructure/obj
-/RithmicSoul.Admin.Application
+/RithmicSoul.Admin.Application/.vs/RithmicSoul.Admin.Application
+/RithmicSoul.Admin.Application/bin/Debug/net7.0
+/RithmicSoul.Admin.Application/obj
