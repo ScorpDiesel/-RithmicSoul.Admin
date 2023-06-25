@@ -1,11 +1,12 @@
-﻿@page "/surveys/product"
+﻿@page "/surveys/product/{id:guid}"
 
 <MudContainer Class="mt-4 mb-12" MaxWidth="MaxWidth.ExtraExtraLarge">
     <MudText Class="mt-16">@_surveyDescription</MudText>
-    <MudText>@(string.Join("\r\n", _questionResponses.Select(q => $"{q.Key}:{q.Value.questionType}:{string.Join(", ", q.Value.responses)}")))</MudText>
+    <MudText>@(string.Join("\r\n", _questionResponses.Select(q => $"{q.Key}:{string.Join(", ", q.Value)}")))</MudText>
         <MudGrid>
             <MudItem xs="4">
                 <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
+                    <MudButton Class="mr-8" StartIcon="@Icons.Material.Filled.Save" Color="Color.Success" OnClick="@(async () => await SaveSurveyAsync())">Save</MudButton>
                     <MudText Class="mr-8" Color="Color.Default" Style="font-size:.875rem;font-weight:500">PAGE @(_currentPage + 1) OF @(_questions?.Count())</MudText>
                     <div>
                         <MudButton StartIcon="@Icons.Material.Filled.NavigateBefore" OnClick="@PreviousPage" Disabled="@(!HasPreviousPage)">Previous</MudButton>
@@ -19,7 +20,7 @@
                             {
                                 return;
                             }
-                        <QuestionResponse Items="@_authoredSurveys"
+                        <RsQuestionResponse Items="@_authoredSurveys"
                           OnValueChanged="@QuestionValueChanged"
                           QuestionNumber="@_currentPage"
                           QuestionTextTypography="Typo.body1"

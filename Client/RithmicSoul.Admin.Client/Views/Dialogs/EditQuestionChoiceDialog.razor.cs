@@ -10,20 +10,20 @@ namespace RithmicSoul.Admin.Client.Views.Dialogs;
 
 public partial class EditQuestionChoiceDialog : ComponentBase
 {
-    [Inject] IBulkActionsService<QuestionChoiceDto> BulkActionsService { get; set; }
-    [Inject] private IAdminService<QuestionChoiceDto>? QuestionChoiceService { get; set; }
-    [Inject] private IAdminService<SurveyQuestionDto>? SurveyQuestionService { get; set; }
-    [Inject] private ISnackbar? Snackbar { get; set; }
-    [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
+    [Inject] private IBulkActionsService<QuestionChoiceDto> BulkActionsService { get; set; }
+    [Inject] private IAdminService<QuestionChoiceDto> QuestionChoiceService { get; set; }
+    [Inject] private IAdminService<SurveyQuestionDto> SurveyQuestionService { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; }
+    [Inject] private IOptions<AppSettings> AppSettingsOptions { get; set; }
     [CascadingParameter] private MudDialogInstance MudDialog { get; set; }
-    [Parameter] public QuestionChoiceDto? Model { get; set; }
+    [Parameter] public QuestionChoiceDto Model { get; set; }
     
-    private string? _questionTypeName;
+    private string _questionTypeName;
     private readonly List<string> _chooseableList = new();
-    private string QuestionChoiceTableName = nameof(QuestionChoiceDto).Replace("Dto", "");
+    private string _questionChoiceTableName = nameof(QuestionChoiceDto).Replace("Dto", "");
     protected readonly List<QuestionChoiceDto> DtoList = new();
     private readonly List<QuestionChoiceDto> _oldDtoList = new();
-    private IEnumerable<SurveyQuestionDto>? _surveyQuestions;
+    private IEnumerable<SurveyQuestionDto> _surveyQuestions;
     private readonly DialogOptions _options = new();
     private AppSettings _appSettings;
     protected bool _showContent;
@@ -86,12 +86,12 @@ public partial class EditQuestionChoiceDialog : ComponentBase
         string message;
         if (isSuccessful)
         {
-            message = string.Format(_appSettings.ItemsCreatedSuccessMessageTemplate, QuestionChoiceTableName);
+            message = string.Format(_appSettings.ItemsCreatedSuccessMessageTemplate, _questionChoiceTableName);
             Snackbar?.Add(message, Severity.Success);
         }
         else
         {
-            message = string.Format(_appSettings.ItemsCreatedFailureMessageTemplate, QuestionChoiceTableName);
+            message = string.Format(_appSettings.ItemsCreatedFailureMessageTemplate, _questionChoiceTableName);
             Snackbar?.Add(message, Severity.Error);
         }
     }
@@ -100,6 +100,5 @@ public partial class EditQuestionChoiceDialog : ComponentBase
     {
         _contentStyle = "";
         _showContent = true;
-        //StateHasChanged();
     }
 }

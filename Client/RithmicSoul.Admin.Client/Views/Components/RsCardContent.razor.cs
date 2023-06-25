@@ -4,7 +4,7 @@ namespace RithmicSoul.Admin.Client.Views.Components;
 
 public partial class RsCardContent : ComponentBase
 {
-    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
     private string _prevContent;
 
     protected override bool ShouldRender()

@@ -12,31 +12,35 @@ namespace RithmicSoul.Admin.Client.Pages.Surveys.Forms;
 
 public partial class SurveyForm : ComponentBase
 {
-    [Inject] IDialogService DialogService { get; set; }
-    [Inject] NavigationManager Navigation { get; set; }
-    [Inject] IAdminService<SurveyTypeDto> SurveyTypeService { get; set; }
-    [Inject] IAdminService<SurveyQuestionDto> SurveyQuestionService { get; set; }
-    [Inject] IDraftSurveyService DraftSurveyService { get; set; }
-    [Inject] ISnackbar Snackbar { get; set; }
-    [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
+    [Inject] private IDialogService DialogService { get; set; }
+    [Inject] private NavigationManager Navigation { get; set; }
+    [Inject] private IAdminService<SurveyTypeDto> SurveyTypeService { get; set; }
+    [Inject] private IAdminService<SurveyQuestionDto> SurveyQuestionService { get; set; }
+    [Inject] private IDraftSurveyService DraftSurveyService { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; }
+    [Inject] private IOptions<AppSettings> AppSettingsOptions { get; set; }
     [Parameter] public int? Id { get; set; }
 
     private static IEnumerable<SurveyTypeDto> _surveyTypes;
     private IEnumerable<SurveyQuestionDto> _surveyQuestions;
-    private DraftSurveyDto? Model = new();
+    private DraftSurveyDto Model = new();
     private AppSettings _appSettings;
     private string _scrollToBottom;
     private bool _surveyTypeDisabled;
     private bool _isActiveDefault;
+    protected bool _showContent;
+    protected string _contentStyle;
 
     protected override async Task OnInitializedAsync()
     {
         await InitializeAsync();
+        ShowContent();
     }
 
     private async Task InitializeAsync()
     {
         _appSettings = AppSettingsOptions.Value;
+        _contentStyle = "display:none !important;";
         _surveyTypes = await SurveyTypeService.GetAllAsync();
         _surveyQuestions = await SurveyQuestionService.GetAllAsync();
 
@@ -56,7 +60,7 @@ public partial class SurveyForm : ComponentBase
         SetFunc = id => _surveyTypes.FirstOrDefault(qt => qt.SurveyTypeId == id)?.SurveyTypeName ?? "Select..."
     };
 
-    private string? GetSelectedQuestionTypeName(int id)
+    private string GetSelectedQuestionTypeName(int id)
     {
         return _surveyQuestions.FirstOrDefault(s => s.QuestionId == id)?.QuestionTypeName;
     }
@@ -141,5 +145,11 @@ public partial class SurveyForm : ComponentBase
         }
 
         Model.IsActive = isActive;
+    }
+
+    private void ShowContent()
+    {
+        _contentStyle = "";
+        _showContent = true;
     }
 }

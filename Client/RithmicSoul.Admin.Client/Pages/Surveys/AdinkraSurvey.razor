@@ -1,4 +1,4 @@
-﻿@page "/surveys/adinkra/{id}"
+﻿@page "/surveys/adinkra/{id:guid}"
 
 <PageTitle>Adinkra Survey</PageTitle>
 
@@ -31,8 +31,8 @@
                     <RsAdinkraSymbolCard Style="max-height: 560px; height: 560px"
                         SymbolId="@symbol.SymbolId"
                        SymbolName="@symbol.SymbolName" SymbolMeaning="@symbol.SymbolMeaning"
-                       ImgSrcUrl=@($"{_baseAddress}v2/AdinkraSymbols/{symbol.SymbolId}/300")
-                       AudioSrcUrl=@($"{_baseAddress}v3/AdinkraSymbols/{symbol.SymbolId}")
+                       ImgSrcUrl=@($"{_baseAddress}/v2/AdinkraSymbols/{symbol.SymbolId}/300")
+                       AudioSrcUrl=@($"{_baseAddress}/v3/AdinkraSymbols/{symbol.SymbolId}")
                        SymbolTranslation="@symbol.SymbolTranslation"
                        IsSelected="@(_symbolLikes.Contains(symbol.SymbolId))"
                        OnSymbolClicked="@(isSelected => TallySymbolLikes(isSelected, symbol.SymbolId))"

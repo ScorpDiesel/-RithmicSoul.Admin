@@ -67,7 +67,7 @@ public partial class RsAdinkraSymbolCard : ComponentBase
         _isLoaded = true;
     }
 
-    private async Task NewPagAsync(object? sender, EventArgs e)
+    private async Task NewPagAsync(object sender, EventArgs e)
     {
         HideContent();
     }

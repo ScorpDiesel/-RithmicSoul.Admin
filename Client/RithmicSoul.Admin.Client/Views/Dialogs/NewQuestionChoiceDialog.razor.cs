@@ -11,16 +11,16 @@ namespace RithmicSoul.Admin.Client.Views.Dialogs;
 
 public partial class NewQuestionChoiceDialog : ComponentBase
 {
-    [Inject] IBulkActionsService<QuestionChoiceDto> BulkActionsService { get; set; }
-    [Inject] IAdminService<QuestionChoiceDto> QuestionChoiceService { get; set; }
-    [Inject] IAdminService<SurveyQuestionDto> SurveyQuestionService { get; set; }
-    [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
-    [Inject] private ISnackbar? Snackbar { get; set; }
+    [Inject] private IBulkActionsService<QuestionChoiceDto> BulkActionsService { get; set; }
+    [Inject] private IAdminService<QuestionChoiceDto> QuestionChoiceService { get; set; }
+    [Inject] private IAdminService<SurveyQuestionDto> SurveyQuestionService { get; set; }
+    [Inject] private IOptions<AppSettings> AppSettingsOptions { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; }
 
     [CascadingParameter] private MudDialogInstance MudDialog { get; set; }
     public string QuestionChoiceTableName;
-    private string? _questionTypeName;
-    private string? _questionText;
+    private string _questionTypeName;
+    private string _questionText;
     private List<string> _chooseableList = new();
     private string _questionTypeNameVisibility;
     private string _choiceControlsVisibility;

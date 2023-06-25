@@ -33,7 +33,7 @@
     MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
-    public SurveyDto? Model { get; set; }
+    public SurveyMetaDataDto? Model { get; set; }
 
     //public int? SelectedSurveyTypeId
     //{
@@ -46,7 +46,7 @@
     protected override async Task OnInitializedAsync()
     {
         _surveyTypes = await SurveyTypeService.GetAllAsync();
-        Model ??= new SurveyDto();
+        Model ??= new SurveyMetaDataDto();
     }
 
     void Save()

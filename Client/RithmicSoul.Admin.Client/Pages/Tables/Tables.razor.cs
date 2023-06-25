@@ -7,17 +7,17 @@ namespace RithmicSoul.Admin.Client.Pages.Tables;
 
 public partial class Tables : ComponentBase
 {
-    [Inject] IAdminService<QuestionTypeDto> QuestionTypeService { get; set; }
-    [Inject] IAdminService<SurveyDto> SurveyService { get; set; }
-    [Inject] IAdminService<SurveyQuestionDto> SurveyQuestionService { get; set; }
-    [Inject] IAdminService<SurveyQuestionnaireDto> SurveyQuestionnaireService { get; set; }
-    [Inject] IAdminService<SurveyTypeDto> SurveyTypeService { get; set; }
-    [Inject] IAdminService<QuestionChoiceDto> QuestionChoiceService { get; set; }
-    [Inject] IAdminService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
+    [Inject] private IAdminService<QuestionTypeDto> QuestionTypeService { get; set; }
+    [Inject] private IAdminService<SurveyMetaDataDto> SurveyService { get; set; }
+    [Inject] private IAdminService<SurveyQuestionDto> SurveyQuestionService { get; set; }
+    [Inject] private IAdminService<SurveyQuestionnaireDto> SurveyQuestionnaireService { get; set; }
+    [Inject] private IAdminService<SurveyTypeDto> SurveyTypeService { get; set; }
+    [Inject] private IAdminService<QuestionChoiceDto> QuestionChoiceService { get; set; }
+    [Inject] private IAdminService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
 
     private IEnumerable<QuestionTypeDto> _questionTypes;
     private IEnumerable<SurveyTypeDto> _surveyTypes;
-    private IEnumerable<SurveyDto> _surveys;
+    private IEnumerable<SurveyMetaDataDto> _surveys;
     private IEnumerable<SurveyQuestionnaireDto> _surveyQuestionnaires;
     private IEnumerable<SurveyQuestionDto> _surveyQuestions;
     private IEnumerable<QuestionChoiceDto> _questionChoices;

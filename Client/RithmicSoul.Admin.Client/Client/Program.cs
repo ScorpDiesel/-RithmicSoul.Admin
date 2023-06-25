@@ -9,6 +9,7 @@ using RithmicSoul.Admin.Client.Logger;
 using RithmicSoul.Admin.Infrastructure.Logging;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 using RithmicSoul.Admin.Core.Models;
+using RithmicSoul.Admin.Infrastructure.Configuration;
 using RithmicSoul.Admin.Infrastructure.Services;
 
 namespace RithmicSoul.Admin.Client.Client
@@ -31,11 +32,11 @@ namespace RithmicSoul.Admin.Client.Client
             builder.Services.AddScoped<IJsInteropLogger, JsInteropLogger>();
             builder.Services.AddScoped(typeof(ConsoleRedirectLogger<>));
             //builder.Services.AddSingleton(_ => new PeriodicTimerService());
-
+            builder.Services.AddInfrastructure();
             builder.Services.AddHttpClientInterceptor();
             builder.Services.AddTransient(typeof(IBulkActionsService<>), typeof(BulkActionsService<>));
             //builder.Services.RegisterAssemblyPublicNonGenericClasses(AppDomain.CurrentDomain.GetAssemblies())
-            builder.Services.RegisterAssemblyPublicNonGenericClasses(typeof(Program).Assembly, typeof(QuestionTypeService).Assembly, typeof(Application.Dtos.DraftSurveyDto).Assembly)
+            builder.Services.RegisterAssemblyPublicNonGenericClasses(typeof(Program).Assembly, typeof(Application.Dtos.DraftSurveyDto).Assembly)
                 .Where(c => c.Name.EndsWith("Service") || c.Name.EndsWith("Repository"))
                 .AsPublicImplementedInterfaces();
 

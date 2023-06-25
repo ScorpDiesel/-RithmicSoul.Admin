@@ -1,8 +1,8 @@
 ﻿@using RithmicSoulSharedLibrary.Extensions
 <MudDialog Class="pa-5">
     <DialogContent>
-        <MudSelect T="int" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="@nameof(Model.SurveyName).SplitCamelCase()" AnchorOrigin="Origin.BottomCenter"
-                   @bind-Value="@Model.SurveyId">
+        <MudSelect T="int" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="@nameof(_model.SurveyName).SplitCamelCase()" AnchorOrigin="Origin.BottomCenter"
+                   @bind-Value="@_model.SurveyId">
             <MudSelectItem T="int" Value="0" Disabled="true">Select...</MudSelectItem>
             @if (_surveys == null)
             {
@@ -10,7 +10,7 @@
             }
             @foreach (var st in _surveys)
             {
-                <MudSelectItem T="int" Value="@st.SurveyId">@st.SurveyName</MudSelectItem>
+                <MudSelectItem T="int" Disabled="@(!st.IsActive && IsShowDialog)" Value="@st.SurveyId">@st.SurveyName</MudSelectItem>
             }
         </MudSelect>
     </DialogContent>

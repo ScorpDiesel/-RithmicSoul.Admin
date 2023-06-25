@@ -2,7 +2,7 @@
 @typeparam T
 
 <RsLoadingSpinnerCard ShowContent="@_showContent" />
-<MudContainer Style="@_contentStyle">
+<MudContainer Style="@_contentStyle" MaxWidth="MaxWidth.ExtraExtraLarge">
     <MudDataGrid Items="@Items" T="T" Hover="true" FixedHeader="true" Style="height: 560px;"
                  EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
                  RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"

@@ -11,6 +11,7 @@ public class DraftSurveyDto : IDirty
     private string _surveyDescription;
     private string _surveyTypeName;
     private bool _isDirty;
+    private string _activeSurveyName;
 
     public bool IsDirty => _isDirty;
 
@@ -58,8 +59,17 @@ public class DraftSurveyDto : IDirty
         }
     }
 
+    public string ActiveSurveyName
+    {
+        get => _activeSurveyName;
+        set
+        {
+            _activeSurveyName = value;
+            _isDirty = true;
+        }
+    }
+
     public bool IsActive { get; set; }
-    public string ActiveSurveyName { get; set; }
 
     public string SurveyQuestionText { get; set; }
 

@@ -10,10 +10,10 @@ namespace RithmicSoul.Admin.Infrastructure.Services;
 public class DraftSurveyService : IDraftSurveyService
 {
     private readonly IBulkActionsService<SurveyQuestionnaireDto> _bulkActionsService;
-    private readonly IAdminService<SurveyDto> _surveyService;
+    private readonly IAdminService<SurveyMetaDataDto> _surveyService;
     private readonly IAdminService<SurveyQuestionnaireDto> _surveyQuestionnaireService;
 
-    public DraftSurveyService(IBulkActionsService<SurveyQuestionnaireDto> bulkActionsService, IAdminService<SurveyDto> surveyService, IAdminService<SurveyQuestionnaireDto> surveyQuestionnaireService)
+    public DraftSurveyService(IBulkActionsService<SurveyQuestionnaireDto> bulkActionsService, IAdminService<SurveyMetaDataDto> surveyService, IAdminService<SurveyQuestionnaireDto> surveyQuestionnaireService)
     {
         _bulkActionsService = bulkActionsService;
         _surveyService = surveyService;
@@ -42,7 +42,7 @@ public class DraftSurveyService : IDraftSurveyService
     {
         var result = await _surveyQuestionnaireService.GetAsync(q => q.SurveyId == draftSurveyDto.SurveyId);
 
-        var dto = new SurveyDto
+        var dto = new SurveyMetaDataDto
         {
             SurveyId = draftSurveyDto.SurveyId,
             SurveyName = draftSurveyDto.SurveyName,
@@ -63,14 +63,15 @@ public class DraftSurveyService : IDraftSurveyService
         }
 
         var questionnaires = draftSurveyDto.SurveyQuestionIds.Select(questionId => new SurveyQuestionnaireDto { SurveyId = surveyId, QuestionId = questionId }).ToList();
-        var isQuestionnairesSaved = await _bulkActionsService.BulkInsertAsync(questionnaires);
+        var isQuestionnairesSaved = true;
+        if (questionnaires.Any()) isQuestionnairesSaved = await _bulkActionsService.BulkInsertAsync(questionnaires);
 
         return isQuestionnairesSaved;
     }
 
     private async Task<bool> InsertSurvey(DraftSurveyDto draftSurveyDto)
     {
-        var dto = new SurveyDto
+        var dto = new SurveyMetaDataDto
         {
             SurveyName = draftSurveyDto.SurveyName,
             SurveyTypeId = draftSurveyDto.SurveyTypeId,

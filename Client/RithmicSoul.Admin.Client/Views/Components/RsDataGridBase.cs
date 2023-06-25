@@ -13,25 +13,25 @@ namespace RithmicSoul.Admin.Client.Views.Components;
 
 public class RsDataGridBase<T> : ComponentBase where T : class
 {
-    [Inject] IBulkActionsService<T> BulkActionsService { get; set; }
-    [Inject] ISnackbar? Snackbar { get; set; }
-    [Inject] IDialogService DialogService { get; set; }
-    [Inject] IOptions<AppSettings> AppSettingsOptions { get; set; }
+    [Inject] private IBulkActionsService<T> BulkActionsService { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; }
+    [Inject] private IDialogService DialogService { get; set; }
+    [Inject] private IOptions<AppSettings> AppSettingsOptions { get; set; }
     [Parameter] public IAdminService<T> ApiAdminService { get; set; }
-    [Parameter] public ISurveyService<T>? ApiSurveyService { get; set; }
+    [Parameter] public ISurveyService<T> ApiSurveyService { get; set; }
     [Parameter] public bool CanGroup { get; set; }
     [Parameter] public bool GroupExpanded { get; set; }
-    [Parameter] public string? GroupBy { get; set; }
+    [Parameter] public string GroupBy { get; set; }
     [Parameter] public bool MultiSelection { get; set; }
-    [Parameter] public int[]? ColumnsToHide { get; set; }
+    [Parameter] public int[] ColumnsToHide { get; set; }
     [Parameter] public bool CanEdit { get; set; }
     [Parameter] public bool CanCreate { get; set; }
     [Parameter] public bool CanDelete { get; set; }
     [Parameter] public bool ReturnIdOnInsert { get; set; }
-    [Parameter] public Type? TEditDialog { get; set; }
+    [Parameter] public Type TEditDialog { get; set; }
     [Parameter] public Type TDialog { get; set; }
-    [Parameter] public List<int>? FilterIds { get; set; }
-    [Parameter] public string? ColumnToFilter { get; set; }
+    [Parameter] public List<int> FilterIds { get; set; }
+    [Parameter] public string ColumnToFilter { get; set; }
     [Parameter] public IEnumerable<T> Items { get; set; }
 
     protected IEnumerable<PropertyInfo> _properties;
@@ -216,7 +216,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         await GetAllItemsAsync();
     }
 
-    public async Task DeleteSelectedItemsAsync(T? item = null)
+    public async Task DeleteSelectedItemsAsync(T item = null)
     {
         var options = new DialogOptions { CloseButton = true };
         var parameters = new DialogParameters
@@ -271,7 +271,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         SetRowHighlight(dto);
         var options = new DialogOptions { CloseButton = true };
         var dialogParameters = new DialogParameters { { "Model", dto } };
-        IDialogReference? dialog;
+        IDialogReference dialog;
 
         if (TEditDialog is not null)
         {

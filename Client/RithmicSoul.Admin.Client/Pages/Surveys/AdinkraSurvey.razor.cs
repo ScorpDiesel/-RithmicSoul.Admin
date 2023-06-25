@@ -3,23 +3,24 @@ using Microsoft.JSInterop;
 using Microsoft.VisualStudio.Threading;
 using MudBlazor;
 using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
+using RithmicSoul.Admin.Application.Interfaces.Services.Survey;
 using RithmicSoul.Admin.Client.Views.Dialogs;
-using RithmicSoul.Admin.Infrastructure.Services;
+using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
-using RithmicSoul.Models.Survey.Models;
+using RithmicSoul.Models.Survey.ValueObjects;
 
 namespace RithmicSoul.Admin.Client.Pages.Surveys;
 
 public partial class AdinkraSurvey : ComponentBase
 {
-    [Inject] IDialogService? DialogService { get; set; }
-    [Inject] IJSRuntime JSRuntime { get; set; }
-    [Inject] private HttpClient _httpClient { get; set; }
-    [Inject] private IAdminService<AdinkraSymbolDto> adinkraSymbolService { get; set; }
-    [Inject] private SurveyResponsesService surveyResponsesService { get; set; }
+    [Inject] private IDialogService DialogService { get; set; }
+    [Inject] private IJSRuntime JSRuntime { get; set; }
+    [Inject] private AppSetting AppSetting { get; set; }
+    [Inject] private IAdminService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
+    [Inject] private ISurveyResponseService SurveyResponseService { get; set; }
 
-    private IEnumerable<AdinkraSymbolDto>? _allSymbols;
-    private IEnumerable<AdinkraSymbolDto>? CurrentSymbols => _allSymbols?.Skip(_currentPage * _pageSize).Take(_pageSize);
+    private IEnumerable<AdinkraSymbolDto> _allSymbols;
+    private IEnumerable<AdinkraSymbolDto> CurrentSymbols => _allSymbols?.Skip(_currentPage * _pageSize).Take(_pageSize);
     [CascadingParameter] public EventCallback<bool> HideMenus { get; set; }
     [Parameter] public Guid Id { get; set; }
 
@@ -28,7 +29,8 @@ public partial class AdinkraSurvey : ComponentBase
     private readonly int _pageSize = 10;
     private int _currentPage;
     private HashSet<int> _symbolLikes = new();
-    private string? _baseAddress;
+    private SurveyResponseDto _surveyResponse;
+    private string _baseAddress;
     private bool _endOfSurveyReached;
     //private bool _isSaveButtonDisabled = true;
 
@@ -46,8 +48,10 @@ public partial class AdinkraSurvey : ComponentBase
     private async Task InitializeAsync()
     {
         await HideMenus.InvokeAsync(true);
-        _baseAddress = _httpClient.BaseAddress?.ToString();
-        _allSymbols = await adinkraSymbolService.GetAllAsync();
+        _baseAddress = AppSetting.BaseAddress;
+        _allSymbols = await AdinkraSymbolService.GetAllAsync();
+        var items = await SurveyResponseService.GetResponsesByIdAsync(Id);
+        _surveyResponse = items.First();
     }
 
     private bool HasPreviousPage => _currentPage > 0;
@@ -101,14 +105,11 @@ public partial class AdinkraSurvey : ComponentBase
         if (!result.Canceled)
         {
             if (!_symbolLikes.Any()) return;
-            var symbolNames = _allSymbols.Where(a => _symbolLikes.Any(s => s == a.SymbolId)).Select(r => r.SymbolName).ToList();
-            var responses = new SurveyResponses
-            {
-                UserId = Id,
-                Answers = symbolNames
-            };
-
-            var isSuccess = await surveyResponsesService.UpdateResponsesAsync(responses);
+            var symbolNames = _allSymbols.Where(a => _symbolLikes.Any(s => s == a.SymbolId))
+                .Select(r => new QuestionAnswers(QuestionId: _surveyResponse.QuestionId, Answers: new List<string> { r.SymbolName })).ToList();
+            _surveyResponse.QuestionAnswers = symbolNames;
+            _surveyResponse.DateCreated = DateTime.UtcNow;
+            var isSuccess = await SurveyResponseService.UpdateResponsesAsync(_surveyResponse);
         }
     }
 }

@@ -8,7 +8,7 @@
             @{
                 for (var q = 0; q < _choices.Count(); q++)
                 {
-                    var question = _choices.ElementAt(q);
+                    var questionChoice = _choices.ElementAt(q);
                     var style = "none";
                     if(q == QuestionNumber)
                     {
@@ -16,7 +16,7 @@
                     }
                 
                     <div style="display:@style">
-                        @CreateRenderFragment(question)
+                        @CreateRenderFragment(questionChoice)
                     </div>
                 }
             }

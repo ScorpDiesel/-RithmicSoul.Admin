@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Azure;
 using Refit;
 using RithmicSoul.Admin.Application.Interfaces.Repositories.Admin;
 using RithmicSoul.Admin.Application.Interfaces.Services.Admin;
@@ -9,70 +8,70 @@ using Serialize.Linq.Serializers;
 
 namespace RithmicSoul.Admin.Infrastructure.Services;
 
-public class SurveyService : IAdminService<SurveyDto>
+public class SurveyMetaDataService : IAdminService<SurveyMetaDataDto>
 {
     private readonly AppSetting _appSetting;
-    private readonly IAdminRepository<SurveyDto> _adminRepository;
-    private const string RouteSuffix = "Surveys";
+    private readonly IAdminRepository<SurveyMetaDataDto> _adminRepository;
+    private const string RouteSuffix = "SurveyMetaData";
 
-    public SurveyService(AppSetting appSetting)
+    public SurveyMetaDataService(AppSetting appSetting)
     {
         _appSetting = appSetting;
-        _adminRepository = RestService.For<IAdminRepository<SurveyDto>>(_appSetting.BaseAddress);
+        _adminRepository = RestService.For<IAdminRepository<SurveyMetaDataDto>>(_appSetting.BaseAddress);
     }
 
-    public async Task<bool> InsertAsync(SurveyDto dto)
+    public async Task<bool> InsertAsync(SurveyMetaDataDto dto)
     {
         var response = await _adminRepository.InsertAsync(dto, RouteSuffix);
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<object> InsertForIdAsync(SurveyDto dto)
+    public async Task<object> InsertForIdAsync(SurveyMetaDataDto dto)
     {
         return await _adminRepository.InsertForIdAsync(dto, RouteSuffix);
     }
 
-    public async Task<bool> BulkInsertAsync(List<SurveyDto> dtos)
+    public async Task<bool> BulkInsertAsync(List<SurveyMetaDataDto> dtos)
     {
         var response = await _adminRepository.BulkInsertAsync(dtos, RouteSuffix);
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> UpdateAsync(SurveyDto dto)
+    public async Task<bool> UpdateAsync(SurveyMetaDataDto dto)
     {
         var response = await _adminRepository.UpdateAsync(dto, RouteSuffix);
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> BulkUpdateAsync(List<SurveyDto> dtos)
+    public async Task<bool> BulkUpdateAsync(List<SurveyMetaDataDto> dtos)
     {
         var response = await _adminRepository.BulkUpdateAsync(dtos, RouteSuffix);
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> DeleteAsync(SurveyDto dto)
+    public async Task<bool> DeleteAsync(SurveyMetaDataDto dto)
     {
         var response = await _adminRepository.DeleteAsync(dto, RouteSuffix);
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> BulkDeleteAsync(List<SurveyDto> dtos)
+    public async Task<bool> BulkDeleteAsync(List<SurveyMetaDataDto> dtos)
     {
         var response = await _adminRepository.BulkDeleteAsync(dtos, RouteSuffix);
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<SurveyDto> GetByIdAsync(int id)
+    public async Task<SurveyMetaDataDto> GetByIdAsync(int id)
     {
         return await _adminRepository.GetByIdAsync(id, RouteSuffix);
     }
 
-    public async Task<IEnumerable<SurveyDto>> GetAllAsync()
+    public async Task<IEnumerable<SurveyMetaDataDto>> GetAllAsync()
     {
         return await _adminRepository.GetAllAsync(RouteSuffix);
     }
 
-    public async Task<IEnumerable<SurveyDto>> GetAsync(Expression<Func<SurveyDto, bool>> expression)
+    public async Task<IEnumerable<SurveyMetaDataDto>> GetAsync(Expression<Func<SurveyMetaDataDto, bool>> expression)
     {
         var serializer = new ExpressionSerializer(new JsonSerializer());
         var serializedExpression = serializer.SerializeText(expression);
@@ -80,13 +79,13 @@ public class SurveyService : IAdminService<SurveyDto>
         return await _adminRepository.GetAsync(content, RouteSuffix);
     }
 
-    public async Task<bool> DeleteAsync(Expression<Func<SurveyDto, bool>> expression)
+    public async Task<bool> DeleteAsync(Expression<Func<SurveyMetaDataDto, bool>> expression)
     {
         throw new NotImplementedException();
         //var serializer = new ExpressionSerializer(new JsonSerializer());
         //var serializedExpression = serializer.SerializeText(expression);
         //var content = new StringContent(serializedExpression);
-        //var api = RestService.For<IAdminRepository<SurveyDto>>("v1/Surveys");
+        //var api = RestService.For<IAdminRepository<SurveyMetaDataDto>>("v1/Surveys");
         //return await api.DeleteAsync(content);
     }
 }

@@ -1,10 +1,11 @@
 ﻿@page "/surveys/new"
 @page "/surveys/{id:int}"
 
-<MudContainer Class="mt-4" MaxWidth="MaxWidth.ExtraExtraLarge">
-    <MudGrid>
+<MudContainer Class="mt-4" MaxWidth="MaxWidth.ExtraExtraLarge" Style="height: 1408px">
+    <RsLoadingSpinnerCard ShowContent="@_showContent" />
+    <MudGrid Style="@_contentStyle">
         <MudItem xs="6">
-            <MudPaper Elevation="25" Class="mb-16">
+            <MudPaper Elevation="25" Class="mb-8">
                 <MudToolBar>
                     <MudIconButton Size="Size.Large" Icon="@Icons.Material.Outlined.Logout" OnClick="@CancelAsync" />
                     <MudIconButton Disabled="@(!Model.IsDirty)" Size="Size.Large" Icon="@Icons.Material.Outlined.Save" OnClick="@SaveAsync" />
@@ -13,8 +14,9 @@
             <MudPaper Class="pa-10">
                 <MudForm ReadOnly="false">
                     <MudTextField T="string" Label="Survey Name" Required="true" RequiredError="Survey Name is required!" @bind-Value="Model.SurveyName" />
-                    <MudTextField T="string" Label="Survey Description" Required="true" RequiredError="Survey Description is required!" Class="mt-16" @bind-Value="Model.SurveyDescription" />
-                    <MudGrid>
+                    <MudTextField T="string" Label="Survey Description" Required="true" RequiredError="Survey Description is required!" Class="mt-8" @bind-Value="Model.SurveyDescription" />
+                    <MudTextField T="string" Label="Active Survey Name" Class="mt-8" @bind-Value="Model.ActiveSurveyName" />
+                    <MudGrid Class="mt-8">
                         <MudItem xs="12">
                             <MudStack Row="true" Class="mt-8" AlignItems="AlignItems.Center" Justify="Justify.SpaceEvenly">
                                 <MudSelect T="int" Required Margin="@Margin.Dense" Variant="Variant.Outlined" Label="Survey Type" AnchorOrigin="Origin.BottomCenter"

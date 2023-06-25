@@ -3,12 +3,12 @@ using RithmicSoul.Models.Survey.Models;
 
 namespace RithmicSoul.Admin.Application.Interfaces.Repositories.Survey;
 
-public interface ISurveyResponsesRepository
+public interface ISurveyResponseRepository
 {
-    [Get("/v1/SurveyResponses")] Task<IEnumerable<SurveyResponses>> GetAllResponsesAsync();
-    [Get("/v1/SurveyResponses/{id}")] Task<SurveyResponses> GetResponsesByIdAsync(Guid id);
-    [Post("/v2/SurveyResponses")] Task<IEnumerable<SurveyResponses>> GetResponsesAsync([Body] StringContent content);
-    [Post("/v1/SurveyResponses")] Task<ApiResponse<object>> InsertResponsesAsync(SurveyResponses item);
-    [Put("/v1/SurveyResponses")] Task<ApiResponse<object>> UpdateResponsesAsync(SurveyResponses item);
-    [Delete("/v4/SurveyResponses")] Task<ApiResponse<object>> DeleteResponsesAsync(SurveyResponses item);
+    [Get("/v1/SurveyResponse")] Task<IEnumerable<SurveyResponse>> GetAllResponsesAsync();
+    [Get("/v1/SurveyResponse/{id}")] Task<IEnumerable<SurveyResponse>> GetResponsesByIdAsync(Guid id);
+    [Post("/v2/SurveyResponse")] Task<IEnumerable<SurveyResponse>> GetResponsesAsync([Body] StringContent content);
+    [Post("/v1/SurveyResponse")] Task<ApiResponse<object>> InsertResponsesAsync(SurveyResponse item);
+    [Put("/v1/SurveyResponse")] Task<ApiResponse<object>> UpdateResponsesAsync(SurveyResponse item);
+    [Delete("/v4/SurveyResponse")] Task<ApiResponse<object>> DeleteResponsesAsync(SurveyResponse item);
 }

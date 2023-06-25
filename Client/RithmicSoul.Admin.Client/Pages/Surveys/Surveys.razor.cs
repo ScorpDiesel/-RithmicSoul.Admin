@@ -9,11 +9,11 @@ namespace RithmicSoul.Admin.Client.Pages.Surveys;
 
 public partial class Surveys : ComponentBase
 {
-    [Inject] IDialogService? DialogService { get; set; }
-    [Inject] ISurveyService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
-    [Inject] IDraftSurveyService DraftSurveyService { get; set; }
-    [Inject] NavigationManager Navigation { get; set; }
-    [Inject] ISnackbar Snackbar { get; set; }
+    [Inject] private IDialogService DialogService { get; set; }
+    [Inject] private ISurveyService<AuthoredSurveyDto> AuthoredSurveyService { get; set; }
+    [Inject] private IDraftSurveyService DraftSurveyService { get; set; }
+    [Inject] private NavigationManager Navigation { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; }
     [CascadingParameter] public EventCallback<bool> HideMenus { get; set; }
 
     private IEnumerable<AuthoredSurveyDto> _authoredSurveys;
@@ -26,43 +26,45 @@ public partial class Surveys : ComponentBase
     private async Task InitializeAsync()
     {
         await HideMenus.InvokeAsync(false);
-        _authoredSurveys = await AuthoredSurveyService.GetAllFromViewAsync();
+        _authoredSurveys = await AuthoredSurveyService!.GetAllFromViewAsync();
     }
 
-    private void NewSurvey() => Navigation.NavigateTo("/surveys/new");
+    private void NewSurvey() => Navigation!.NavigateTo("/surveys/new");
 
     private async Task SelectEditSurveyDialogAsync()
     {
-        var dialog = await DialogService?.ShowAsync<SelectSurveyDialog>("Select a survey to edit")!;
+        var parameters = new DialogParameters { { "IsShowDialog", false } };
+        var dialog = await DialogService?.ShowAsync<SelectSurveyDialog>("Select a survey to edit", parameters)!;
         var result = await dialog.Result;
         if (!result.Canceled)
         {
             var id = (int)result.Data;
-            Navigation.NavigateTo($"/surveys/{id}");
+            Navigation!.NavigateTo($"/surveys/{id}");
         }
     }
 
     private async Task SelectShowSurveyDialogAsync()
     {
-        var dialog = await DialogService?.ShowAsync<SelectSurveyDialog>("Select a survey to show")!;
+        var parameters = new DialogParameters { { "IsShowDialog", true } };
+        var dialog = await DialogService?.ShowAsync<SelectSurveyDialog>("Select a survey to show", parameters)!;
         var result = await dialog.Result;
         if (!result.Canceled)
         {
             var id = (int)result.Data;
-            var survey = await DraftSurveyService.GetByIdAsync(id);
+            var survey = await DraftSurveyService!.GetByIdAsync(id);
             if (survey is null)
             {
                 ShowSnackBar(false, "Survey not found.");
                 return;
             }
 
-            Navigation.NavigateTo($"/surveys/{survey.SurveyTypeName}");
+            Navigation!.NavigateTo($"/surveys/{survey.ActiveSurveyName}");
         }
     }
 
     private void ShowSnackBar(bool isSuccess, string message)
     {
-        Snackbar.Clear();
+        Snackbar!.Clear();
         Snackbar.Add(message, isSuccess ? Severity.Success : Severity.Error);
     }
 

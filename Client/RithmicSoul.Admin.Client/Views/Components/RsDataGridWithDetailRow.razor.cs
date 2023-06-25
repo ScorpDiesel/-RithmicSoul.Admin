@@ -14,5 +14,5 @@ namespace RithmicSoul.Admin.Client.Views.Components;
 
 public partial class RsDataGridWithDetailRow<T> : RsDataGridBase<T> where T : class
 {
-    [Parameter] public RenderFragment<T>? DetailRowContent { get; set; }
+    [Parameter] public RenderFragment<T> DetailRowContent { get; set; }
 }

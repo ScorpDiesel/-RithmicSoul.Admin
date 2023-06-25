@@ -7,11 +7,10 @@ public static class Utilities
     public static IList<T1>? MapToModelWithCollection<T1, T>(T model)
     {
         IList<T1>? collection = new List<T1>();
-        var modelProperties = model.GetType().GetProperties();
-        var genericList = modelProperties.FirstOrDefault(m => m.PropertyType.UnderlyingSystemType.IsGenericList());
+        var modelProperties = model?.GetType().GetProperties();
+        var genericList = modelProperties?.FirstOrDefault(m => m.PropertyType.UnderlyingSystemType.IsGenericList());
 
-        var values = genericList?.GetValue(model) as IEnumerable<object>;
-        if (values is null || !values.Any()) return null;
+        if (genericList?.GetValue(model) is not IEnumerable<object> values || !values.Any()) return null;
 
         foreach (var value in values)
         {
