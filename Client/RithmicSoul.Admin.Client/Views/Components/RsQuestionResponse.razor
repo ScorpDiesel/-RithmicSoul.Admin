@@ -1,25 +1,17 @@
-﻿<MudPaper Class="pa-4 mt-8" Outlined="true">
-    <MudStack>
-        <MudStack Row="true" Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Class="mb-1">
-            <MudText Class="@_questionClass" Typo="Typo.h6">@_questionNumberText</MudText>
-            <MudText Typo="@QuestionTextTypography">@QuestionText</MudText>
-        </MudStack>
-        <MudStack Class="mt-3 ml-5">
-            @{
-                for (var q = 0; q < _choices.Count(); q++)
+﻿<MudCard Class="pa-4 pl-16" Style="@Style" @onmouseover="@CardElevationUp" @onmouseout="@CardElevationDown" Elevation="@_elevation">
+    <MudText Style="@(_showNoAnswersMessage ? "" : "display:none")" Typo="Typo.h6">No answers for this question</MudText>
+    <div style="@(!_showNoAnswersMessage ? "" : "display:none")">
+        <MudText>
+            @SurveyQuestion
+        </MudText>
+        <MudCardContent Class="">
+            <hr/>
+            <div class="">
+                @foreach (var answer in _answers)
                 {
-                    var questionChoice = _choices.ElementAt(q);
-                    var style = "none";
-                    if(q == QuestionNumber)
-                    {
-                        style = "block";
-                    }
-                
-                    <div style="display:@style">
-                        @CreateRenderFragment(questionChoice)
-                    </div>
+                    <p>@answer</p>
                 }
-            }
-        </MudStack>
-    </MudStack>
-</MudPaper>
+            </div>
+        </MudCardContent>
+    </div>
+</MudCard>
