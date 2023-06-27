@@ -1,0 +1,13 @@
+﻿<MudDropContainer T="string" Items="@Items" ItemsSelector="@((item,dropzone) => true)" ItemDropped="@ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
+    <ChildContent>
+        <MudList Clickable="true" Class="d-flex flex-column mud-height-full">
+            <MudText>@RankListHeader</MudText>
+            <MudDropZone T="string" Identifier="@_rankDropZone" Class="flex-grow-1" AllowReorder="true" />
+        </MudList>
+    </ChildContent>
+    <ItemRenderer>
+        <MudPaper Elevation="3" Class="pa-4 my-4" Width="300px">
+            @context
+        </MudPaper>
+    </ItemRenderer>
+</MudDropContainer>
