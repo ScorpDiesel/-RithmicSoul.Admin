@@ -53,8 +53,9 @@
                     continue;
                 }
                 @CreateColumn(value)
+               @* <PropertyColumn Property="x => x[value.Name]" Title="@value.Name" />*@
             }
-            <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
+            <TemplateColumn Hidden="@(!CanEdit && !CanDelete)" CellClass="d-flex justify-space-around">
                 <CellTemplate>
                     @if (CanEdit)
                     {

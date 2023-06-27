@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using RithmicSoul.Admin.Application.Interfaces.Services;
 using RithmicSoul.Admin.Client.Views.Dialogs;
+using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
 
 namespace RithmicSoul.Admin.Client.Pages.Tables;
@@ -32,6 +33,11 @@ public partial class Tables : ComponentBase
     private Type _questionChoiceEditDialogType;
     private Type _surveyTypeDialogType;
     private Type _questionTypeDialogType;
+    private readonly TableColumnWidth _adinkraSymbolColumnWidths = new();
+    private readonly TableColumnWidth _surveyQuestionnaireColumnWidths = new();
+    private readonly TableColumnWidth _surveyMetaDataColumnWidths = new();
+    private readonly TableColumnWidth _surveyQuestionColumnWidths = new();
+    private readonly TableColumnWidth _questionChoiceColumnWidths = new();
     //private Type _adinkraSymbolEditDialogType;
 
 
@@ -42,6 +48,29 @@ public partial class Tables : ComponentBase
 
     private async Task InitializeAsync()
     {
+        _adinkraSymbolColumnWidths.TableName = nameof(AdinkraSymbolDto).Replace("Dto", "");
+        _adinkraSymbolColumnWidths.ColumnWidths[1] = "350px";
+        _adinkraSymbolColumnWidths.ColumnWidths[2] = "450px";
+        _adinkraSymbolColumnWidths.ColumnWidths[3] = "580px";
+        _surveyQuestionnaireColumnWidths.TableName = nameof(SurveyQuestionnaireDto).Replace("Dto", "");
+        _surveyQuestionnaireColumnWidths.ColumnWidths[1] = "280px";
+        _surveyQuestionnaireColumnWidths.ColumnWidths[2] = "700px";
+        _surveyQuestionnaireColumnWidths.ColumnWidths[3] = "300px";
+        _surveyMetaDataColumnWidths.TableName = nameof(SurveyMetaDataDto).Replace("Dto", "");
+        _surveyMetaDataColumnWidths.ColumnWidths[1] = "280px";
+        _surveyMetaDataColumnWidths.ColumnWidths[2] = "230px";
+        _surveyMetaDataColumnWidths.ColumnWidths[3] = "100px";
+        _surveyMetaDataColumnWidths.ColumnWidths[4] = "150px";
+        _surveyMetaDataColumnWidths.ColumnWidths[5] = "600px";
+        _surveyMetaDataColumnWidths.ColumnWidths[6] = "300px";
+        _surveyQuestionColumnWidths.TableName = nameof(SurveyQuestionDto).Replace("Dto", "");
+        _surveyMetaDataColumnWidths.ColumnWidths[1] = "150px";
+        _surveyMetaDataColumnWidths.ColumnWidths[2] = "575px";
+        _surveyMetaDataColumnWidths.ColumnWidths[3] = "575px";
+        _questionChoiceColumnWidths.TableName = nameof(QuestionChoiceDto).Replace("Dto", "");
+        _questionChoiceColumnWidths.ColumnWidths[1] = "600px";
+        _questionChoiceColumnWidths.ColumnWidths[2] = "200px";
+        _questionChoiceColumnWidths.ColumnWidths[3] = "600px";
         _questionTypes = await QuestionTypeService.GetAllAsync();
         _surveyTypes = await SurveyTypeService.GetAllAsync();
         _surveys = await SurveyService.GetAllAsync();

@@ -14,7 +14,7 @@
         <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexStart">
             <MudText Typo="Typo.h4">Please select the Adinkra symbols you like by clicking the</MudText>
             <MudIcon Style="margin-left: 10px" Size="Size.Large" Icon="@Icons.Material.Filled.Favorite"/>
-            <MudText>@(string.Join(", ", _symbolLikes))</MudText>
+            @*<MudText>@(string.Join(", ", _symbolLikes))</MudText>*@
         </MudStack>
         <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
             <MudButton Class="mr-8" StartIcon="@Icons.Material.Filled.Save" Color="Color.Success" OnClick="@(async () => await SaveSurveyAsync())">Save</MudButton>

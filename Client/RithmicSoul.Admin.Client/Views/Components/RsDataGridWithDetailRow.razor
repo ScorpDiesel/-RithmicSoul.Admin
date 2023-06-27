@@ -52,7 +52,7 @@
                 }
                 @CreateColumn(value)
             }
-            <TemplateColumn Hidden="false" CellClass="d-flex justify-space-around">
+            <TemplateColumn Hidden="@(!CanEdit && !CanDelete)" CellClass="d-flex justify-space-around">
                 <CellTemplate>
                     @if (CanEdit)
                     {

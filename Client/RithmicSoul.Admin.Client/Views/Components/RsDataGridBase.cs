@@ -32,6 +32,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
     [Parameter] public List<int> FilterIds { get; set; }
     [Parameter] public string ColumnToFilter { get; set; }
     [Parameter] public IEnumerable<T> Items { get; set; }
+    [Parameter] public TableColumnWidth TableColumnWidths { get; set; }
 
     protected IEnumerable<PropertyInfo> _properties;
     protected MudDataGrid<T> thisDataGrid;
@@ -53,7 +54,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
     {
         _appSettings = AppSettingsOptions.Value;
         _contentStyle = "display: none;";
-        TableName = typeof(T).Name.Replace("Dto", string.Empty).SplitCamelCase();
+        TableName = typeof(T).Name.Replace("Dto", string.Empty);//.SplitCamelCase();
         _properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
     }
 
@@ -119,23 +120,18 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         ++_propertiesCount;
         return builder =>
         {
-            // Create a parameter for the lambda expression
-            var parameterExp = Expression.Parameter(typeof(T), propertyInfo.Name);
-
-            // Create a property access expression for the specified property
+            var propertyName = propertyInfo.Name;
+            Console.WriteLine($"{propertyName}: {_propertiesCount}");
+            var parameterExp = Expression.Parameter(typeof(T), propertyName);
             var propertyExp = Expression.Property(parameterExp, propertyInfo);
-
-            // Because Property expects a Func<T, object>, we may need to convert the property 
-            // expression to object if the property type is a value type
             var convertExp = Expression.Convert(propertyExp, typeof(object));
-
-            // Create a lambda expression for the property access expression
             var lambdaExp = Expression.Lambda<Func<T, object>>(convertExp, parameterExp);
-            
             builder.OpenComponent(0, typeof(PropertyColumn<T, object>));
             builder.AddAttribute(1, "Property", lambdaExp);
             builder.AddAttribute(2, "Title", propertyInfo.Name.SplitCamelCase());
-            if (propertyInfo.Name == GroupBy) builder.AddAttribute(3, _appSettings.RsDataGridRenderFragmentGroupingAttribute, true);
+            if (TableColumnWidths is not null && TableColumnWidths.TableName == TableName 
+                                              && TableColumnWidths.ColumnWidths.TryGetValue(_propertiesCount, out var width)) builder.AddAttribute(3, "CellStyle", $"width: { width }");
+            if (propertyInfo.Name == GroupBy) builder.AddAttribute(4, _appSettings.RsDataGridRenderFragmentGroupingAttribute, true);
             builder.CloseComponent();
 
             ShowContent();

@@ -19,6 +19,7 @@
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
                                         <RsDataGrid T="SurveyMetaDataDto" ReturnIdOnInsert="true"
                                                     Items="@_surveys"
+                                                    TableColumnWidths="@_surveyMetaDataColumnWidths"
                                                     ApiService="@SurveyService" ColumnsToHide="@_surveyColumnsToHide"/>
                                     </MudPaper>
                                 </MudItem>
@@ -27,6 +28,7 @@
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;">
                                         <RsDataGrid T="SurveyQuestionnaireDto"
                                                     Items="@_surveyQuestionnaires"
+                                                    TableColumnWidths="@_surveyQuestionnaireColumnWidths"
                                                     CanGroup="true" GroupExpanded="false" GroupBy="SurveyName"
                                                     ApiService="@SurveyQuestionnaireService" ColumnsToHide="@_surveyQuestionnaireColumnsToHide"/>
                                     </MudPaper>
@@ -36,6 +38,7 @@
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 600px; overflow-y: auto">
                                         <RsDataGrid T="SurveyQuestionDto"
                                                     Items="@_surveyQuestions"
+                                                    TableColumnWidths="@_surveyQuestionColumnWidths"
                                                     CanCreate="true" CanDelete="true" CanEdit="true" TDialog="@_surveyQuestionDialogType"
                                                     CanGroup="true" GroupExpanded="false" GroupBy="QuestionTypeName"
                                                     ApiService="@SurveyQuestionService" ColumnsToHide="@_surveyQuestionColumnsToHide"/>
@@ -48,6 +51,7 @@
                                                     TEditDialog="@_questionChoiceEditDialogType" TDialog="@_questionChoiceDialogType"
                                                     CanCreate="true" CanDelete="true" CanEdit="true"
                                                     ColumnsToHide="@_questionChoicesColumnsToHide"
+                                                    TableColumnWidths="@_questionChoiceColumnWidths"
                                                     CanGroup="true" GroupExpanded="false" ApiService="@QuestionChoiceService"
                                                     GroupBy="QuestionText" MultiSelection="true"/>
                                     </MudPaper>
@@ -56,6 +60,7 @@
                                     <MudPaper Elevation="2" Class="pa-4" Style="height: 650px; overflow-y: auto">
                                         <RsDataGridWithDetailRow T="AdinkraSymbolDto"
                                              Items="@_adinkraSymbols"
+                                             TableColumnWidths="@_adinkraSymbolColumnWidths"
                                              CanCreate="true" CanDelete="false" CanEdit="true" ColumnsToHide="@_adinkraSymbolColumnsToHide"
                                              ApiService="@AdinkraSymbolService">
                                             <DetailRowContent>

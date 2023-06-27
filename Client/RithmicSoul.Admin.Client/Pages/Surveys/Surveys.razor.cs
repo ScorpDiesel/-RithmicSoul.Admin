@@ -3,6 +3,7 @@ using MudBlazor;
 using RithmicSoul.Admin.Application.Interfaces.Services;
 using RithmicSoul.Admin.Application.Interfaces.Services.Survey;
 using RithmicSoul.Admin.Client.Views.Dialogs;
+using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
 
 namespace RithmicSoul.Admin.Client.Pages.Surveys;
@@ -19,6 +20,8 @@ public partial class Surveys : ComponentBase
 
     private IEnumerable<AuthoredSurveyDto> _authoredSurveys;
     private IEnumerable<SurveyResponseDto> _surveyResponses;
+    private readonly TableColumnWidth _surveyResponseColumnWidths = new();
+    private readonly TableColumnWidth _authoredSurveyColumnWidths = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -28,6 +31,20 @@ public partial class Surveys : ComponentBase
     private async Task InitializeAsync()
     {
         await HideMenus.InvokeAsync(false);
+        _surveyResponseColumnWidths.TableName = nameof(SurveyResponseDto).Replace("Dto", "");
+        _surveyResponseColumnWidths.ColumnWidths[1] = "350px";
+        _surveyResponseColumnWidths.ColumnWidths[3] = "700px";
+        _surveyResponseColumnWidths.ColumnWidths[4] = "300px";
+        _authoredSurveyColumnWidths.TableName = nameof(AuthoredSurveyDto).Replace("Dto", "");
+        _authoredSurveyColumnWidths.ColumnWidths[1] = "300px";
+        _authoredSurveyColumnWidths.ColumnWidths[2] = "150px";
+        _authoredSurveyColumnWidths.ColumnWidths[3] = "350px";
+        _authoredSurveyColumnWidths.ColumnWidths[4] = "700px";
+        _authoredSurveyColumnWidths.ColumnWidths[5] = "200px";
+        _authoredSurveyColumnWidths.ColumnWidths[6] = "350px";
+        _authoredSurveyColumnWidths.ColumnWidths[7] = "100px";
+        _authoredSurveyColumnWidths.ColumnWidths[8] = "100px";
+        _authoredSurveyColumnWidths.ColumnWidths[9] = "300px";
         _authoredSurveys = await AuthoredSurveyService!.GetAllFromViewAsync();
         _surveyResponses = await SurveyResponseService.GetAllAsync();
     }
