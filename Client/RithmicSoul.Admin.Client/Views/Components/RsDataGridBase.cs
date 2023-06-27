@@ -38,7 +38,6 @@ public class RsDataGridBase<T> : ComponentBase where T : class
     protected MudDataGrid<T> thisDataGrid;
     private Dictionary<(string, int), string> RowHighlight = new();
     private AppSettings _appSettings;
-    protected bool _isExpanded;
     protected string TableName;
     protected bool _showContent;
     protected string _contentStyle;
@@ -79,13 +78,13 @@ public class RsDataGridBase<T> : ComponentBase where T : class
     protected void ExpandGroups()
     {
         thisDataGrid?.ExpandAllGroups();
-        _isExpanded = true;
+        GroupExpanded = true;
     }
 
     protected void CollapseGroups()
     {
         thisDataGrid?.CollapseAllGroups();
-        _isExpanded = false;
+        GroupExpanded = false;
     }
 
     //protected List<RenderFragment> CreateColumn()
@@ -121,7 +120,6 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         return builder =>
         {
             var propertyName = propertyInfo.Name;
-            Console.WriteLine($"{propertyName}: {_propertiesCount}");
             var parameterExp = Expression.Parameter(typeof(T), propertyName);
             var propertyExp = Expression.Property(parameterExp, propertyInfo);
             var convertExp = Expression.Convert(propertyExp, typeof(object));

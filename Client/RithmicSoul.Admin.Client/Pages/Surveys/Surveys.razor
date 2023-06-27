@@ -41,7 +41,7 @@
                 <MudItem xs="12">
                     <MudGrid>
                         <MudItem xs="12">
-                            <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;overflow-y: auto">
+                            <MudPaper Elevation="2" Class="pa-4">
                                 <RsDataGrid T="AuthoredSurveyDto"
                                     ApiDatabaseService="@AuthoredSurveyService"
                                     ColumnsToHide="new []{ 4 }"
@@ -53,10 +53,11 @@
                 <MudItem xs="12">
                     <MudGrid>
                         <MudItem xs="12">
-                            <MudPaper Elevation="2" Class="pa-4" Style="height: 600px;overflow-y: auto">
+                            <MudPaper Elevation="2" Class="pa-4">
                                 <RsDataGridWithDetailRow T="SurveyResponseDto"
                                      ApiService="@SurveyResponseService"
                                      Items="@_surveyResponses"
+                                     CanGroup="true" GroupExpanded="false" GroupBy="SurveyName"
                                      TableColumnWidths="@_surveyResponseColumnWidths"
                                      ColumnsToHide="new []{ 2, 4, 6 }">
                                     <DetailRowContent>

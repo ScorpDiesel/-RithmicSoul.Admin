@@ -6,6 +6,7 @@
 
 @code
 {
+    [Parameter] public string Style { get; set; }
     [Parameter] public bool ShowContent
     {
         get => _showContent;
@@ -17,7 +18,12 @@
     }
 
     private bool _showContent;
-    private string _style = "display:none";
+    private string _style;
+
+    protected override void OnInitialized()
+    {
+        _style = Style;
+    }
 
     private void SetCardStyle(bool value) => _style = value ? "display:none" : string.Empty;
 }

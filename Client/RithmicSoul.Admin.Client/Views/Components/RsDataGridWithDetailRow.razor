@@ -1,9 +1,9 @@
 ﻿@inherits RsDataGridBase<T>
 @typeparam T
 
-<RsLoadingSpinnerCard ShowContent="@_showContent" />
-<MudContainer Style="@_contentStyle" MaxWidth="MaxWidth.ExtraExtraLarge">
-    <MudDataGrid Items="@Items" T="T" Hover="true" FixedHeader="true" Style="height: 560px;"
+<RsLoadingSpinnerCard ShowContent="@_showContent" Style="height: 650px" />
+<MudContainer Style="" MaxWidth="MaxWidth.ExtraExtraLarge">
+    <MudDataGrid Items="@Items" T="T" Hover="true" FixedHeader="true" Height="560px" Virtualize="true"
                  EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
                  RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
                  Groupable="@CanGroup" GroupExpanded="@GroupExpanded" MultiSelection="@MultiSelection"
@@ -13,7 +13,7 @@
             <MudSpacer />
             @if (CanGroup)
             {
-                @if (!_isExpanded)
+                @if (!GroupExpanded)
                 {
                     <MudIconButton Size="@Size.Large" Icon="@Icons.Material.Filled.UnfoldMore" Class="mt-0" OnClick="@ExpandGroups" />
                 }
@@ -72,7 +72,7 @@
             }
         </ChildRowContent>
         <PagerContent>
-            <MudDataGridPager T="T" DisableRowsPerPage="true" />
+            <MudDataGridPager T="T"/>
         </PagerContent>
     </MudDataGrid>
 </MudContainer>
