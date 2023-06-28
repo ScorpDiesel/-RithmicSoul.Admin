@@ -1,12 +1,9 @@
 ﻿@page "/tables"
 @using RithmicSoul.Models.Survey.Dtos
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 
 <PageTitle>Surveys</PageTitle>
-@*<AuthorizeView>
-    <NotAuthorized>
-        <a href="authentication/login">Login In</a>
-    </NotAuthorized>
-    <Authorized>*@
 <MudContainer Class="mt-16 mb-16" MaxWidth="MaxWidth.ExtraExtraLarge">
     <MudGrid Justify="Justify.FlexStart" Spacing="1">
         <MudItem xs="12">
@@ -89,14 +86,6 @@
                                                     ApiService="@QuestionTypeService"/>
                                     </MudPaper>
                                 </MudItem>
-                                <MudItem xs="12">
-                                    <MudPaper Elevation="2" Class="pa-4">
-                                        @*<RsDataGrid T="QuestionTypeDto"
-                                                    Items="@_questionTypes"
-                                                    CanCreate="true" CanDelete="true" CanEdit="true" TDialog="@_questionTypeDialogType"
-                                                    ApiAdminService="@QuestionTypeService"/>*@
-                                    </MudPaper>
-                                </MudItem>
                             </MudGrid>
                         </MudItem>
                     </MudGrid>
@@ -105,6 +94,3 @@
         </MudItem>
     </MudGrid>
 </MudContainer>
-@*    </Authorized>
-</AuthorizeView>
-*@
