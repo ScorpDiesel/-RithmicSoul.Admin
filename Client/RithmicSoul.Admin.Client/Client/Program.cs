@@ -24,7 +24,7 @@ namespace RithmicSoul.Admin.Client.Client
             builder.Services.AddMsalAuthentication(options =>
             {
                 options.ProviderOptions.LoginMode = "redirect";
-                options.ProviderOptions.DefaultAccessTokenScopes.Add("https://graph.microsoft.com/User.Read");
+                options.ProviderOptions.DefaultAccessTokenScopes.Add("https://graph.microsoft.com/openid");
                 builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
             });
 
