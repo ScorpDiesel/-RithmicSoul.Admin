@@ -8,6 +8,7 @@ using RithmicSoul.Admin.Application.Interfaces.Services.Survey;
 using RithmicSoul.Admin.Client.Views.Dialogs;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoulSharedLibrary.Extensions;
+
 namespace RithmicSoul.Admin.Client.Views.Components;
 
 public class RsDataGridBase<T> : ComponentBase where T : class
@@ -26,10 +27,11 @@ public class RsDataGridBase<T> : ComponentBase where T : class
     [Parameter] public bool CanEdit { get; set; }
     [Parameter] public bool CanCreate { get; set; }
     [Parameter] public bool CanDelete { get; set; }
+    [Parameter] public bool CanFilter { get; set; }
     [Parameter] public bool ReturnIdOnInsert { get; set; }
     [Parameter] public Type TEditDialog { get; set; }
     [Parameter] public Type TDialog { get; set; }
-    [Parameter] public List<int> FilterIds { get; set; }
+    //[Parameter] public List<int> NoFilterIds { get; set; }
     [Parameter] public string ColumnToFilter { get; set; }
     [Parameter] public IEnumerable<T> Items { get; set; }
     [Parameter] public TableColumnWidth TableColumnWidths { get; set; }
@@ -42,11 +44,11 @@ public class RsDataGridBase<T> : ComponentBase where T : class
     protected bool _showContent;
     protected string _contentStyle;
     protected int _propertiesCount;
+    protected string _searchString;
 
     protected override async Task OnInitializedAsync()
     {
         Initialize();
-        await FilterItemsAsync();
     }
 
     protected void Initialize()
@@ -57,23 +59,37 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         _properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
     }
 
-    private async Task FilterItemsAsync()
+    //private async Task FilterItemsAsync()
+    //{
+    //    if (FilterIds is null) return;
+
+    //    var allResults = await ApiService?.GetAllAsync();
+    //    IList<T> filteredResults = new List<T>();
+    //    foreach (var item in allResults)
+    //    {
+    //        var property = item.GetType().GetProperties().FirstOrDefault(p => p.Name == ColumnToFilter);
+    //        var value = property?.GetValue(item, null);
+
+    //        if (value is null) continue;
+    //        if (FilterIds.Contains((int)value)) filteredResults?.Add(item);
+    //    }
+
+    //    Items = filteredResults;
+    //}
+
+    protected Func<T, bool> QuickFilter => x =>
     {
-        if (FilterIds is null) return;
-
-        var allResults = await ApiService?.GetAllAsync();
-        IList<T> filteredResults = new List<T>();
-        foreach (var item in allResults)
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+        foreach (var property in _properties)
         {
-            var property = item.GetType().GetProperties().FirstOrDefault(p => p.Name == ColumnToFilter);
-            var value = property?.GetValue(item, null);
-
+            var value = property.GetValue(x, null);
             if (value is null) continue;
-            if (FilterIds.Contains((int)value)) filteredResults?.Add(item);
+            if (value.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase)) return true;
         }
 
-        Items = filteredResults;
-    }
+        return false;
+    };
 
     protected void ExpandGroups()
     {

@@ -4,13 +4,16 @@
 <RsLoadingSpinnerCard ShowContent="@_showContent" Style="height: 650px" />
 <MudContainer Style="" MaxWidth="MaxWidth.ExtraExtraLarge">
     <MudDataGrid Items="@Items" T="T" Hover="true" FixedHeader="true" Height="560px" Virtualize="true"
-                 EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
-                 RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true"
-                 Groupable="@CanGroup" GroupExpanded="@GroupExpanded" MultiSelection="@MultiSelection"
-                 Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="thisDataGrid">
+         EditMode="DataGridEditMode.Form" CommittedItemChanges="@UpdateItemAsync" CanceledEditingItem="@ResetRowHighlight"
+         RowStyleFunc="@((item, index) => GetRowHighlight(item, index))" Striped="true" Filterable="@CanFilter" QuickFilter="@QuickFilter"
+         FilterMode="DataGridFilterMode.Simple" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive"
+         Groupable="@CanGroup" GroupExpanded="@GroupExpanded" MultiSelection="@MultiSelection"
+         Dense="true" EditTrigger="DataGridEditTrigger.Manual" ReadOnly="false" @ref="thisDataGrid">
         <ToolBarContent>
             <MudText Typo="Typo.h6">Table: @TableName</MudText>
             <MudSpacer />
+            <MudTextField @bind-Value="@_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mr-8 mb-4"></MudTextField>
             @if (CanGroup)
             {
                 @if (!GroupExpanded)

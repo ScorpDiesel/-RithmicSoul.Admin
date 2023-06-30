@@ -1,13 +1,19 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Options;
+using MudBlazor;
 using RithmicSoul.Admin.Application.Interfaces.Services;
 using RithmicSoul.Admin.Client.Views.Dialogs;
 using RithmicSoul.Admin.Core.Models;
+using RithmicSoul.Admin.Infrastructure.Services;
 using RithmicSoul.Models.Survey.Dtos;
+using RithmicSoulSharedLibrary.Extensions;
 
 namespace RithmicSoul.Admin.Client.Pages.Tables;
 
 public partial class Tables : ComponentBase
 {
+    [Inject] protected IDialogService DialogService { get; set; }
+    [Inject] private IOptions<AppSettings> AppSettingsOptions { get; set; }
     [Inject] private IService<QuestionTypeDto> QuestionTypeService { get; set; }
     [Inject] private IService<SurveyMetaDataDto> SurveyService { get; set; }
     [Inject] private IService<SurveyQuestionDto> SurveyQuestionService { get; set; }
@@ -16,6 +22,7 @@ public partial class Tables : ComponentBase
     [Inject] private IService<QuestionChoiceDto> QuestionChoiceService { get; set; }
     [Inject] private IService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
 
+    private AppSettings _appSettings;
     private IEnumerable<QuestionTypeDto> _questionTypes;
     private IEnumerable<SurveyTypeDto> _surveyTypes;
     private IEnumerable<SurveyMetaDataDto> _surveys;
@@ -40,6 +47,8 @@ public partial class Tables : ComponentBase
     private readonly TableColumnWidth _questionChoiceColumnWidths = new();
     //private Type _adinkraSymbolEditDialogType;
 
+    public delegate Task<bool> EditModel(Type editDialogType, object dto, string tableName);
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -48,6 +57,7 @@ public partial class Tables : ComponentBase
 
     private async Task InitializeAsync()
     {
+        _appSettings = AppSettingsOptions.Value;
         _adinkraSymbolColumnWidths.TableName = nameof(AdinkraSymbolDto).Replace("Dto", "");
         _adinkraSymbolColumnWidths.ColumnWidths[1] = "350px";
         _adinkraSymbolColumnWidths.ColumnWidths[2] = "450px";

@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="RithmicSoul.Models" Version="2023.6.27.1" />
+    <PackageReference Include="RithmicSoul.Models" Version="2023.6.29.1" />
     <PackageReference Include="RithmicSoulSharedLibrary" Version="2023.6.26.1" />
   </ItemGroup>
 

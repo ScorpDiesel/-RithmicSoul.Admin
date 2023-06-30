@@ -3,7 +3,7 @@ using RithmicSoul.Admin.Application.Dtos;
 using RithmicSoul.Models.Survey.Dtos;
 using RithmicSoul.Models.Survey.Models;
 
-namespace RithmicSoul.Admin.Infrastructure.Mapper;
+namespace RithmicSoul.Admin.Application.Mapper;
 
 public class SurveyResponseProfile : Profile
 {

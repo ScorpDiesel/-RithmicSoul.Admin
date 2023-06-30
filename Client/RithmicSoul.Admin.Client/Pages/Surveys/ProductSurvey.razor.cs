@@ -22,12 +22,22 @@ public partial class ProductSurvey : ComponentBase
     private IEnumerable<AuthoredSurveyDto> _authoredSurveys;
     private SurveyResponseDto _surveyResponse;
     private IEnumerable<string> _questions;
-    private int _pageSize = 1;
+    private IEnumerable<string> _choiceExamples;
+    private string _choiceExample;
+    private readonly int _pageSize = 1;
     private int _currentPage;
     private bool _endOfSurveyReached;
-    private Dictionary<int, List<string>> _questionResponses = new();
+    private readonly Dictionary<int, List<string>> _questionResponses = new();
 
-    private string CurrentQuestion => _questions?.Skip(_currentPage * _pageSize).Take(_pageSize).First();
+    private string CurrentQuestion
+    {
+        get
+        {
+            var skip = _currentPage * _pageSize;
+            _choiceExample = _choiceExamples.Skip(skip).Take(_pageSize).First();
+            return _questions?.Skip(skip).Take(_pageSize).First();
+        }
+    }
 
 
     protected override async Task OnInitializedAsync()
@@ -45,6 +55,7 @@ public partial class ProductSurvey : ComponentBase
         _authoredSurveys = await AuthoredSurveyService.GetFromViewAsync(v => v.ActiveSurveyName == surveyNameRoute);
         _surveyDescription = _authoredSurveys.First().SurveyDescription;
         _questions = _authoredSurveys.Select(q => q.QuestionText).Distinct();
+        _choiceExamples = _authoredSurveys.Select(q => q.ChoiceExample).Distinct();
     }
 
     private bool HasPreviousPage => _currentPage > 0;

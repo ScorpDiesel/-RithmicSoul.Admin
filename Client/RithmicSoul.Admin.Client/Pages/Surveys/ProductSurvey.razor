@@ -23,7 +23,8 @@
                         <RsSurveyQuestion Items="@_authoredSurveys"
                           OnValueChanged="@QuestionValueChanged"
                           QuestionNumber="@_currentPage"
-                          QuestionTextTypography="Typo.body1"
+                          QuestionTextTypography="Typo.body1" 
+                          ChoiceExample="@_choiceExample"
                           QuestionText="@CurrentQuestion" />
                     </MudItem>
                 </MudGrid>

@@ -12,6 +12,7 @@ public partial class RsSurveyQuestion : ComponentBase
     [Inject] private IOptions<AppSettings> AppSettingsOptions { get; set; }
     [Parameter] public string QuestionText { get; set; }
     [Parameter] public int QuestionNumber { get; set; }
+    [Parameter] public string ChoiceExample { get; set; }
     [Parameter] public Typo QuestionTextTypography { get; set; }
     [Parameter] public IEnumerable<AuthoredSurveyDto> Items { get; set; }
     [Parameter] public EventCallback<QuestionResponseObject> OnValueChanged { get; set; }
