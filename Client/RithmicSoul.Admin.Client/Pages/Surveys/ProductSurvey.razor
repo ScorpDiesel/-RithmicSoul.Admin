@@ -5,7 +5,7 @@
     <MudText>@(string.Join("\r\n", _questionResponses.Select(q => $"{q.Key}:{string.Join(", ", q.Value)}")))</MudText>
         <MudGrid>
             <MudItem xs="4">
-                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Class="mt-6">
                     <MudButton Class="mr-8" StartIcon="@Icons.Material.Filled.Save" Color="Color.Success" OnClick="@(async () => await SaveSurveyAsync())">Save</MudButton>
                     <MudText Class="mr-8" Color="Color.Default" Style="font-size:.875rem;font-weight:500">PAGE @(_currentPage + 1) OF @(_questions?.Count())</MudText>
                     <div>
@@ -13,7 +13,7 @@
                         <MudButton EndIcon="@Icons.Material.Filled.NavigateNext" OnClick="@NextPage" Disabled="@(!HasNextPage)">Next</MudButton>
                     </div>
                 </MudStack>
-                <MudPaper Class="pa-10">
+                <MudPaper Class="pa-4">
                     <MudGrid>
                         <MudItem xs="12">
                             @if (_questions is null)

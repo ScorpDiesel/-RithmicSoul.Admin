@@ -147,7 +147,6 @@ public class RsDataGridBase<T> : ComponentBase where T : class
                                               && TableColumnWidths.ColumnWidths.TryGetValue(_propertiesCount, out var width)) builder.AddAttribute(3, "CellStyle", $"width: { width }");
             if (propertyInfo.Name == GroupBy) builder.AddAttribute(4, _appSettings.RsDataGridRenderFragmentGroupingAttribute, true);
             builder.CloseComponent();
-
             ShowContent();
         };
     }
@@ -295,19 +294,33 @@ public class RsDataGridBase<T> : ComponentBase where T : class
         if (!result.Canceled)
         {
             dynamic resultData;
-            bool isSuccessful = false;
+            var isSuccess = false;
             var data = result.Data;
 
             if (data.IsGenericList())
             {
                 resultData = (List<T>)data;
-                isSuccessful = await BulkActionsService.BulkInsertAsync(resultData);
+                isSuccess = await BulkActionsService.BulkInsertAsync(resultData);
             }
             else
             {
                 resultData = (T)result.Data;
                 await UpdateItemAsync(resultData);
             }
+
+            string message;
+
+            if (isSuccess)
+            {
+                message = string.Format(_appSettings.ItemDeletedSuccessMessageTemplate, TableName);
+                await GetAllItemsAsync();
+            }
+            else
+            {
+                message = string.Format(_appSettings.ItemDeletedFailureMessageTemplate, TableName);
+            }
+
+            ShowSnackBar(isSuccess, message);
 
         }
     }

@@ -4,6 +4,7 @@ using MudBlazor;
 using RithmicSoul.Admin.Application.Interfaces.Services;
 using RithmicSoul.Admin.Core.Models;
 using RithmicSoul.Models.Survey.Dtos;
+using RithmicSoul.Models.Survey.Models;
 
 namespace RithmicSoul.Admin.Client.Views.Dialogs;
 
@@ -74,6 +75,8 @@ public partial class EditQuestionChoiceDialog : ComponentBase
         foreach (var choice in DtoList)
         {
             choice.QuestionId = Model.QuestionId;
+            choice.ChoiceText = choice.ChoiceText.Replace("'", "''");
+            choice.ChoiceExample = choice.ChoiceExample?.Replace("'", "''");
         }
 
         MudDialog?.Close(DialogResult.Ok(DtoList));
