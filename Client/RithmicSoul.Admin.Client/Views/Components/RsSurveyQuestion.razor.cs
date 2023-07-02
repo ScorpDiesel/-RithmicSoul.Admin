@@ -4,7 +4,6 @@ using RithmicSoul.Models.Survey.Dtos;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Options;
 using RithmicSoul.Admin.Core.Models;
-using RithmicSoul.Models.Survey.Models;
 
 namespace RithmicSoul.Admin.Client.Views.Components;
 
@@ -21,7 +20,6 @@ public partial class RsSurveyQuestion : ComponentBase
     private AppSettings _appSettings;
     private string _questionNumberText;
     private string _questionClass;
-    private bool _firstRender;
 
     protected override void OnInitialized()
     {
@@ -34,18 +32,10 @@ public partial class RsSurveyQuestion : ComponentBase
         _choices = Items.GroupBy(q => q.QuestionText)
             .Select(g => new QuestionChoiceObject{ QuestionType = g.Select(x => x.QuestionTypeName).First(),
                 QuestionId = g.Select(x => x.QuestionId).First(),
+                ChoiceExamples = g.Select(x => x.ChoiceExample).ToList(),
                 QuestionChoices = g.Select(x => x.ChoiceText).ToList()});
+
     }
-
-    //protected override void OnAfterRender(bool firstRender)
-    //{
-    //    _firstRender = firstRender;
-    //}
-
-    //protected override bool ShouldRender()
-    //{
-    //    return _firstRender = true;
-    //}
 
     private RenderFragment CreateRenderFragment(QuestionChoiceObject choices)
     {
@@ -81,11 +71,6 @@ public partial class RsSurveyQuestion : ComponentBase
             }
         };
     }
-
-    //private void CreateRankFragment(string questionType, RenderTreeBuilder builder)
-    //{
-    //    builder.OpenComponent(0, typeof());
-    //}
 
     private void CreateTextFieldFragment(QuestionChoiceObject choices, RenderTreeBuilder builder)
     {
@@ -127,13 +112,12 @@ public partial class RsSurveyQuestion : ComponentBase
                 childBuilder.AddAttribute(childSeq++, "CheckedChanged", EventCallback.Factory.Create<bool>(this, value => ValueChangedAsync(choices, label, value)));
                 childBuilder.CloseComponent();
 
-                var choiceExamples = Items.Where(i => i.QuestionText == QuestionText && !string.IsNullOrEmpty(i.ChoiceExample)).Select(q => q.ChoiceExample).ToList();
-                if (!choiceExamples.Any() || choiceExamples.Count != checkboxLabels.Count) continue;
-                var example = choiceExamples[c];
+                var example = choices.ChoiceExamples[c];
+                if (string.IsNullOrEmpty(example)) continue;
                 childBuilder.OpenElement(0, "div");
                 childBuilder.AddAttribute(1, "class", "ml-12");
                 childBuilder.AddAttribute(2, "style", $"display:block;font-style:italic;color:{Colors.Grey.Darken1}");
-                childBuilder.AddContent(3, $"({ example })");
+                childBuilder.AddContent(3, $"({example})");
                 childBuilder.CloseComponent();
             }
         }));

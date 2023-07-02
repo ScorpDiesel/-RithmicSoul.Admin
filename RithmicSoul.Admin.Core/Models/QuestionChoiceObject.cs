@@ -6,4 +6,5 @@ public class QuestionChoiceObject
     public string QuestionType { get; set; }
     public string QuestionText { get; set; }
     public List<string> QuestionChoices { get; set; }
+    public List<string> ChoiceExamples { get; set; }
 }
