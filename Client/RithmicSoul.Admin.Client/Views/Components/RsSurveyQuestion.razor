@@ -10,17 +10,16 @@
                 {
                     var questionChoice = _choices.ElementAt(q);
                     var style = "none";
-                    if(q == QuestionNumber)
+                    if (q == QuestionNumber)
                     {
                         style = "block";
                     }
-                
+
                     <div style="display:@style">
                         @CreateRenderFragment(questionChoice)
                     </div>
                 }
             }
         </MudStack>
-        <MudText Class="mt-8">Example: @ChoiceExample</MudText>
     </MudStack>
 </MudPaper>

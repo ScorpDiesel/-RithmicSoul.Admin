@@ -4,9 +4,9 @@ namespace RithmicSoul.Admin.Core.Utilities;
 
 public static class Utilities
 {
-    public static IList<T1>? MapToModelWithCollection<T1, T>(T model)
+    public static IList<TToDto>? MapToModelWithCollection<TToDto, TFromDto>(TFromDto model)
     {
-        IList<T1>? collection = new List<T1>();
+        IList<TToDto>? collection = new List<TToDto>();
         var modelProperties = model?.GetType().GetProperties();
         var genericList = modelProperties?.FirstOrDefault(m => m.PropertyType.UnderlyingSystemType.IsGenericList());
 
@@ -14,17 +14,18 @@ public static class Utilities
 
         foreach (var value in values)
         {
-            var mapToModel = (T1)Activator.CreateInstance(typeof(T1)) ?? throw new InvalidCastException("Cannot create instance of mapped model type");
+            var isValueGenericList = value.GetType().IsGenericList();
+            var mapToModel = (TToDto)Activator.CreateInstance(typeof(TToDto)) ?? throw new InvalidCastException("Cannot create instance of mapped model type");
             var mapToTypeProperties = mapToModel.GetType().GetProperties();
             var propertyToMapTo = mapToTypeProperties.FirstOrDefault(p => !modelProperties.Select(m => m.Name).Contains(p.Name));
             propertyToMapTo?.SetValue(mapToModel, value);
 
-            foreach (var property in modelProperties)
-            {
-                var propertyValue = property.GetValue(model);
-                var mapToTypeProperty = mapToTypeProperties.FirstOrDefault(m => m.Name == property.Name);
-                mapToTypeProperty?.SetValue(mapToModel, propertyValue);
-            }
+            //foreach (var property in modelProperties)
+            //{
+            //    var propertyValue = property.GetValue(model);
+            //    var mapToTypeProperty = mapToTypeProperties.FirstOrDefault(m => m.Name == property.Name);
+            //    mapToTypeProperty?.SetValue(mapToModel, propertyValue);
+            //}
 
             collection.Add(mapToModel);
         }

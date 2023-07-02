@@ -65,16 +65,18 @@ public partial class EditQuestionChoiceDialog : ComponentBase
     private async Task SaveEditAsync()
     {
         var isDeleteSuccessful = await BulkActionsService.BulkDeleteAsync(_oldDtoList);
-        if (!isDeleteSuccessful) ShowSnackBar(isDeleteSuccessful);
+        if (!isDeleteSuccessful)
+        {
+            ShowSnackBar(isDeleteSuccessful);
+            Cancel();
+        }
 
         foreach (var choice in DtoList)
         {
             choice.QuestionId = Model.QuestionId;
         }
 
-        var isBulkInsertSuccessful = await BulkActionsService.BulkInsertAsync(DtoList);
-        ShowSnackBar(isBulkInsertSuccessful);
-        MudDialog?.Close(DialogResult.Ok(Model));
+        MudDialog?.Close(DialogResult.Ok(DtoList));
     }
 
     private void Cancel() => MudDialog?.Cancel();

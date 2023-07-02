@@ -3,7 +3,6 @@ using Microsoft.Extensions.Options;
 using MudBlazor;
 using RithmicSoul.Admin.Application.Interfaces.Services;
 using RithmicSoul.Admin.Core.Models;
-using RithmicSoul.Admin.Core.Utilities;
 using RithmicSoul.Models.Survey.Dtos;
 
 namespace RithmicSoul.Admin.Client.Views.Dialogs;
@@ -33,10 +32,10 @@ public partial class NewQuestionChoiceDialog : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await Initialize();
+        await InitializeAsync();
     }
 
-    private async Task Initialize()
+    private async Task InitializeAsync()
     {
         _appSettings = AppSettingsOptions.Value;
         QuestionChoiceTableName = nameof(QuestionChoiceDto).Replace("Dto", "");
@@ -44,18 +43,16 @@ public partial class NewQuestionChoiceDialog : ComponentBase
         _choiceControlsVisibility = _appSettings.QuestionTypeNameCssVisibilityHidden;
         _chooseableList.Add(_appSettings.QuestionChoicesMultipleChoice);
         _chooseableList.Add(_appSettings.QuestionChoicesSingleChoice);
-        _surveyQuestions = await SurveyQuestionService.GetAllAsync();
         _questionChoices = await QuestionChoiceService.GetAllAsync();
-        _surveyQuestions = _surveyQuestions
-            .Where(item1 => _chooseableList.Contains(item1.QuestionTypeName) 
-                && _questionChoices.Any(item2 => item2.QuestionId == item1.QuestionId 
-                && item2.ChoiceText is null)
+        var items = await SurveyQuestionService.GetAllAsync();
+        _surveyQuestions = items
+            .Where(item1 => _chooseableList.Contains(item1.QuestionTypeName) /*&& _questionChoices.Any(item2 => item2.QuestionId == item1.QuestionId)*/
             ).ToList();
-        SetStatusMessage();
     }
 
     private void SetStatusMessage()
     {
+        if(_surveyQuestions is null) return;
         if (!_surveyQuestions.Any())
         {
             _statusMessage = "Create a question in the SurveyQuestion table first";
@@ -99,12 +96,28 @@ public partial class NewQuestionChoiceDialog : ComponentBase
             : _appSettings.QuestionTypeNameCssVisibilityHidden;
     }
 
-    private async Task SaveNewAsync()
+    private void Save()
     {
-        var modelCollection = Utilities.MapToModelWithCollection<QuestionChoiceDto, SurveyQuestionChoices>(Model);
-        var isBulkInsertSuccessful = await BulkActionsService.BulkInsertAsync(modelCollection.ToList());
-        ShowSnackBar(isBulkInsertSuccessful);
+        var modelCollection = CreateListFromObject(Model);
         MudDialog.Close(DialogResult.Ok(modelCollection));
+    }
+
+    private List<QuestionChoiceDto> CreateListFromObject(SurveyQuestionChoices surveyQuestionChoices)
+    {
+        List<QuestionChoiceDto> choices = new();
+        for (var c = 0; c < surveyQuestionChoices.QuestionChoices.Count; c++)
+        {
+            var choice = surveyQuestionChoices.QuestionChoices[c];
+            var example = surveyQuestionChoices.QuestionExamples[c];
+            var questionChoice = new QuestionChoiceDto();
+            questionChoice.QuestionId = (int)surveyQuestionChoices.QuestionId;
+            questionChoice.ChoiceId = surveyQuestionChoices.ChoiceId;
+            questionChoice.ChoiceText = choice.Replace("'", "''");
+            questionChoice.ChoiceExample = example.Replace("'", "''");
+            choices.Add(questionChoice);
+        }
+
+        return choices;
     }
 
     private void Cancel() => MudDialog.Cancel();

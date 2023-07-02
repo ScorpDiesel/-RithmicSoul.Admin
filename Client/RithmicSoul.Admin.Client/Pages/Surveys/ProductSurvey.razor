@@ -2,7 +2,7 @@
 
 <MudContainer Class="mt-4 mb-12" MaxWidth="MaxWidth.ExtraExtraLarge">
     <MudText Class="mt-16">@_surveyDescription</MudText>
-    @*<MudText>@(string.Join("\r\n", _questionResponses.Select(q => $"{q.Key}:{string.Join(", ", q.Value)}")))</MudText>*@
+    <MudText>@(string.Join("\r\n", _questionResponses.Select(q => $"{q.Key}:{string.Join(", ", q.Value)}")))</MudText>
         <MudGrid>
             <MudItem xs="4">
                 <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd">
@@ -24,7 +24,6 @@
                           OnValueChanged="@QuestionValueChanged"
                           QuestionNumber="@_currentPage"
                           QuestionTextTypography="Typo.body1" 
-                          ChoiceExample="@_choiceExample"
                           QuestionText="@CurrentQuestion" />
                     </MudItem>
                 </MudGrid>

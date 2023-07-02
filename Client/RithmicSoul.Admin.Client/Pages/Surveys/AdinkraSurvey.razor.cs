@@ -41,6 +41,7 @@ public partial class AdinkraSurvey : ComponentBase
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await JSRuntime.InvokeVoidAsync("setPlaybackRate", 0.75);
+        await JSRuntime.InvokeVoidAsync("scrollToTop");
     }
 
 

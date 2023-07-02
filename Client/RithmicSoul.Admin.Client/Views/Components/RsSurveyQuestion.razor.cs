@@ -4,6 +4,7 @@ using RithmicSoul.Models.Survey.Dtos;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Options;
 using RithmicSoul.Admin.Core.Models;
+using RithmicSoul.Models.Survey.Models;
 
 namespace RithmicSoul.Admin.Client.Views.Components;
 
@@ -12,7 +13,6 @@ public partial class RsSurveyQuestion : ComponentBase
     [Inject] private IOptions<AppSettings> AppSettingsOptions { get; set; }
     [Parameter] public string QuestionText { get; set; }
     [Parameter] public int QuestionNumber { get; set; }
-    [Parameter] public string ChoiceExample { get; set; }
     [Parameter] public Typo QuestionTextTypography { get; set; }
     [Parameter] public IEnumerable<AuthoredSurveyDto> Items { get; set; }
     [Parameter] public EventCallback<QuestionResponseObject> OnValueChanged { get; set; }
@@ -21,7 +21,7 @@ public partial class RsSurveyQuestion : ComponentBase
     private AppSettings _appSettings;
     private string _questionNumberText;
     private string _questionClass;
-    private List<QuestionResponseObject> _questionResponses = new();
+    private bool _firstRender;
 
     protected override void OnInitialized()
     {
@@ -36,6 +36,16 @@ public partial class RsSurveyQuestion : ComponentBase
                 QuestionId = g.Select(x => x.QuestionId).First(),
                 QuestionChoices = g.Select(x => x.ChoiceText).ToList()});
     }
+
+    //protected override void OnAfterRender(bool firstRender)
+    //{
+    //    _firstRender = firstRender;
+    //}
+
+    //protected override bool ShouldRender()
+    //{
+    //    return _firstRender = true;
+    //}
 
     private RenderFragment CreateRenderFragment(QuestionChoiceObject choices)
     {
@@ -106,14 +116,24 @@ public partial class RsSurveyQuestion : ComponentBase
         builder.AddAttribute(2, "Class", "ml-n3");
         builder.AddAttribute(3, "ChildContent", (RenderFragment)(childBuilder =>
         {
-            foreach (var label in checkboxLabels)
+            for (var c = 0; c < checkboxLabels.Count; c++)
             {
+                var label = checkboxLabels[c];
                 var childSeq = 0;
                 childBuilder.OpenComponent<MudCheckBox<bool>>(childSeq++);
                 childBuilder.AddAttribute(childSeq++, "UnCheckedColor", Color.Default);
                 childBuilder.AddAttribute(childSeq++, "Dense", true);
                 childBuilder.AddAttribute(childSeq++, "Label", label);
                 childBuilder.AddAttribute(childSeq++, "CheckedChanged", EventCallback.Factory.Create<bool>(this, value => ValueChangedAsync(choices, label, value)));
+                childBuilder.CloseComponent();
+
+                var choiceExamples = Items.Where(i => i.QuestionText == QuestionText && !string.IsNullOrEmpty(i.ChoiceExample)).Select(q => q.ChoiceExample).ToList();
+                if (!choiceExamples.Any() || choiceExamples.Count != checkboxLabels.Count) continue;
+                var example = choiceExamples[c];
+                childBuilder.OpenElement(0, "div");
+                childBuilder.AddAttribute(1, "class", "ml-12");
+                childBuilder.AddAttribute(2, "style", $"display:block;font-style:italic;color:{Colors.Grey.Darken1}");
+                childBuilder.AddContent(3, $"({ example })");
                 childBuilder.CloseComponent();
             }
         }));
