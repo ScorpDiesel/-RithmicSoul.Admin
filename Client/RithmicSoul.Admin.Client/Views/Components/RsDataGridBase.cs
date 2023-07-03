@@ -130,6 +130,42 @@ public class RsDataGridBase<T> : ComponentBase where T : class
     //    return columns;
     //}
 
+    //protected List<Dictionary<string, object>> ConvertToDictionaryList<T>(IEnumerable<T> items)
+    //{
+    //    var list = new List<Dictionary<string, object>>();
+
+    //    foreach (var item in items)
+    //    {
+    //        var dictionary = new Dictionary<string, object>();
+    //        foreach (var property in typeof(T).GetProperties())
+    //        {
+    //            dictionary.Add(property.Name, property.GetValue(item));
+    //        }
+
+    //        list.Add(dictionary);
+    //    }
+
+    //    return list;
+    //}
+    
+    //protected List<Dictionary<string, object>> ConvertToDictionaryList<T>(IEnumerable<T> items)
+    //{
+    //    var list = new List<Dictionary<string, object>>();
+
+    //    foreach (var item in items)
+    //    {
+    //        var dictionary = new Dictionary<string, object>();
+    //        foreach (var property in typeof(T).GetProperties())
+    //        {
+    //            dictionary.Add(property.Name, property.GetValue(item));
+    //        }
+
+    //        list.Add(dictionary);
+    //    }
+
+    //    return list;
+    //}
+
     protected RenderFragment CreateColumn(PropertyInfo propertyInfo)
     {
         ++_propertiesCount;
@@ -147,6 +183,7 @@ public class RsDataGridBase<T> : ComponentBase where T : class
                                               && TableColumnWidths.ColumnWidths.TryGetValue(_propertiesCount, out var width)) builder.AddAttribute(3, "CellStyle", $"width: { width }");
             if (propertyInfo.Name == GroupBy) builder.AddAttribute(4, _appSettings.RsDataGridRenderFragmentGroupingAttribute, true);
             builder.CloseComponent();
+
             ShowContent();
         };
     }

@@ -1,0 +1,18 @@
+﻿@page "/surveys/thanks"
+
+<div style="height: 100vh" class="d-flex justify-center">
+    <div Class="align-self-center" style="text-align: center">
+    <MudText Typo="Typo.h3">Yɛda wo ase wɔ wo nsɛm a wokae no ho! <span style="font-size:1.5rem;">(Akan/Twi)</span></MudText>
+    <MudText Typo="Typo.h4">Thanks for your feedback!</MudText>
+    </div>
+</div>
+<NavigationLock OnBeforeInternalNavigation="@(context => context.PreventNavigation())"/>
+
+@code {
+    [CascadingParameter] public EventCallback<bool> HideMenus { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await HideMenus.InvokeAsync(true);
+    }
+}

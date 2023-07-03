@@ -15,6 +15,7 @@ public partial class AdinkraSurvey : ComponentBase
     [Inject] private IDialogService DialogService { get; set; }
     [Inject] private IJSRuntime JSRuntime { get; set; }
     [Inject] private AppSetting AppSetting { get; set; }
+    [Inject] private NavigationManager Navigation { get; set; }
     [Inject] private IService<AdinkraSymbolDto> AdinkraSymbolService { get; set; }
     [Inject] private IService<SurveyResponseDto> SurveyResponseService { get; set; }
 
@@ -31,7 +32,6 @@ public partial class AdinkraSurvey : ComponentBase
     private SurveyResponseDto _surveyResponse;
     private string _baseAddress;
     private bool _endOfSurveyReached;
-    //private bool _isSaveButtonDisabled = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,7 +55,15 @@ public partial class AdinkraSurvey : ComponentBase
     }
 
     private bool HasPreviousPage => _currentPage > 0;
-    private bool HasNextPage => (_currentPage + 1) * _pageSize < _allSymbols?.Count();
+    private bool HasNextPage
+    {
+        get
+        {
+            var hasNextPage = (_currentPage + 1) * _pageSize < _allSymbols?.Count();
+            _endOfSurveyReached = !hasNextPage;
+            return hasNextPage;
+        }
+    }
 
     private async Task PreviousPageAsync()
     {
@@ -66,11 +74,7 @@ public partial class AdinkraSurvey : ComponentBase
 
     private async Task NextPageAsync()
     {
-        if (!HasNextPage)
-        {
-            _endOfSurveyReached = true;
-            return;
-        }
+        if (!HasNextPage) return;
         _currentPage++;
         await NewPageAsync.InvokeAsync(this, EventArgs.Empty);
     }
@@ -110,6 +114,7 @@ public partial class AdinkraSurvey : ComponentBase
             _surveyResponse.QuestionAnswers = symbolNames;
             _surveyResponse.DateCreated = DateTime.UtcNow;
             var isSuccess = await SurveyResponseService.UpdateAsync(_surveyResponse);
+            if (isSuccess) Navigation!.NavigateTo("/surveys/thanks");
         }
     }
 }

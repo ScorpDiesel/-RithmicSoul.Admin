@@ -60,9 +60,9 @@ public partial class ProductSurvey : ComponentBase
     {
         get
         {
-            var hasNextPag = _questions is not null && (_currentPage + 1) * _pageSize < _questions.Count();
-            _endOfSurveyReached = !hasNextPag;
-            return hasNextPag;
+            var hasNextPage = _questions is not null && (_currentPage + 1) * _pageSize < _questions.Count();
+            _endOfSurveyReached = !hasNextPage;
+            return hasNextPage;
         }
     }
 
@@ -136,6 +136,7 @@ public partial class ProductSurvey : ComponentBase
             _surveyResponse.QuestionAnswers = answers;
             _surveyResponse.DateCreated = DateTime.UtcNow;
             var isSuccess = await SurveyResponseService.UpdateAsync(_surveyResponse);
+            if (isSuccess) Navigation!.NavigateTo("/surveys/thanks");
         }
     }
 }
